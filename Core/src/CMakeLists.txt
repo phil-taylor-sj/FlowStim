@@ -9,5 +9,4 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(VecPlus)
 
-
 add_subdirectory(Domain)

@@ -3,10 +3,6 @@
 
 #include <VecPlus/Vec2.h>
 
-#include "Domain/Compass.h"
-
-using namespace vecp;
-
 namespace fstim
 {
     /**
@@ -21,58 +17,43 @@ namespace fstim
     {
     public:
         /**
-         * @brief The unique identifier for the face.
+         * \brief The unique identifier for the face.
          *
          * This ID is constant and must be initialized at the time of object creation.
          */
-        const int id;
+        int id, ownerId, neighId;
 
         /**
-         * @brief The area of the face.
+         * \brief The area of the face.
          *
          * Represents the surface area of the face in 2D space.
          */
-        double area;
+        vecp::Vec2d normal{0., 0.}; 
 
         /**
-         * @brief The center of the face.
+         * \brief The center of the face.
          *
          * A Vec2d object representing the coordinates of the center of the face.
          */
-        Vec2d center;
+        vecp::Vec2d center{0., 0.};
 
         /**
-         * @brief Indicates whether the face is on the boundary.
+         * \brief Indicates whether the face is on the boundary.
          *
          * A boolean flag that is true if the face is a boundary face, false otherwise.
          */
         bool isBoundary;
 
         /**
-         * @brief A map associating compass directions with cell IDs.
-         *
-         * This map stores cell identifiers indexed by compass directions (e.g., North, South, etc.)
-         * that are associated with this face.
+         * \brief Constructor that initializes the Face with a given ID.
          */
-        std::map<Compass, int> cellId = {
-            {Compass.NORTH, -1},
-            {Compass.SOUTH, -1},
-            {Compass.EAST, -1},
-            {Compass.WEST, -1}
-        };
+        Face() : id(-1), ownerId(-1), neighId(-1) {};
 
         /**
-         * @brief Constructor that initializes the Face with a given ID.
-         *
-         * @param faceId The unique identifier for the face.
-         */
-        Face(int faceId) : id(faceId) {};
-
-        /**
-         * @brief Destructor for the Face class.
+         * \attention Destructor for the Face class.
          *
          * Cleans up any resources used by the Face object.
          */
-        ~Face();
+        ~Face() {};
     };
 }

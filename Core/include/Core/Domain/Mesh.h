@@ -10,19 +10,14 @@ namespace fstim
     class Mesh
     {
     public:
-        const Vec2i size;
-        const Vec2d length;
-        const Cell* const cells;
-        const Face* const faces;
+        const std::unique_ptr<const Cell[]> cells;
+        const std::unique_ptr<const Face[]> faces;
 
         const int nCells;
         const int nFaces;
 
-        int getCellId(int i, int j);
-
-        Mesh(Vec2i sizeIn, Vec2d lengthIn, Cell* cellsIn. Face* facesIn) 
-            : size(sizeIn), length(lengthIn);
+        Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn);
  
-        ~Mesh();
-    }
+        ~Mesh() {};
+    };
 }

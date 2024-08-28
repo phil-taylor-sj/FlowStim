@@ -22,9 +22,11 @@ endif()
 
 set(BUILD_BIN_DIR ${PROJECT_SOURCE_DIR}/build/bin)
 
-add_subdirectory(src)
+set(PUBLIC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/Core/include)
+
+add_subdirectory(Core/src)
 
 if(PROJECT_IS_TOP_LEVEL)
     enable_testing()
-    add_subdirectory(test)
+    add_subdirectory(Core/test)
 endif()
