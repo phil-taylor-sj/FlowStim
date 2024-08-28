@@ -144,14 +144,13 @@ namespace Domain_Tests
         }
     }
 
-    // TEST_F(SmallMeshEqualF, test_sets_correct_cell_dimensions)
-    // {
-    //     for (int id = 0; id < 12; id++)
-    //     {
-    //         ASSERT_DOUBLE_EQ(1., mesh.cells[id].width.x);
-    //         ASSERT_DOUBLE_EQ(2., mesh.cells[id].width.y);
-    //     }
-    // }
+    TEST_F(SmallMeshEqualF, test_sets_correct_cell_volumes)
+    {
+        for (int id = 0; id < 12; id++)
+        {
+             ASSERT_DOUBLE_EQ(2., mesh->cells[id].volume);
+        }
+    }
 
     TEST_F(SmallMeshEqualF, test_sets_correct_domain_properties)
     {
