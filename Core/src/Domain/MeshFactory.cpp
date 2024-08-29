@@ -46,8 +46,8 @@ namespace fstim
                 cell.id = cellId;
 
                 std::map<Compass, int> faceIds = {
-                    {Compass::NORTH, northStart + j + i * (size.y + 1)},
-                    {Compass::SOUTH, northStart + j + i * (size.y + 1) + 1}, // northId + 1
+                    {Compass::NORTH, northStart + i + j * (size.x)},
+                    {Compass::SOUTH, northStart + i + (j + 1) * (size.x)},
                     {Compass::EAST, i + j * (size.x + 1) + 1}, // eastId + 1
                     {Compass::WEST, i + j * (size.x + 1)}
                 };

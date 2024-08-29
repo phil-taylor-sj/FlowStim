@@ -63,8 +63,8 @@ namespace Domain_Tests
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_ids_for_cells)
     {
-        int expectedNorth[12] = {16, 21, 26, 17, 22, 27, 18, 23, 28, 19, 24, 29};
-        int expectedSouth[12] = {17, 22, 27, 18, 23, 28, 19, 24, 29, 20, 25, 30};
+        int expectedNorth[12] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
+        int expectedSouth[12] = {19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
         int expectedEast[12] = {1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15};
         int expectedWest[12] = {0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14};
 
@@ -77,24 +77,25 @@ namespace Domain_Tests
         }
     }
 
-    // TEST_F(SmallMeshEqualF, test_sets_correct_cells_ids_for_faces)
-    // {   
-    //     int expectedNorth[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    //         -1, 0, 3, 6, 9, -1, 1, 4, 7, 10, -1, 2, 5, 8, 11};
-    //     int expectedSouth[] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    //         0, 3, 6, 9, -1, 1, 4, 7, 10, -1, 2, 5, 8, 11, -1};
-    //     int expectedEast[] = {0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, -1, 9, 10, 11, -1,
-    //         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-    //     int expectedWest[] = {-1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, -1, 9, 10, 11,
-    //         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-    //     for (int id = 0; id < 31; id++)
-    //     {
-    //         ASSERT_EQ(expectedNorth[id], mesh.faces[id].cellId[Compass.NORTH]);
-    //         ASSERT_EQ(expectedSouth[id], mesh.faces[id].cellId[Compass.SOUTH]);
-    //         ASSERT_EQ(expectedEast[id], mesh.faces[id].cellId[Compass.EAST]);
-    //         ASSERT_EQ(expectedWest[id], mesh.faces[id].cellId[Compass.WEST]);
-    //     }       
-    // }
+    TEST_F(SmallMeshEqualF, test_sets_correct_owner_ids_for_faces)
+    {   
+        int expected[] = {0, 0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10 ,11,
+                    0, 1, 2, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+        for (int id = 0; id < 31; id++)
+        {
+            ASSERT_EQ(expected[id], mesh->faces[id].ownerId);
+        }       
+    }
+
+    TEST_F(SmallMeshEqualF, test_sets_correct_neighbour_ids_for_faces)
+    {   
+        int expected[] = {-1, 1, 2, -1, -1, 4, 5, -1, -1, 7, 8, -1, -1, 10, 11, -1,
+            -1, -1, -1, 3, 4, 5, 6, 7, 8, 9, 10, 11, -1, -1, -1};
+        for (int id = 0; id < 31; id++)
+        {
+            ASSERT_EQ(expected[id], mesh->faces[id].neighId);
+        }       
+    }
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_positions)
     {
@@ -103,9 +104,11 @@ namespace Domain_Tests
                 {0., 3.}, {1., 3.}, {2., 3.}, {3., 3.},
                 {0., 5.}, {1., 5.}, {2., 5.}, {3., 5.},
                 {0., 7.}, {1., 7.}, {2., 7.}, {3., 7.},
-                {0.5, 0.}, {0.5, 2.}, {0.5, 4.}, {0.5, 6.}, {0.5, 8.},
-                {1.5, 0.}, {1.5, 2.}, {1.5, 4.}, {1.5, 6.}, {1.5, 8.},
-                {2.5, 0.}, {2.5, 2.}, {2.5, 4.}, {2.5, 6.}, {2.5, 8.}
+                {0.5, 0.}, {1.5, 0.}, {2.5, 0.},
+                {0.5, 2.}, {1.5, 2.}, {2.5, 2.},
+                {0.5, 4.}, {1.5, 4.}, {2.5, 4.}, 
+                {0.5, 6.}, {1.5, 6.}, {2.5, 6.}, 
+                {0.5, 8.}, {1.5, 8.}, {2.5, 8.}
         };
         for (int id = 0; id < 31; id++)
         {
@@ -128,9 +131,11 @@ namespace Domain_Tests
         double expected[31] = {
             0.5, 1., 1., 0.5, 0.5, 1., 1., 0.5,
             0.5, 1., 1., 0.5, 0.5, 1., 1., 0.5,
-            1., 2., 2., 2., 1.,
-            1., 2., 2., 2., 1.,
-            1., 2., 2., 2., 1.
+            1., 1., 1.,
+            2., 2., 2.,
+            2., 2., 2.,
+            2., 2., 2.,
+            1., 1., 1.
         };
         for (int id = 0; id < 31; id++)
         {
