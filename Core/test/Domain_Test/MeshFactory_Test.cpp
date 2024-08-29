@@ -17,20 +17,6 @@ namespace Domain_Tests
         std::unique_ptr<const Mesh> mesh;
     };
 
-    // TEST_F(SmallMeshEqualF, test_sets_correct_cell_locations)
-    // {
-    //     int expectedId[4][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}};
-    //     for (int i = 0; i < 3; i++)
-    //     {
-    //         for(int j = 0; j < 4; j++)
-    //         {
-    //             int id = expectedId[i][j];
-    //             ASSERT_EQ(i, mesh->cells[id].i);
-    //             ASSERT_EQ(j, mesh->cells[id].j);
-    //         }
-    //     }
-    // }
-
     TEST_F(SmallMeshEqualF, test_sets_correct_cell_center_positions)
     {
         double expected[12][2]  = {
@@ -45,21 +31,6 @@ namespace Domain_Tests
             ASSERT_DOUBLE_EQ(expected[id][1], mesh->cells[id].center.y);
         }
     }
-
-    // TEST_F(SmallMeshEqualF, test_sets_correct_neighbour_cell_ids)
-    // {
-    //     int expectedNorth[12] = {-1, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8};
-    //     int expectedSouth[12] = {3, 4, 5, 6, 7, 8, 9, 10, 11, -1, -1, -1};
-    //     int expectedEast[12] = {1, 2, -1, 4, 5, -1, 7, 8, -1, 10, 11, -1};
-    //     int expectedWest[12] = {-1, 0, 1, -1, 3, 4, -1, 6, 7, -1, 9, 10};
-    //     for (int id = 0; id < 12; id++)
-    //     {
-    //         ASSERT_EQ(expectedNorth[id], mesh->cells[id].neighId[Compass::NORTH]);
-    //         ASSERT_EQ(expectedSouth[id], mesh->cells[id].neighId[Compas::SOUTH]);
-    //         ASSERT_EQ(expectedEast[id], mesh->cells[id].neighId[Compass::EAST]);
-    //         ASSERT_EQ(expectedWest[id], mesh->cells[id].neighId[Compass::WEST]);
-    //     }
-    // }
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_ids_for_cells)
     {
@@ -117,14 +88,27 @@ namespace Domain_Tests
         }
     }
 
-    // TEST_F(SmallMeshEqualF, test_sets_correct_face_area)
-    // {
-    //     for (int id = 0; id < 31; id++)
-    //     {
-    //         double expected = id >= 16 ? 1. : 2.;
-    //         ASSERT_DOUBLE_EQ(expected, mesh->faces[id].area);
-    //     }
-    // }
+    TEST_F(SmallMeshEqualF, test_sets_correct_face_normal_vectors)
+    {
+        double dx = 1.;
+        double dy = 2.;
+        double expected[31][2] = {
+            {-dy, 0,}, {dy, 0.}, {dy, 0,}, {dy, 0.},
+            {-dy, 0,}, {dy, 0.}, {dy, 0,}, {dy, 0.}, 
+            {-dy, 0,}, {dy, 0.}, {dy, 0,}, {dy, 0.}, 
+            {-dy, 0,}, {dy, 0.}, {dy, 0,}, {dy, 0.},
+            {0., -dx}, {0., -dx}, {0., -dx},
+            {0., dx}, {0., dx}, {0., dx},
+            {0., dx}, {0., dx}, {0., dx},
+            {0., dx}, {0., dx}, {0., dx},
+            {0., dx}, {0., dx}, {0., dx}
+        };
+        for (int id = 0; id < 31; id++)
+        {
+            ASSERT_DOUBLE_EQ(expected[id][0], mesh->faces[id].normal.x);
+            ASSERT_DOUBLE_EQ(expected[id][1], mesh->faces[id].normal.y);
+        }
+    }
 
     TEST_F(SmallMeshEqualF, test_sets_correct_cell_spacings_for_faces)
     {

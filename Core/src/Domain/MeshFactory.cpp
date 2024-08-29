@@ -98,7 +98,10 @@ namespace fstim
                 
                 Face& face = faces[faceId];
                 face.center = cell.center + std::get<1>(properties[direction]);
-                face.normal = (face.center - cell.center).normalise() * area;
+                if (face.ownerId == cell.id) 
+                {
+                    face.normal = (face.center - cell.center).normalise() * area;
+                }
             }
         }
 
