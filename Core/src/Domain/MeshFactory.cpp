@@ -12,6 +12,7 @@ namespace fstim
 
         this->m_assignIds(cells, faces, size);
         this->m_assignProperties(cells, faces, size, length);
+        this->m_assignVertices(cells, faces, size);
 
         return std::move(
             std::make_unique<Mesh>(nCells, nFaces, std::move(cells), std::move(faces))
@@ -52,6 +53,8 @@ namespace fstim
                     {Compass::WEST, i + j * (size.x + 1)}
                 };
             
+                cell.faceId.resize(4);
+                cell.verticies.resize(4);
                 for (Compass direction : this->m_directions)
                 {
                     Face& face = faces[faceIds[direction]];
@@ -115,5 +118,23 @@ namespace fstim
             //    ? (cells[face.neighId].center - owner.center).mag()
             //    : (face.center - owner.center).mag();
         }
-    }   
+    }
+
+    void MeshFactory::m_assignVertices(
+        std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, vecp::Vec2i size
+    )
+    {
+        int nCells = size.x * size.y;
+        for (int id = 0; id < nCells; id++)
+        {
+            Cell& cell = cells[id];
+            for (int sideId = 0; sideId < cell.faceId.size(); sideId++)
+            {
+                Face& face = faces[cell.faceId[sideId]];
+                double angle = (face.ownerId == cell.id) ? -90. : 90.;
+                vecp::Vec2d tangent = (face.normal.rotate(angle)) * 0.5;
+                cell.verticies[sideId] = (face.center + tangent).toFloat(); 
+            }
+        }
+    }
 }
