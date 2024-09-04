@@ -26,10 +26,8 @@ void Simulation::paintGL()
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Example: Drawing three rectangles
-    for (int id = 0; id < this->m_mesh->nCells; id++)
-    {
-        m_drawRectangle(this->m_mesh->cells[id]);
-    }
+    //for (int id = 0; id < this->m_mesh->nCells; id++)
+ 
     //m_drawRectangle(-0.5f, -0.5f, 0.3f, 0.3f); // Rectangle 1
     //m_drawRectangle(0.2f, 0.2f, 0.5f, 0.5f);   // Rectangle 2
     //m_drawRectangle(-0.8f, 0.2f, 0.2f, 0.4f);  // Rectangle 3
@@ -43,10 +41,10 @@ void Simulation::m_updateCanvas()
 void Simulation::m_drawRectangle(const fstim::Cell& cell)
 {
     qInfo() << "Cell Id = " << cell.id << ":" 
-    << cell.verticies[0].x << cell.verticies[0].y << ",  "
-    << cell.verticies[1].x << cell.verticies[1].y << ",  "
-    << cell.verticies[2].x << cell.verticies[2].y << ",  "
-    << cell.verticies[3].x << cell.verticies[3].y;
+    << cell.vertices[0].x << cell.vertices[0].y << ",  "
+    << cell.vertices[1].x << cell.vertices[1].y << ",  "
+    << cell.vertices[2].x << cell.vertices[2].y << ",  "
+    << cell.vertices[3].x << cell.vertices[3].y;
     glBegin(GL_LINE_LOOP);
     if (cell.id % 2 == 0)
     {
@@ -57,7 +55,7 @@ void Simulation::m_drawRectangle(const fstim::Cell& cell)
     }
    
 
-    for (vecp::Vec2f vertex : cell.verticies)
+    for (vecp::Vec2f vertex : cell.vertices)
     {
         glVertex2f(vertex.x/20.f, vertex.y/20.f);
     }

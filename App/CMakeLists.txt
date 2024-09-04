@@ -14,12 +14,14 @@ qt_standard_project_setup()
 qt6_wrap_cpp(MOC_FILES 
     ${PROJECT_SOURCE_DIR}/App/include/Simulation.h
     ${PROJECT_SOURCE_DIR}/App/include/SimulationGL.h
+    ${PROJECT_SOURCE_DIR}/App/include/Simulation2D.h
     )
 
 qt_add_executable(helloworld
     src/main.cpp
     src/Simulation.cpp
     src/SimulationGL.cpp
+    src/Simulation2D.cpp
     ${MOC_FILES}
 )
 

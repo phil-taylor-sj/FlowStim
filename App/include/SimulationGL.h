@@ -4,7 +4,10 @@
 #include <QDebug>
 #include <QOpenGLFunctions>
 #include <QTimer>
+#include <mutex>
+#include <iostream>
 
+#include <QtGUI>
 #include <VecPlus/Vec2.h>
 #include <Core/Domain/MeshFactory.h>
 #include <Core/Domain/Mesh.h>
@@ -16,7 +19,8 @@ public:
     explicit SimulationGL(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     ~SimulationGL();
 
-signals:
+public slots:
+    void loadMesh(const fstim::Mesh* mesh);
 
 protected:
     void initializeGL() override;
@@ -24,12 +28,15 @@ protected:
     void paintGL() override;
 
 private:
-    std::unique_ptr<const fstim::Mesh> m_mesh;
-    vecp::Vec2d m_length;
-    
+    vecp::Vec2f m_length{1.f, 1.f}; 
+    int m_nCells = -1;
     QTimer* m_timer;
+    unsigned int m_buffer = 0;
     
+    std::mutex renderMutex;
+    bool m_isMeshLoaded = false;
+
     void m_updateCanvas();
-    void m_drawRectangle(const fstim::Cell& cell);
+    void m_drawRectangle();
 
 };

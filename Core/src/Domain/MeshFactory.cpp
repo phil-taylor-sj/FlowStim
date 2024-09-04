@@ -15,7 +15,7 @@ namespace fstim
         this->m_assignVertices(cells, faces, size);
 
         return std::move(
-            std::make_unique<Mesh>(nCells, nFaces, std::move(cells), std::move(faces))
+            std::make_unique<Mesh>(nCells, nFaces, std::move(cells), std::move(faces), length.toFloat())
         );
     }
 
@@ -54,7 +54,7 @@ namespace fstim
                 };
             
                 cell.faceId.resize(4);
-                cell.verticies.resize(4);
+                cell.vertices.resize(4);
                 for (Compass direction : this->m_directions)
                 {
                     Face& face = faces[faceIds[direction]];
@@ -133,7 +133,7 @@ namespace fstim
                 Face& face = faces[cell.faceId[sideId]];
                 double angle = (face.ownerId == cell.id) ? -90. : 90.;
                 vecp::Vec2d tangent = (face.normal.rotate(angle)) * 0.5;
-                cell.verticies[sideId] = (face.center + tangent).toFloat(); 
+                cell.vertices[sideId] = (face.center + tangent).toFloat(); 
             }
         }
     }

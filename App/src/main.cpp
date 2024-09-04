@@ -6,6 +6,7 @@
 
 #include <Core/Domain/Cell.h>
 #include <SimulationGL.h>
+#include <Simulation2D.h>
 
 int main(int argc, char **argv)
 {
@@ -18,15 +19,19 @@ int main(int argc, char **argv)
     QWidget window;
     window.resize(800, 600);
 
-    std::unique_ptr<QVBoxLayout> layout = std::make_unique<QVBoxLayout>(&window);
-    std::unique_ptr<QPushButton> button = std::make_unique<QPushButton>("Hello world!");
+    QVBoxLayout* layout = new QVBoxLayout(&window);
+    QPushButton* startButton = new QPushButton("Start Solver");
 
-    std::unique_ptr<SimulationGL> simulation = std::make_unique<SimulationGL>();
+    SimulationGL* simulation = new SimulationGL();
     simulation->setMinimumSize(800, 600);
-    
-    layout->addWidget(simulation.get());
-    layout->addWidget(button.get());
-    window.setLayout(layout.get());
+
+    Simulation2D* solver = new Simulation2D();
+    QObject::connect(startButton, &QPushButton::clicked, solver, &Simulation2D::start);
+    QObject::connect(solver, &Simulation2D::renderMesh, simulation, &SimulationGL::loadMesh, Qt::QueuedConnection);
+
+    layout->addWidget(simulation);
+    layout->addWidget(startButton);
+    window.setLayout(layout);
     window.show();
     return app.exec();
 } 

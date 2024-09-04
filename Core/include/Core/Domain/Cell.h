@@ -56,7 +56,7 @@ namespace fstim
          * A vector containing the IDs of the faces that form the boundaries of the cell.
          * By default, this vector is initialized with three elements, all set to -1.
          */
-        std::vector<vecp::Vec2f> verticies = {vecp::Vec2f(0.f, 0.f)};
+        std::vector<vecp::Vec2f> vertices = {vecp::Vec2f(0.f, 0.f)};
 
         /**
          * \brief Default constructor.
