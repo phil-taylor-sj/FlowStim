@@ -37,6 +37,7 @@ namespace fstim
 
         void m_assignProperties(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, Vec2i size, Vec2d length);
         
+        void m_assignVertices(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, vecp::Vec2i size);
 
     };
     

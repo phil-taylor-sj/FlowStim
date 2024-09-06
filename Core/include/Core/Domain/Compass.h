@@ -24,8 +24,8 @@ namespace fstim
     enum class Compass
     {
         NORTH = 0,
-        SOUTH = 1,
-        EAST = 2,
+        SOUTH = 2,
+        EAST = 1,
         WEST = 3
     };
 }

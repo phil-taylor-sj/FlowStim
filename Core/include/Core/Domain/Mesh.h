@@ -15,8 +15,9 @@ namespace fstim
 
         const int nCells;
         const int nFaces;
+        const vecp::Vec2f length;
 
-        Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn);
+        Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2f lengthIn);
  
         ~Mesh() {};
     };
