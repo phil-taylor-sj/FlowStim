@@ -12,10 +12,7 @@ int main(int argc, char **argv)
 {
     QApplication app (argc, argv);
     //QFont font("Courier");
-    //QWindow window_1;
-    //QPushButton button_1 ("Hello world!");
-    //window_1.resize(500, 500);
-    //window_1.show();
+
     QWidget window;
     window.resize(800, 600);
 
