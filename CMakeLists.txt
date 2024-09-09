@@ -12,7 +12,6 @@ else()
     message(STATUS "This project is a top-level one")
 endif()
 
-
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(PROJECT_IS_TOP_LEVEL ON)
 else()

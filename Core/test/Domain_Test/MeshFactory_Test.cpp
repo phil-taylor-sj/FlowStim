@@ -17,6 +17,21 @@ namespace Domain_Tests
         std::unique_ptr<const Mesh> mesh;
     };
 
+    class SmallMeshEqualSetsF : public ::testing::Test
+    {
+    protected:
+        void SetUp() override 
+        {
+            MeshFactory factory = MeshFactory();
+            mesh = std::move(factory(Vec2i(3, 4), Vec2d(3., 8.)));
+            mesh->addFaceSet(vecp::Vec2d(8., 4.), 3., 0.001); // North
+            mesh->addFaceSet(vecp::Vec2d(0., 4.), 3., 0.001); //South
+            mesh->addFaceSet(vecp::Vec2d(3., 1.5), 0.001, 8.); // East
+            mesh->addFaceSet(vecp::Vec2d(0., 1.5), 0.001, 8.); // West
+        }
+        std::unique_ptr<Mesh> mesh;
+    };
+
     TEST_F(SmallMeshEqualF, test_sets_correct_cell_center_positions)
     {
         double expected[12][2]  = {
@@ -34,8 +49,8 @@ namespace Domain_Tests
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_ids_for_cells)
     {
-        int expectedNorth[12] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
-        int expectedSouth[12] = {19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
+        int expectedSouth[12] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
+        int expectedNorth[12] = {19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
         int expectedEast[12] = {1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15};
         int expectedWest[12] = {0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14};
 
@@ -146,4 +161,7 @@ namespace Domain_Tests
         ASSERT_EQ(12, mesh->nCells);
         ASSERT_EQ(31, mesh->nFaces);
     }
+
+    // TODO: add test for face sets.
+
 }

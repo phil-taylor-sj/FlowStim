@@ -10,7 +10,7 @@ set(CMAKE_AUTOUIC ON)
 
 set(APP_NAME FlowStim)
 
-find_package(Qt6  REQUIRED COMPONENTS Widgets Gui OpenGL OpenGLWidgets)
+find_package(Qt6 COMPONENTS Core Gui OpenGL OpenGLWidgets REQUIRED )
 qt_standard_project_setup()
 
 qt6_wrap_cpp(MOC_FILES 

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <set>
 
 #include <VecPlus/Vec2.h>
 #include <Core/Domain/Cell.h>
@@ -17,8 +18,16 @@ namespace fstim
         const int nFaces;
         const vecp::Vec2f length;
 
+        int addFaceSet(vecp::Vec2d center, double width, double height);
+        
+        int getFaceSetId(int faceId) const;
+
         Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2f lengthIn);
  
-        ~Mesh() {};
+        virtual ~Mesh() = default;
+    
+    private:
+        std::vector<std::set<int>> m_faceSets{};
+    
     };
 }

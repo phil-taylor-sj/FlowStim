@@ -2,7 +2,7 @@
 
 namespace fstim
 {
-    std::unique_ptr<const Mesh> MeshFactory::operator()(Vec2i size, Vec2d length)
+    std::unique_ptr<Mesh> MeshFactory::operator()(Vec2i size, Vec2d length)
     {
         int nCells = size.x * size.y;
         int nFaces = (size.x + 1) * size.y + (size.y + 1) * size.x;
@@ -47,8 +47,8 @@ namespace fstim
                 cell.id = cellId;
 
                 std::map<Compass, int> faceIds = {
-                    {Compass::NORTH, northStart + i + j * (size.x)},
-                    {Compass::SOUTH, northStart + i + (j + 1) * (size.x)},
+                    {Compass::NORTH, northStart + i + (j + 1) * (size.x)},
+                    {Compass::SOUTH, northStart + i + j * (size.x)},
                     {Compass::EAST, i + j * (size.x + 1) + 1}, // eastId + 1
                     {Compass::WEST, i + j * (size.x + 1)}
                 };
@@ -88,8 +88,8 @@ namespace fstim
             cell.center.y = std::get<0>(gridY)[j];
 
             std::map<Compass, std::tuple<double, vecp::Vec2d>> properties = {
-                {Compass::NORTH, std::make_tuple(dx, vecp::Vec2d(0., 0.5 * -dy))},
-                {Compass::SOUTH, std::make_tuple(dx, vecp::Vec2d(0., 0.5 * dy))},
+                {Compass::NORTH, std::make_tuple(dx, vecp::Vec2d(0., 0.5 * dy))},
+                {Compass::SOUTH, std::make_tuple(dx, vecp::Vec2d(0., 0.5 * -dy))},
                 {Compass::EAST, std::make_tuple(dy, vecp::Vec2d(0.5 * dx, 0.))},
                 {Compass::WEST, std::make_tuple(dy, vecp::Vec2d(0.5 * -dx, 0.))}
             };
