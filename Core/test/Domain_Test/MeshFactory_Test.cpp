@@ -12,7 +12,7 @@ namespace Domain_Tests
         void SetUp() override 
         {
             MeshFactory factory = MeshFactory();
-            mesh = std::move(factory(Vec2i(3, 4), Vec2d(3., 8.)));
+            mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
         }
         std::unique_ptr<const Mesh> mesh;
     };
@@ -23,11 +23,17 @@ namespace Domain_Tests
         void SetUp() override 
         {
             MeshFactory factory = MeshFactory();
-            mesh = std::move(factory(Vec2i(3, 4), Vec2d(3., 8.)));
-            mesh->addFaceSet(vecp::Vec2d(8., 4.), 3., 0.001); // North
-            mesh->addFaceSet(vecp::Vec2d(0., 4.), 3., 0.001); //South
-            mesh->addFaceSet(vecp::Vec2d(3., 1.5), 0.001, 8.); // East
-            mesh->addFaceSet(vecp::Vec2d(0., 1.5), 0.001, 8.); // West
+            mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
+            mesh->addFaceSet(vecp::Vec2d(1.5, 8.), vecp::Vec2d(3., 0.001));
+            
+            std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> walls = 
+            {
+                std::make_tuple<>(vecp::Vec2d(0., 4.), vecp::Vec2d(0.001, 8.)),
+                std::make_tuple<>(vecp::Vec2d(3., 4.), vecp::Vec2d(0.001, 8.)),
+                std::make_tuple<>(vecp::Vec2d(1.5, 0.), vecp::Vec2d(3., 0.001))
+            };
+            
+            mesh->addFaceSet(walls); 
         }
         std::unique_ptr<Mesh> mesh;
     };
@@ -162,6 +168,19 @@ namespace Domain_Tests
         ASSERT_EQ(31, mesh->nFaces);
     }
 
-    // TODO: add test for face sets.
-
+    TEST_F(SmallMeshEqualSetsF, test_assigns_boundary_cells_to_correct_face_sets)
+    {
+        std::set<int> set_1{28, 29, 30};
+        std::set<int> set_2{0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18};
+        for (int faceId = 0; faceId < mesh->nFaces; faceId++)
+        {
+            int setId = mesh->getFaceSetId(faceId);
+            int expected = (set_1.count(faceId) == 1)
+                ? 0
+                : (set_2.count(faceId) == 1) 
+                    ? 1 
+                    : -1;
+            ASSERT_EQ(expected, setId);
+        }
+    }
 }
