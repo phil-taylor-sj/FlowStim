@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Core/Field/Laplacian.h>
+#include <Core/Field/Field.h>
+#include <Core/Domain/Mesh.h>
 
 namespace fstim
 {
@@ -9,10 +10,10 @@ namespace fstim
     {
     public:
 
-        void operator(const Mesh& mesh, FieldEquation<T>& field, PropertyField& viscosity) override;
+        void operator()(const Mesh& mesh, Field<T>& field, const double* mu);
         
         Laplacian();
 
         virtual ~Laplacian() = default;
-    }
+    };
 }

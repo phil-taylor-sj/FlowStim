@@ -1,13 +1,21 @@
-#include <Core/Field/Laplacian.h>
+#include <Core/Field/Divergence.h>
 
 namespace fstim
 {
     template <typename T>
-    void Laplacian<T>::operator()(const Mesh& mesh, Field<T>& field, const double* mu)
+    void Divergence<T>::operator()(
+            const Mesh& mesh, 
+            Field<T>& field, 
+            const VectorField& velocity,
+            const double* rho)
     {
+
         const T* values = field.readValues();
         std::map<int, T>* lhs = field.writeLeft();
         T* rhs = field.writeRight();
+        //const vecp::Vec2d* fluxes[] = velocity.readValues();
+
+        std::unique_ptr<double[]> fluxes = FaceFlux::Linear(mesh, velocity, rho);
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
         {
@@ -23,13 +31,17 @@ namespace fstim
                 double distance = (neighId != -1)
                     ? (mesh.cells[neighId].center - cell.center).mag()  
                     : (face.center - cell.center).mag();
-                double sfMag = face.normal.mag();
-                
+                double internalWeight = (cell.center - face.center).mag() / distance;
+
+                double flux = (face.ownerId == cellId) 
+                    ? fluxes[faceId]
+                    : -1.0 * fluxes[faceId];
+
                 // Update and skip to next cycle if face is internal
                 if (neighId != -1) 
                 {
-                    lhs[cellId][cellId] -= -1.0 * (sfMag / distance) * mu[cellId];
-                    lhs[cellId][neighId] -=  1.0 * (sfMag / distance) * mu[neighId];
+                    lhs[cellId][cellId] += flux * internalWeight;
+                    lhs[cellId][neighId] +=  flux * (1. - internalWeight);
                     continue;
                 }
 
@@ -38,25 +50,22 @@ namespace fstim
                 std::tuple<BcType, T> bc = field.getBc(mesh.getFaceSetId(face.id));              
                 switch (std::get<0>(bc)) {
                     case BcType::ZEROGRADIENT:
-                        // no change to equation
+                        lhs[cellId][cellId] += flux;
                         break;
                     case BcType::FIXEDVALUE:
-                        rhs[cellId] += std::get<1>(bc) * (sfMag / distance) * mu[cellId];
+                        rhs[cellId] -= std::get<1>(bc) * flux;
                         break;
                     default:
                         break;
                 }
-
             }            
         }
-
     }
 
     template <typename T>
-    Laplacian<T>::Laplacian() {}
+    Divergence<T>::Divergence() {}
 
-    template class Laplacian<double>;
+    template class Divergence<double>;
 
-    template class Laplacian<vecp::Vec2d>;
-
+    template class Divergence<vecp::Vec2d>;
 }

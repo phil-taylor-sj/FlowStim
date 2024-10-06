@@ -7,6 +7,7 @@ namespace fstim
 {
 
     /**
+     * \class Cell
      * \brief Represents a cell within the simulation domain.
      * 
      * The Cell class encapsulates the properties and attributes
