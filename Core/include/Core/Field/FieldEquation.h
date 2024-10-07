@@ -26,7 +26,7 @@ namespace fstim
 
     };
 
-    using ScalarField = Field<double>;
+    using ScalarFieldEqu = FieldEquation<double>;
 
-    using VectorField = Field<vecp::Vec2d>;
+    using VectorFieldEqu = FieldEquation<vecp::Vec2d>;
 }

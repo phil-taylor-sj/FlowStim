@@ -10,11 +10,12 @@ namespace fstim
     class Divergence
     {
     public:
+
        void operator()(
             const Mesh& mesh, 
             Field<T>& field, 
             const VectorField& velocity,
-            const double* rho
+            const double* rho = nullptr
             );
 
         Divergence();

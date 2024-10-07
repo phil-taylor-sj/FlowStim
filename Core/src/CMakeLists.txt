@@ -11,3 +11,4 @@ FetchContent_MakeAvailable(VecPlus)
 
 add_subdirectory(Domain)
 add_subdirectory(Field)
+add_subdirectory(Solver)

@@ -35,7 +35,7 @@ namespace fstim
 
                 double flux = (face.ownerId == cellId) 
                     ? fluxes[faceId]
-                    : -1.0 * fluxes[faceId];
+                    : -1. * fluxes[faceId];
 
                 // Update and skip to next cycle if face is internal
                 if (neighId != -1) 

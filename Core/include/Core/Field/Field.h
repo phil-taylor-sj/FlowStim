@@ -12,8 +12,6 @@ namespace fstim
     template<typename T>
     class Field
     {
-        class schemes;
-
     public:
         const int nCells;
 
@@ -67,11 +65,15 @@ namespace fstim
         */    
         T* writeRight() { return this->m_rhs.get(); };
 
-        std::tuple<BcType, T> getBc(int faceSetId);
+        std::tuple<BcType, T> getBc(int faceSetId) const;
 
         int addBc(BcType type, T value);
 
         bool updateBc(int faceSetId, T newValue);
+
+        void clear();
+
+        void initialise();
 
         Field(int nCells) : nCells(nCells),
           m_lhs(std::make_unique<std::map<int, T>[]>(nCells)),

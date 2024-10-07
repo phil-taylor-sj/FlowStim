@@ -69,6 +69,13 @@ namespace fstim
          */
         int addFaceSet(std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> boundaries);
 
+        /**
+         * \brief Get the id of a face set which contains a face with the specified id.
+         * 
+         * \param faceId The value of the face id to search for.
+         * 
+         * \return The id of the face set, or -1 if the face id is not found.
+         */
         int getFaceSetId(int faceId) const;
 
         Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2f lengthIn);

@@ -4,10 +4,11 @@ namespace fstim
 {
     template <typename T>
     void EulerExplicit<T>::operator()( 
+            double deltaT,
             const Mesh& mesh, 
             Field<T>& field, 
-            const double* rho,
-            double deltaT)
+            const double* rho
+            )
     {
         const T* values = field.readValues();
         std::map<int, T>* lhs = field.writeLeft();
@@ -15,8 +16,9 @@ namespace fstim
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
         {
-            double volume = mesh.cells[cellId].volume;
-            double factor = volume * rho[cellId] / deltaT;
+            double factor = mesh.cells[cellId].volume / deltaT;
+            if (rho != nullptr) { factor *= rho[cellId]; }
+
             lhs[cellId][cellId] += factor;
             rhs[cellId] += values[cellId] * factor;  
         }

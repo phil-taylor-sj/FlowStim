@@ -9,16 +9,16 @@ namespace fstim
     {
     public:
         static void Linear(
+            double* flux,
             const Mesh& mesh, 
             const VectorField& velocity,
-            const double* rho,
-            double* fluxs
+            const double* rho = nullptr
         );
 
         static std::unique_ptr<double[]> Linear(
             const Mesh& mesh, 
             const VectorField& velocity,
-            const double* rho
-            );
+            const double* rho = nullptr
+        );
     };
 }

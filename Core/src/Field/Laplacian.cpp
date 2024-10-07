@@ -3,7 +3,7 @@
 namespace fstim
 {
     template <typename T>
-    void Laplacian<T>::operator()(const Mesh& mesh, Field<T>& field, const double* mu)
+    void Laplacian<T>::operator()(const Mesh& mesh, Field<T>& field, const double* visc)
     {
         const T* values = field.readValues();
         std::map<int, T>* lhs = field.writeLeft();
@@ -28,8 +28,8 @@ namespace fstim
                 // Update and skip to next cycle if face is internal
                 if (neighId != -1) 
                 {
-                    lhs[cellId][cellId] -= -1.0 * (sfMag / distance) * mu[cellId];
-                    lhs[cellId][neighId] -=  1.0 * (sfMag / distance) * mu[neighId];
+                    lhs[cellId][cellId] -= -1.0 * (sfMag / distance) * visc[cellId];
+                    lhs[cellId][neighId] -=  1.0 * (sfMag / distance) * visc[neighId];
                     continue;
                 }
 
@@ -41,7 +41,7 @@ namespace fstim
                         // no change to equation
                         break;
                     case BcType::FIXEDVALUE:
-                        rhs[cellId] += std::get<1>(bc) * (sfMag / distance) * mu[cellId];
+                        rhs[cellId] += std::get<1>(bc) * (sfMag / distance) * visc[cellId];
                         break;
                     default:
                         break;

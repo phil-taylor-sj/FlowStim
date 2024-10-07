@@ -3,10 +3,10 @@
 namespace fstim
 {
     void FaceFlux::Linear(
+            double* flux,
             const Mesh& mesh, 
             const VectorField& velocity,
-            const double* rho,
-            double* flux)
+            const double* rho)
     {
         const vecp::Vec2d* values = velocity.readValues();
 
@@ -25,22 +25,25 @@ namespace fstim
                 vecp::Vec2d faceVelocity = values[face.ownerId] * internalWeight
                     + values[face.neighId] * (1. - internalWeight);
 
-                vecp::Vec2d faceRho = rho[face.ownerId] * internalWeight
-                    + rho[face.neighId] * (1. - internalWeight);
+                double faceRho = (rho == nullptr) 
+                    ? 1.
+                    : rho[face.ownerId] * internalWeight
+                        + rho[face.neighId] * (1. - internalWeight);
 
                 flux[faceId] = face.normal.dot(faceVelocity * faceRho);
 
                 continue;
             }
 
-            // Calculate face flux      
+            // Calculate face flux
+            double cellRho = (rho == nullptr) ? 1. : rho[face.ownerId];
             std::tuple<BcType, vecp::Vec2d> fluxBc = velocity.getBc(mesh.getFaceSetId(faceId));
             switch (std::get<0>(fluxBc)) {
                 case BcType::ZEROGRADIENT:
-                    flux[faceId] = face.normal.dot(values[face.ownerId] * rho[face.ownerId]);
+                    flux[faceId] = face.normal.dot(values[face.ownerId] * cellRho);
                     break;
                 case BcType::FIXEDVALUE:
-                    flux[faceId] = face.normal.dot(std::get<1>(fluxBc) * rho[face.ownerId]);
+                    flux[faceId] = face.normal.dot(std::get<1>(fluxBc) * cellRho);
                     break;
                 default:
                     break;
@@ -50,14 +53,14 @@ namespace fstim
         
     }
 
-    std::unique_ptr<double[]> Linear(
+    std::unique_ptr<double[]> FaceFlux::Linear(
         const Mesh& mesh, 
-        const VectorFieldEqu& velocity,
+        const VectorField& velocity,
         const double* rho
         )
     {
         std::unique_ptr<double[]> flux = std::make_unique<double[]>(mesh.nFaces);
-        FaceFlux::Linear(mesh, velocity, rho, flux.get());
+        FaceFlux::Linear(flux.get(), mesh, velocity, rho);
         return std::move(flux);
     }
 }

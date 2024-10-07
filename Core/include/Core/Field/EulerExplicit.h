@@ -10,10 +10,10 @@ namespace fstim
     {
     public:
        void operator()(
+            double deltaT,
             const Mesh& mesh, 
             Field<T>& field, 
-            const double* rho,
-            double deltaT
+            const double* rho = nullptr
             );
 
         EulerExplicit();
