@@ -51,6 +51,14 @@ namespace fstim
         }
     }
 
+    template <typename T>
+    void Field<T>::updateOldValues()
+    {
+        for (int id = 0; id < this->nCells; id++)
+        {
+            this->m_oldValues[id] = this->m_values[id];
+        }
+    }
 
     template class Field<double>;
 

@@ -8,7 +8,8 @@ namespace fstim
 {
     class SolverBase
     {
-        void virtual compute(double timeStep) = 0;
+    public:
+        bool virtual compute(double deltaTime) = 0;
 
         void setMesh(std::unique_ptr<Mesh> mesh);
 
@@ -35,7 +36,7 @@ namespace fstim
         SolverBase& operator=(const SolverBase& newSolver) = delete;
 
         
-    private:
+    protected:
         std::unique_ptr<Mesh> m_mesh = nullptr;
         std::unique_ptr<VectorFieldEqu> m_velocity = nullptr;
         std::unique_ptr<double[]> m_viscosity = nullptr;

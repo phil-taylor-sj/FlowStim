@@ -65,6 +65,10 @@ namespace fstim
         */    
         T* writeRight() { return this->m_rhs.get(); };
 
+        const T* readOldValues() { return this->m_oldValues.get(); }
+
+        void updateOldValues();
+
         std::tuple<BcType, T> getBc(int faceSetId) const;
 
         int addBc(BcType type, T value);
@@ -87,10 +91,11 @@ namespace fstim
         Field& operator=(const Field& newField) = delete;
 
 
-    private:
+    protected:
         std::unique_ptr<std::map<int, T>[]> m_lhs;
         std::unique_ptr<T[]> m_rhs;
         std::unique_ptr<T[]> m_values;
+        std::unique_ptr<T[]> m_oldValues = nullptr;
         std::vector<std::tuple<BcType, T>> m_boundaries{};
     };
 
