@@ -6,25 +6,37 @@ namespace fstim
     void SolverBase::setMesh(std::unique_ptr<Mesh> mesh)
     {
         this->m_mesh = std::move(mesh);
+        this->m_viscosity = std::make_unique<double[]>(this->m_mesh->nCells);
     }
 
     void SolverBase::setVelocity(std::unique_ptr<VectorFieldEqu> velocity)
     {
-        this->m_velocity = std::move(velocity);
+        if (this->m_mesh == nullptr)
+        {
+            return;
+        }
+        if (this->m_mesh->nCells == velocity->nCells)
+        {
+            this->m_velocity = std::move(velocity);
+        }
     }
 
-    const Mesh& SolverBase::getMesh()
+    const Mesh* SolverBase::getMesh()
     {
-        return  *(this->m_mesh.get());
+        return  this->m_mesh.get();
     }
 
-    const VectorField& SolverBase::getVelocity()
+    const VectorField* SolverBase::getVelocity()
     {
-        return *(this->m_velocity.get());
+        return this->m_velocity.get();
     }
 
     void SolverBase::initialiseViscosity(double initVisc)
     {
+        if (this->m_viscosity == nullptr)
+        {
+            return;
+        }
         for (int id = 0; id < this->m_mesh->nCells; id++)
         {
             this->m_viscosity[id] = initVisc;

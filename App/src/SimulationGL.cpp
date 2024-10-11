@@ -20,66 +20,82 @@ void SimulationGL::resizeGL(int w, int h)
 
 void SimulationGL::paintGL()
 {
-   
+
     std::lock_guard<std::mutex> guard(this->renderMutex);
-    if (this->m_isMeshLoaded)
-    {
-        glClear(GL_COLOR_BUFFER_BIT);
-        m_drawRectangle();
+    
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    if (this->m_nCells == 0) 
+    { 
+        return; 
     }
+    
+    if (this->m_velocity != nullptr) 
+    { 
+        m_drawField(); 
+    }
+
+    m_drawMesh();
 }
 
-void SimulationGL::loadMesh(const fstim::Mesh* mesh)
-{    
-    this->m_length = mesh->length;
-    this->m_nCells = mesh->nCells;
-
-    std::vector<float> points(2 * 4 * this->m_nCells);
-    const fstim::Cell* begin = mesh->cells.get(); 
-    const fstim::Cell* end = begin + mesh->nCells;
-
-    int index = 0;
-    for (const fstim::Cell* cell = begin; cell != end; cell++)
-    {
-        for (vecp::Vec2f vertex : cell->vertices)
-        {
-            points[index++] = (vertex.x - 5.f) / 12.f;
-            points[index++] = (vertex.y - 10.f) / 12.f;
-        }
-    }
-
-    // for (int j = 0; j < index; j+=2)
-    // {
-    //     std::cout << "[" << points[j] << ", " << points[j+1] << "]   ";
-    // }
-    // std::cout << std::endl;
-
+void SimulationGL::recieveMesh(std::shared_ptr<MeshData> data)
+{   
     std::lock_guard<std::mutex> guard(this->renderMutex);
+
+    m_velocity = nullptr;
+
     glGenBuffers(1, &m_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-    glBufferData(GL_ARRAY_BUFFER, (index) * sizeof(float), points.data(), GL_STATIC_DRAW);
+    glBufferData(
+    GL_ARRAY_BUFFER, 
+        data->vertices.size() * sizeof(float), 
+        data->vertices.data(), GL_STATIC_DRAW
+        );
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    this->m_isMeshLoaded = true;
+    this->m_nCells = data->nCells;
 }
 
+void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> data)
+{
+    std::lock_guard<std::mutex> guard(this->renderMutex);
+    this->m_velocity = data;
+}
 
 void SimulationGL::m_updateCanvas()
 {
-        update();
+    update();
 }
 
-
-void SimulationGL::m_drawRectangle()
+void SimulationGL::m_drawField()
 {
     glBindBuffer(GL_ARRAY_BUFFER, this->m_buffer);  // Bind buffer for drawing
     glEnableVertexAttribArray(0);    
     glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
-    int nPoints  = 2 * 4 * this->m_nCells;
-    for (int index = 0; index < this->m_nCells; index++)
+
+    std::vector<vecp::Vec2f>& velocity = *m_velocity;
+    for (int cellId = 0; cellId < this->m_nCells; cellId++)
     {
-        int start = index * 4;
+        float value = std::min(velocity[cellId].x, 1.f);
+        glColor3f(value, 0.0f, 0.0f);
+        int start = cellId * 4;
+        glDrawArrays(GL_QUADS, start, 4);
+    }
+
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void SimulationGL::m_drawMesh()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, this->m_buffer);  // Bind buffer for drawing
+    glEnableVertexAttribArray(0);    
+    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+
+    for (int cellId = 0; cellId < this->m_nCells; cellId++)
+    {
+        int start = cellId * 4;
         glDrawArrays(GL_LINE_LOOP, start, 4);
     }
 

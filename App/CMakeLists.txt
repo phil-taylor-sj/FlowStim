@@ -37,7 +37,8 @@ target_link_libraries(${APP_NAME} PRIVATE
     Qt6::OpenGLWidgets
     VecPlus
     Domain
- 
+    Field
+    Solver 
     )
 
 target_include_directories(${APP_NAME} PRIVATE

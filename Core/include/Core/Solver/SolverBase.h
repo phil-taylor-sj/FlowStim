@@ -15,9 +15,9 @@ namespace fstim
 
         void setVelocity(std::unique_ptr<VectorFieldEqu> velocity);
 
-        const Mesh& getMesh();
+        const Mesh* getMesh();
 
-        const VectorField& getVelocity();
+        const VectorField* getVelocity();
 
         void initialiseViscosity(double initVisc);
 
@@ -27,7 +27,7 @@ namespace fstim
 
         double calcRequiredTimeStep(double cfl);
 
-        SolverBase(int nCells) : m_viscosity(std::make_unique<double[]>(nCells)) { }
+        SolverBase() { }
 
         ~SolverBase() = default;
 

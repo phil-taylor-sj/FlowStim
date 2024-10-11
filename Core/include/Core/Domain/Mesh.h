@@ -40,7 +40,7 @@ namespace fstim
 
         const int nCells;
         const int nFaces;
-        const vecp::Vec2f length;
+        const vecp::Vec2d length;
 
         /**
          * \brief Add a new face set, by selecting faces based on a single 2d rectangle.
@@ -78,7 +78,7 @@ namespace fstim
          */
         int getFaceSetId(int faceId) const;
 
-        Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2f lengthIn);
+        Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2d lengthIn);
  
         virtual ~Mesh() = default;
     

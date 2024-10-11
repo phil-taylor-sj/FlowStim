@@ -24,6 +24,9 @@ namespace fstim
         }
     }
 
+    template <typename T>
+    EulerExplicit<T>::EulerExplicit() {}
+
     template class EulerExplicit<double>;
 
     template class EulerExplicit<vecp::Vec2d>;

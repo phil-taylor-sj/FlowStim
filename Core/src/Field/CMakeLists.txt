@@ -6,6 +6,7 @@ add_library(Field OBJECT
     Laplacian.cpp
     Divergence.cpp
     EulerExplicit.cpp
+    FaceFlux.cpp
 )
 
 target_link_libraries(Field VecPlus)

@@ -8,8 +8,10 @@ namespace fstim
     class ExplicitIterator
     {
     public:
-    
+
         void operator()(Field<T>& field);
+
+        ExplicitIterator();
     };
 }
 

@@ -15,7 +15,7 @@ namespace fstim
         this->m_assignVertices(cells, faces, size);
 
         return std::move(
-            std::make_unique<Mesh>(nCells, nFaces, std::move(cells), std::move(faces), length.toFloat())
+            std::make_unique<Mesh>(nCells, nFaces, std::move(cells), std::move(faces), length)
         );
     }
 

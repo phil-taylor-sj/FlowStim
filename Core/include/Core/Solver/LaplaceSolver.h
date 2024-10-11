@@ -11,7 +11,7 @@ namespace fstim
 
         bool compute(double deltaTime) override;
 
-        LaplaceSolver(int nCells) : SolverBase(nCells) { }
+        LaplaceSolver() { }
 
         ~LaplaceSolver() = default;
 
@@ -20,7 +20,7 @@ namespace fstim
         LaplaceSolver& operator=(const LaplaceSolver& newSolver) = delete;
 
     private:
-    
+
         ExplicitIterator<vecp::Vec2d> m_velocityIterator{};
 
     };

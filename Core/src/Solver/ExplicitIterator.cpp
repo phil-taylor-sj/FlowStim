@@ -18,7 +18,14 @@ namespace fstim
                 if (pair.first == id) { continue; }
                 values[id] -= pair.second * oldValues[pair.first];
             }
-            values[id] /= lhs[id][id];
+            values[id] /= lhs[id].at(id);
         }
     }
+
+    template <typename T>
+    ExplicitIterator<T>::ExplicitIterator() {};
+
+    template class ExplicitIterator<double>;
+
+    template class ExplicitIterator<vecp::Vec2d>; 
 }

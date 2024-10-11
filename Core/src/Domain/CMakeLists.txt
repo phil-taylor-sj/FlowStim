@@ -5,6 +5,7 @@ add_library(Domain OBJECT
     MeshFactory.cpp
     GridProfile.cpp
     GridProfileEquidistant.cpp
+    FaceSetFactory.cpp
 )
 
 target_link_libraries(Domain VecPlus)
