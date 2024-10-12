@@ -13,6 +13,7 @@
 #include <Core/Domain/MeshFactory.h>
 #include <Core/Domain/Mesh.h>
 #include <MeshData.h>
+#include <MeshGL.h>
 
 class SimulationGL : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -34,11 +35,15 @@ protected:
 
 private:
     QTimer* m_timer;
-    unsigned int m_buffer = 0;
-    
+    unsigned int m_vaoMesh;
+    unsigned int m_vbaMesh;
+    unsigned int m_fieldBuffer;
+    unsigned int m_iboMesh;
+    unsigned int m_vertexArrayBuffer;
+
     std::shared_ptr<std::vector<vecp::Vec2f>> m_velocity = nullptr;
 
-    std::mutex renderMutex;
+    std::mutex m_mutex;
 
     vecp::Vec2f m_domainLength = vecp::Vec2f(1., 1.);
     unsigned int m_nCells = 0;
@@ -46,4 +51,6 @@ private:
     void m_updateCanvas();
     void m_drawMesh();
     void m_drawField();
+
+    void m_deleteBuffers();
 };

@@ -54,6 +54,9 @@ void Simulation2D::m_updateMeshData()
     data->nCells = mesh->nCells;
     data->vertices.resize(2 * 4 * mesh->nCells);
 
+    vecp::Vec2f halfLength = data->length * 0.5f;
+    float maxLength = data->length.max();
+
     const fstim::Cell* begin = mesh->cells.get(); 
     const fstim::Cell* end = begin + mesh->nCells;
 
@@ -62,8 +65,8 @@ void Simulation2D::m_updateMeshData()
     {
         for (vecp::Vec2f vertex : cell->vertices)
         {
-            data->vertices[index++] = vertex.x;
-            data->vertices[index++] = vertex.y;
+            data->vertices[index++] = (vertex.x - halfLength.x) / (0.55f * maxLength);
+            data->vertices[index++] = (vertex.y - halfLength.y) / (0.55f * maxLength);
         }
     }
 
@@ -91,12 +94,14 @@ void Simulation2D::m_updateVelocityData()
 Simulation2D::~Simulation2D()
 {
     delete this->m_timer;
-    //qInfo() << this << "Destructed";
 }
 
 void Simulation2D::m_compute()
 {
     std::lock_guard<std::mutex> guard(this->m_mutex);
-
+    if (this->m_solver->getMesh() == nullptr)
+    {
+        return;
+    }
     this->m_updateVelocityData();
 }

@@ -17,6 +17,7 @@ qt6_wrap_cpp(MOC_FILES
     ${PROJECT_SOURCE_DIR}/App/include/Simulation.h
     ${PROJECT_SOURCE_DIR}/App/include/SimulationGL.h
     ${PROJECT_SOURCE_DIR}/App/include/Simulation2D.h
+    ${PROJECT_SOURCE_DIR}/App/include/MeshGL.h
     )
 
 qt_add_executable(${APP_NAME}
@@ -24,6 +25,7 @@ qt_add_executable(${APP_NAME}
     src/Simulation.cpp
     src/SimulationGL.cpp
     src/Simulation2D.cpp
+    src/MeshGL.cpp
     ${MOC_FILES}
 )
 
