@@ -10,7 +10,7 @@ SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(p
 void SimulationGL::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.0f, 0.0f, 0.f, 1.0f);
+    glClearColor(0.f, 0.f, 0.f, 1.f);
 }
 
 void SimulationGL::resizeGL(int w, int h)
@@ -20,7 +20,6 @@ void SimulationGL::resizeGL(int w, int h)
 
 void SimulationGL::paintGL()
 {
-
     std::lock_guard<std::mutex> guard(this->m_mutex);
     
     glClear(GL_COLOR_BUFFER_BIT);
@@ -32,11 +31,7 @@ void SimulationGL::paintGL()
     
     if (this->m_velocity != nullptr) 
     {
-        this->m_drawField(); 
-    }
-    else
-    {
-        qDebug() << "Velocity is nullPtr";
+        //this->m_drawField(); 
     }
 
     this->m_drawMesh();
@@ -45,31 +40,13 @@ void SimulationGL::paintGL()
 void SimulationGL::recieveMesh(std::shared_ptr<MeshData> data)
 {   
     std::lock_guard<std::mutex> guard(this->m_mutex);
-
+    
     this->m_deleteBuffers();
-
-    m_velocity = nullptr;
-
-    MeshGL::createVertexArray(this->m_vaoMesh, this->m_vbaMesh, *data.get());
-
+    this->m_velocity = nullptr;
     this->m_nCells = data->nCells;
-
-    std::vector<unsigned int> indices(this->m_nCells * 6);
-    const std::array<unsigned int, 6> index = {0, 1, 3, 1, 2, 3};
-    for (int cellId = 0; cellId < this->m_nCells; cellId++)
-    {
-        unsigned int startId = cellId * 6;
-        unsigned int startIndex = cellId * 4;
-        
-        for (unsigned int shift = 0; shift < 6; shift++)
-        {
-            indices[(cellId * 6) + shift] = (cellId * 4) + index[shift];
-        }
-    }
-
-    glGenBuffers(1, &this->m_iboMesh);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->m_iboMesh);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    MeshGL::createVertexArray(this->m_vaoMesh, this->m_vbaMesh, *data.get());
+    MeshGL::createElementArray(this->m_vaoMesh, this->m_iboMesh, *data.get());
+    this->m_createShader();
 }
 
 void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> data)
@@ -85,56 +62,22 @@ void SimulationGL::m_updateCanvas()
 
 void SimulationGL::m_drawField()
 {
-    std::vector<float> colours;
-    colours.resize(this->m_nCells * 4 * 3);   
-
-    std::vector<vecp::Vec2f>& velocity = *(this->m_velocity);
-    for (int cellId = 0; cellId < this->m_nCells; ++cellId)
-    {
-        // Random RGB color for the current quad
-        float red = 0.5f;
-        float green = 0.5f;
-        float blue = 0.5f;
-        //float blue = std::min(velocity[cellId].x, 1.f);
-
-        // Set the same color for all 4 vertices of the quad
-        for (int index = 0; index < 4; ++index)
-        {
-            colours[(cellId * 4 + index) * 3 + 0] = red; // Red
-            colours[(cellId * 4 + index) * 3 + 1] = green; // Green
-            colours[(cellId * 4 + index) * 3 + 2] = blue; // Blue
-        }
-    }
-
-    //glGenBuffers(1, &m_fieldBuffer); // Color buffer
-    //glBindBuffer(GL_ARRAY_BUFFER, m_fieldBuffer);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * colours.size(), colours.data(), GL_DYNAMIC_DRAW);
-
     glBindVertexArray(m_vaoMesh);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->m_iboMesh);
-    glEnableVertexAttribArray(0);    
-
     glDrawElements(GL_TRIANGLES, this->m_nCells * 3 + 3, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
-
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void SimulationGL::m_drawMesh()
-{
-    glBindBuffer(GL_ARRAY_BUFFER, this->m_vbaMesh);  // Bind buffer for drawing
-    glEnableVertexAttribArray(0);    
-    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
-
-    for (int cellId = 0; cellId < this->m_nCells; cellId++)
+{   
+    glClear(GL_COLOR_BUFFER_BIT);
+    this->m_shader->bind();
+    glBindVertexArray(m_vaoMesh);
+    for (int index = 0; index < this->m_nCells; index++)
     {
-        int start = cellId * 4;
+        int start = index * 4;
         glDrawArrays(GL_LINE_LOOP, start, 4);
     }
-
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 SimulationGL::~SimulationGL()
@@ -144,11 +87,47 @@ SimulationGL::~SimulationGL()
     this->m_deleteBuffers();
 }
 
+void SimulationGL::m_createShader()
+{
+    std::string vertexShader = 
+        "#version 410 core\n"
+        "\n"
+        "in vec2 position;"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position = vec4(position, 0.0, 1.0);\n"
+        "}\n";
+
+    std::string fragmentShader = 
+        "#version 410 core\n"
+        "\n"
+        "out vec4 color;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    color = vec4(0.0, 1.0, 0.0, 1.0);\n"
+        "}\n";
+
+    this->m_shader = std::make_unique<QOpenGLShaderProgram>();
+    
+    this->m_vertexShader = std::make_unique<QOpenGLShader>(QOpenGLShader::Vertex);
+    this->m_vertexShader->compileSourceCode(QString::fromStdString(vertexShader));
+    
+    this->m_fragmentShader = std::make_unique<QOpenGLShader>(QOpenGLShader::Fragment);
+    this->m_fragmentShader->compileSourceCode(QString::fromStdString(fragmentShader));
+   
+    this->m_shader->addShader(this->m_vertexShader.get());
+    this->m_shader->addShader(this->m_fragmentShader.get());
+
+    //this->m_shader = ShaderGL::createShader(vertexShader, fragmentShader); 
+    //glUseProgram(this->m_shader);
+
+}
+
 void SimulationGL::m_deleteBuffers()
 {
     glDeleteBuffers(1, &m_vbaMesh);
-     glDeleteBuffers(1, &m_vaoMesh);
-    glDeleteBuffers(1, &m_fieldBuffer);
+    glDeleteBuffers(1, &m_vaoMesh);
     glDeleteBuffers(1, &m_iboMesh);
-    glDeleteVertexArrays(1, &m_vertexArrayBuffer);
 }

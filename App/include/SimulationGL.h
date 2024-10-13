@@ -3,6 +3,7 @@
 #include <QOpenGLWidget>
 #include <QDebug>
 #include <QOpenGLFunctions>
+//#include <QOpenGLFunctions_4_1_Core>
 #include <QTimer>
 #include <mutex>
 #include <iostream>
@@ -14,6 +15,9 @@
 #include <Core/Domain/Mesh.h>
 #include <MeshData.h>
 #include <MeshGL.h>
+
+#include <QSurfaceFormat>
+#include <QOpenGLShader>
 
 class SimulationGL : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -48,9 +52,16 @@ private:
     vecp::Vec2f m_domainLength = vecp::Vec2f(1., 1.);
     unsigned int m_nCells = 0;
 
+    std::unique_ptr<QOpenGLShaderProgram> m_shader;
+    std::unique_ptr<QOpenGLShader> m_vertexShader;
+    std::unique_ptr<QOpenGLShader> m_fragmentShader;
+
+    int m_maxCell = 0;
+
     void m_updateCanvas();
     void m_drawMesh();
     void m_drawField();
+    void m_createShader();
 
     void m_deleteBuffers();
 };

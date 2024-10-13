@@ -41,6 +41,7 @@ void Simulation2D::generate()
 
 Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
 {
+    
     this->m_solver = std::make_unique<fstim::LaplaceSolver>();
 
     connect(m_timer, &QTimer::timeout, this, &Simulation2D::m_compute);

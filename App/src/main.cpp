@@ -4,6 +4,7 @@
 #include <QBoxLayout>
 #include <QtGUI>
 #include <QProgressBar>
+#include <QOpenGLFunctions>
 
 #include <Core/Domain/Cell.h>
 #include <SimulationGL.h>
@@ -11,8 +12,16 @@
 
 int main(int argc, char **argv)
 {
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setVersion(4, 1); // macOS supports up to OpenGL 4.1
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    QSurfaceFormat::setDefaultFormat(format);
     QApplication app (argc, argv);
+    
     //QFont font("Courier");
+
+
 
     QWidget window;
     window.resize(800, 600);
