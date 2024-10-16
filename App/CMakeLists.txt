@@ -21,7 +21,9 @@ qt6_wrap_cpp(MOC_FILES
     ${PROJECT_SOURCE_DIR}/App/include/ShaderGL.h
     )
 
-qt_add_executable(${APP_NAME}
+qt_add_resources(RESOURCE_FILES resources/shaders.qrc)
+
+qt_add_executable(${APP_NAME} ${RESOURCE_FILES}
     src/main.cpp
     src/Simulation.cpp
     src/SimulationGL.cpp

@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
   VecPlus
   GIT_REPOSITORY https://github.com/phil-taylor-sj/VecPlus.git
-  GIT_TAG vec-scalar-add
+  GIT_TAG vec-add-cmake
 )
 
 FetchContent_MakeAvailable(VecPlus)

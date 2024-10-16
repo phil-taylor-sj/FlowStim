@@ -3,6 +3,8 @@
 #include <QOpenGLWidget>
 #include <QDebug>
 #include <QOpenGLFunctions>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
 //#include <QOpenGLFunctions_4_1_Core>
 #include <QTimer>
 #include <mutex>
@@ -39,11 +41,11 @@ protected:
 
 private:
     QTimer* m_timer;
-    unsigned int m_vaoMesh;
-    unsigned int m_vbaMesh;
-    unsigned int m_fieldBuffer;
-    unsigned int m_iboMesh;
-    unsigned int m_vertexArrayBuffer;
+
+    QOpenGLVertexArrayObject m_vao = QOpenGLVertexArrayObject();
+    QOpenGLBuffer m_colourBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_vertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_indexBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 
     std::shared_ptr<std::vector<vecp::Vec2f>> m_velocity = nullptr;
 
