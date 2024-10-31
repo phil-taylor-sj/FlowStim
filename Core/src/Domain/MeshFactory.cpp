@@ -14,8 +14,16 @@ namespace fstim
         this->m_assignProperties(cells, faces, size, length);
         this->m_assignVertices(cells, faces, size);
 
+        std::vector<Vertex> verticesArr = VertexMapping::createVertices(cells.get(), nCells, faces.get(), nFaces);
+        int nVertices = verticesArr.size();
+        std::unique_ptr<Vertex[]> vertices(new Vertex[nVertices]);
+        for (Vertex vertex : verticesArr)
+        {
+            vertices[vertex.vertexId] = vertex;
+        }
+
         return std::move(
-            std::make_unique<Mesh>(nCells, nFaces, std::move(cells), std::move(faces), length)
+            std::make_unique<Mesh>(nCells, nFaces, nVertices, std::move(cells), std::move(faces), std::move(vertices), length)
         );
     }
 

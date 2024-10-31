@@ -5,6 +5,7 @@
 #include <VecPlus/Vec2.h>
 #include <Core/Domain/Cell.h>
 #include <Core/Domain/Face.h>
+#include <Core/Domain/Vertex.h>
 
 namespace fstim
 {
@@ -19,11 +20,17 @@ namespace fstim
      * \param faces
      * A unique pointer to a C-style array of face instances.  
      * 
+     * \param vertices
+     * A unique pointer to a C-style array of vertex instances.  
+     * 
      * \param nCells;
      * Total number of cells in the cells array.
      * 
      * \param nFaces;
      * Total number of faces in the faces array.
+     * 
+    * \param nVertices;
+     * Total number of vertices in the vertices array.
      * 
      * \param length
      * The dimensions of the domain in the x and y directions.
@@ -37,9 +44,11 @@ namespace fstim
     public:
         const std::unique_ptr<const Cell[]> cells;
         const std::unique_ptr<const Face[]> faces;
+        const std::unique_ptr<const Vertex[]> vertices;
 
         const int nCells;
         const int nFaces;
+        const int nVertices;
         const vecp::Vec2d length;
 
         /**
@@ -78,7 +87,9 @@ namespace fstim
          */
         int getFaceSetId(int faceId) const;
 
-        Mesh(int nCellsIn, int nFacesIn, std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2d lengthIn);
+        Mesh(int nCellsIn, int nFacesIn, int nVerticesIn, 
+            std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, std::unique_ptr<Vertex[]> verticesIn,
+            vecp::Vec2d lengthIn);
  
         virtual ~Mesh() = default;
     

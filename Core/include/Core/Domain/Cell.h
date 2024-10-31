@@ -60,6 +60,14 @@ namespace fstim
         std::vector<vecp::Vec2f> vertices = {vecp::Vec2f(0.f, 0.f)};
 
         /**
+         * \brief Identifiers for the vertices of the cell.
+         * 
+         * A vector containing the IDs of the vertices of the cell
+         * By default, this vector is initialized with four elements, all set to 0.
+         */
+        std::vector<size_t> vertexId = {0, 0, 0, 0};
+
+        /**
          * \brief Default constructor.
          * 
          * Initializes a cell with default values.

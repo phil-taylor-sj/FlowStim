@@ -50,8 +50,12 @@ namespace fstim
         return -1;
     }
 
-    Mesh::Mesh(int nCellsIn, int nFacesIn,  std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, vecp::Vec2d lengthIn) 
-        : nCells(nCellsIn), nFaces(nFacesIn), cells(std::move(cellsIn)), faces(std::move(facesIn)), length(lengthIn)
+    Mesh::Mesh(int nCellsIn, int nFacesIn, int nVerticesIn,
+        std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, std::unique_ptr<Vertex[]> verticesIn,
+        vecp::Vec2d lengthIn) 
+        : nCells(nCellsIn), nFaces(nFacesIn), nVertices(nVerticesIn), 
+        cells(std::move(cellsIn)), faces(std::move(facesIn)), vertices(std::move(verticesIn)),
+        length(lengthIn)
     {
         m_faceSets.resize(0);        
     }

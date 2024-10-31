@@ -45,6 +45,11 @@ namespace fstim
         bool isBoundary;
 
         /**
+         * 
+         */
+        std::vector<size_t> vertexId = {0, 0};
+
+        /**
          * \brief Constructor that initializes the Face with a given ID.
          */
         Face() : id(-1), ownerId(-1), neighId(-1) {};

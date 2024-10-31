@@ -7,6 +7,7 @@
 #include <Core/Domain/Mesh.h>
 #include <Core/Domain/Compass.h>
 #include <Core/Domain/GridProfileEquidistant.h>
+#include <Core/Domain/VertexMapping.h>
 
 using namespace vecp;
 

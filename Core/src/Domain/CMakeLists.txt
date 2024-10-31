@@ -6,6 +6,7 @@ add_library(Domain OBJECT
     GridProfile.cpp
     GridProfileEquidistant.cpp
     FaceSetFactory.cpp
+    VertexMapping.cpp
 )
 
 target_link_libraries(Domain VecPlus)
