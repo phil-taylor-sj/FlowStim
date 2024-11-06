@@ -42,10 +42,15 @@ protected:
 private:
     QTimer* m_timer;
 
-    QOpenGLVertexArrayObject m_vao = QOpenGLVertexArrayObject();
-    QOpenGLBuffer m_colourBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
-    QOpenGLBuffer m_vertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
-    QOpenGLBuffer m_indexBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    QOpenGLVertexArrayObject m_cellVao = QOpenGLVertexArrayObject();
+    QOpenGLBuffer m_cellColourBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_cellVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_cellIndexBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+
+    QOpenGLVertexArrayObject m_gridVao = QOpenGLVertexArrayObject();
+    QOpenGLBuffer m_gridColourBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_gridVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_gridIndexBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 
     std::shared_ptr<std::vector<vecp::Vec2f>> m_velocity = nullptr;
 
@@ -53,6 +58,7 @@ private:
 
     vecp::Vec2f m_domainLength = vecp::Vec2f(1., 1.);
     unsigned int m_nCells = 0;
+    unsigned int m_nVertices = 0;
 
     std::unique_ptr<QOpenGLShaderProgram> m_shader;
     std::unique_ptr<QOpenGLShader> m_vertexShader;
@@ -64,6 +70,8 @@ private:
     void m_drawMesh();
     void m_drawField();
     void m_createShader();
+    void m_createCellMesh(std::shared_ptr<MeshData>& data);
+    void m_createGridMesh(std::shared_ptr<MeshData>& data);
 
     void m_deleteBuffers();
 };

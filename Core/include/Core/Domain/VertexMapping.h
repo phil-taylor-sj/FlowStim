@@ -4,6 +4,8 @@
 
 #include <Core/Domain/Vertex.h>
 #include <functional>
+#include <iostream>
+#include <cmath> 
 
 #include <Core/Domain/Mesh.h>
 

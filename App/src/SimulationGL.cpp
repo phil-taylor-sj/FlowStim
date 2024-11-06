@@ -12,19 +12,33 @@ void SimulationGL::initializeGL()
     initializeOpenGLFunctions();
     glClearColor(0.f, 0.f, 0.f, 1.f);
 
-    this->m_vao.create();
-    this->m_vao.bind();
+    this->m_cellVao.create();
+    this->m_cellVao.bind();
 
-    this->m_vertexBuffer.create();
-    this->m_vertexBuffer.bind();
-    this->m_vertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    this->m_cellVertexBuffer.create();
+    this->m_cellVertexBuffer.bind();
+    this->m_cellVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
 
-    this->m_colourBuffer.create();
-    this->m_colourBuffer.bind();
-    this->m_colourBuffer.setUsagePattern(QOpenGLBuffer::DynamicDraw);
+    this->m_cellColourBuffer.create();
+    this->m_cellColourBuffer.bind();
+    this->m_cellColourBuffer.setUsagePattern(QOpenGLBuffer::DynamicDraw);
 
+    this->m_cellIndexBuffer.create();
+    this->m_cellVao.release();
 
-    this->m_indexBuffer.create();
+    this->m_gridVao.create();
+    this->m_gridVao.bind();
+
+    this->m_gridVertexBuffer.create();
+    this->m_gridVertexBuffer.bind();
+    this->m_gridVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+    this->m_gridColourBuffer.create();
+    this->m_gridColourBuffer.bind();
+    this->m_gridColourBuffer.setUsagePattern(QOpenGLBuffer::DynamicDraw);
+    
+    this->m_gridIndexBuffer.create();
+    this->m_gridVao.release();
 }
 
 void SimulationGL::resizeGL(int w, int h)
@@ -54,27 +68,9 @@ void SimulationGL::paintGL()
 void SimulationGL::recieveMesh(std::shared_ptr<MeshData> data)
 {   
     std::lock_guard<std::mutex> guard(this->m_mutex);
-    
-    this->m_vao.bind();
-    this->m_vertexBuffer.bind();
-    
-    this->m_vertexBuffer.allocate(data->vertices.data(), data->vertices.size() * sizeof(float));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-    this->m_nCells = data->nCells;
-    this->m_indexBuffer.bind();
-    std::vector<unsigned int> indices(data->nCells * 6);
-    const std::array<unsigned int, 6> index = {0, 1, 3, 1, 2, 3};
-    for (int cellId = 0; cellId < data->nCells; cellId++)
-    {
-        for (unsigned int shift = 0; shift < 6; shift++)
-        {
-            indices[(cellId * 6) + shift] = (cellId * 4) + index[shift];
-        }
-    }
-    this->m_indexBuffer.allocate(indices.data(), indices.size() * sizeof(unsigned int));
-    this->m_vao.release();
+    this->m_createCellMesh(data);
+    this->m_createGridMesh(data);
 
     this->m_velocity = nullptr;
 
@@ -88,23 +84,28 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     std::lock_guard<std::mutex> guard(this->m_mutex);
     this->m_velocity = data;
 
-    this->m_vao.bind();
-    this->m_colourBuffer.bind();
-    
-    unsigned int total = this->m_nCells * 4;
+    //this->m_cellVao.bind();
+    //this->m_cellColourBuffer.bind();
+
+    this->m_gridVao.bind();
+    this->m_cellColourBuffer.bind();
+
+    //unsigned int total = this->m_nCells * 4;
+    unsigned int total = this->m_nVertices;
     std::vector<float> colours(total * 3);
-    for (unsigned int vId = 0; vId < this->m_nCells * 4; vId++)
+    for (unsigned int vId = 0; vId < total; vId++)
     {
         colours[vId * 3] = 0.f;
         colours[vId * 3 + 1] = (vId >= total / 2) ? 0.f : 1.f;
         colours[vId * 3 + 2] = (vId >= total / 2) ? 1.f : 0.f;
     }
 
-    m_colourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
+    //m_cellColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
+    m_gridColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-    this->m_vao.release();
+    this->m_gridVao.release();
    
 }
 
@@ -116,21 +117,21 @@ void SimulationGL::m_updateCanvas()
 void SimulationGL::m_drawField()
 {
     this->m_shader->bind();
-    this->m_vao.bind();
+    this->m_gridVao.bind();
     glDrawElements(GL_TRIANGLES, this->m_nCells * 6, GL_UNSIGNED_INT, nullptr);
-    this->m_vao.release();
+    this->m_gridVao.release();
 }
 
 void SimulationGL::m_drawMesh()
 {   
     this->m_shader->bind();
-    this->m_vao.bind();
+    this->m_cellVao.bind();
     for (int index = 0; index < this->m_nCells; index++)
     {
         int start = index * 4;
         glDrawArrays(GL_LINE_LOOP, start, 4);
     }
-    this->m_vao.release();
+    this->m_cellVao.release();
 }
 
 SimulationGL::~SimulationGL()
@@ -138,6 +139,79 @@ SimulationGL::~SimulationGL()
     delete this->m_timer;
 
     this->m_deleteBuffers();
+}
+
+void SimulationGL::m_createCellMesh(std::shared_ptr<MeshData>& data)
+{
+    std::vector<float> allVertices(2 * 4 * data->nCells);
+    size_t count = 0;
+    for (std::vector<size_t> vertexIds : data->cellElements)
+    {
+        for (size_t vertexId : vertexIds)
+        {
+            vecp::Vec2f position = data->vertices[vertexId];
+            allVertices[count++] = position.x;
+            allVertices[count++] = position.y;
+        }
+    }
+
+    this->m_cellVao.bind();
+    this->m_cellVertexBuffer.bind();
+
+    this->m_cellVertexBuffer.allocate(allVertices.data(), allVertices.size() * sizeof(float));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    this->m_nCells = data->nCells;
+    this->m_cellIndexBuffer.bind();
+    std::vector<unsigned int> indices(data->nCells * 6);
+    const std::array<unsigned int, 6> index = {0, 1, 3, 1, 2, 3};
+    for (int cellId = 0; cellId < data->nCells; cellId++)
+    {
+        for (unsigned int shift = 0; shift < 6; shift++)
+        {
+            indices[(cellId * 6) + shift] = (cellId * 4) + index[shift];
+        }
+    }
+    this->m_cellIndexBuffer.allocate(indices.data(), indices.size() * sizeof(unsigned int));
+    this->m_cellVao.release();
+
+    this->m_velocity = nullptr;
+}
+
+
+void SimulationGL::m_createGridMesh(std::shared_ptr<MeshData>& data)
+{
+    std::vector<float> vertices(2 * data->vertices.size());
+    size_t count = 0;
+    for (vecp::Vec2f position : data->vertices)
+    {
+            vertices[count++] = position.x;
+            vertices[count++] = position.y;
+    }
+
+    this->m_gridVao.bind();
+    this->m_gridVertexBuffer.bind();
+
+    this->m_gridVertexBuffer.allocate(vertices.data(), vertices.size() * sizeof(float));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    this->m_nVertices = data->vertices.size();
+    this->m_gridIndexBuffer.bind();
+    std::vector<unsigned int> indices(data->nCells * 6);
+    const std::array<unsigned int, 6> index = {0, 1, 3, 1, 2, 3};
+
+    count = 0;
+    for (std::vector<size_t> cell : data->cellElements)
+    {
+        for (unsigned int loc = 0; loc < index.size(); loc++)
+        {
+            indices[count++] = cell[index[loc]];
+        }
+    }
+    this->m_gridIndexBuffer.allocate(indices.data(), indices.size() * sizeof(unsigned int));
+    this->m_gridVao.release();
 }
 
 void SimulationGL::m_createShader()

@@ -16,6 +16,8 @@ namespace fstim
 
         std::vector<size_t> cellId = {};
 
+        std::vector<double> cellWeight = {};
+
         Vertex() : position(vecp::Vec2d(0., 0.)){}
 
         Vertex(vecp::Vec2d newPosition) : position(newPosition){}

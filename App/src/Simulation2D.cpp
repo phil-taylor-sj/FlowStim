@@ -53,22 +53,31 @@ void Simulation2D::m_updateMeshData()
     const fstim::Mesh* mesh = this->m_solver->getMesh();
     data->length = mesh->length.toFloat();
     data->nCells = mesh->nCells;
-    data->vertices.resize(2 * 4 * mesh->nCells);
-
+    //data->vertices.resize(2 * 4 * mesh->nCells);
+    data->vertices.resize(mesh->nVertices);
+    data->cellElements.resize(mesh->nCells);
+    
     vecp::Vec2f halfLength = data->length * 0.5f;
     float maxLength = data->length.max();
+    
+    for (size_t id = 0; id < mesh->nVertices; id++)
+    {
+        vecp::Vec2f position =  mesh->vertices[id].position.toFloat();
+        data->vertices[id] = (position - halfLength) / (0.55f * maxLength);
+    }
 
     const fstim::Cell* begin = mesh->cells.get(); 
     const fstim::Cell* end = begin + mesh->nCells;
 
-    int index = 0;
     for (const fstim::Cell* cell = begin; cell != end; cell++)
     {
-        for (vecp::Vec2f vertex : cell->vertices)
-        {
-            data->vertices[index++] = (vertex.x - halfLength.x) / (0.55f * maxLength);
-            data->vertices[index++] = (vertex.y - halfLength.y) / (0.55f * maxLength);
-        }
+        data->cellElements[cell->id] = cell->vertexId;
+        //for (vecp::Vec2f vertex : cell->vertices)
+        //{
+
+            //data->vertices[index++] = (vertex.x - halfLength.x) / (0.55f * maxLength);
+            //data->vertices[index++] = (vertex.y - halfLength.y) / (0.55f * maxLength);
+        //}
     }
 
     emit this->sendMesh(data);
