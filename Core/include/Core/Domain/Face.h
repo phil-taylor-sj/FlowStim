@@ -6,8 +6,8 @@
 namespace fstim
 {
     /**
-     * @class Face
-     * @brief Represents a geometric face in a 2D space, with properties such as area, center, and boundary status.
+     * \class Face
+     * \brief Represents a geometric face in a 2D space, with properties such as area, center, and boundary status.
      *
      * The Face class encapsulates the properties and behavior of a geometric face, including its unique identifier,
      * area, center position, boundary status, and associated cell identifiers. It provides a constructor to initialize
@@ -43,6 +43,11 @@ namespace fstim
          * A boolean flag that is true if the face is a boundary face, false otherwise.
          */
         bool isBoundary;
+
+        /**
+         * 
+         */
+        std::vector<size_t> vertexId = {0, 0};
 
         /**
          * \brief Constructor that initializes the Face with a given ID.

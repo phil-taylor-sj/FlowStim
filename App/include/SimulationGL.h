@@ -3,14 +3,23 @@
 #include <QOpenGLWidget>
 #include <QDebug>
 #include <QOpenGLFunctions>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
+//#include <QOpenGLFunctions_4_1_Core>
 #include <QTimer>
 #include <mutex>
 #include <iostream>
 
 #include <QtGUI>
 #include <VecPlus/Vec2.h>
+
 #include <Core/Domain/MeshFactory.h>
 #include <Core/Domain/Mesh.h>
+#include <MeshData.h>
+#include <MeshGL.h>
+
+#include <QSurfaceFormat>
+#include <QOpenGLShader>
 
 class SimulationGL : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -19,8 +28,11 @@ public:
     explicit SimulationGL(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     ~SimulationGL();
 
+signals:
+
 public slots:
-    void loadMesh(const fstim::Mesh* mesh);
+    void recieveMesh(std::shared_ptr<MeshData> data);
+    void recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> data);
 
 protected:
     void initializeGL() override;
@@ -28,15 +40,38 @@ protected:
     void paintGL() override;
 
 private:
-    vecp::Vec2f m_length{1.f, 1.f}; 
-    int m_nCells = -1;
     QTimer* m_timer;
-    unsigned int m_buffer = 0;
-    
-    std::mutex renderMutex;
-    bool m_isMeshLoaded = false;
+
+    QOpenGLVertexArrayObject m_cellVao = QOpenGLVertexArrayObject();
+    QOpenGLBuffer m_cellColourBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_cellVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_cellIndexBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+
+    QOpenGLVertexArrayObject m_gridVao = QOpenGLVertexArrayObject();
+    QOpenGLBuffer m_gridColourBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_gridVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    QOpenGLBuffer m_gridIndexBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+
+    std::shared_ptr<std::vector<vecp::Vec2f>> m_velocity = nullptr;
+
+    std::mutex m_mutex;
+
+    vecp::Vec2f m_domainLength = vecp::Vec2f(1., 1.);
+    unsigned int m_nCells = 0;
+    unsigned int m_nVertices = 0;
+
+    std::unique_ptr<QOpenGLShaderProgram> m_shader;
+    std::unique_ptr<QOpenGLShader> m_vertexShader;
+    std::unique_ptr<QOpenGLShader> m_fragmentShader;
+
+    int m_maxCell = 0;
 
     void m_updateCanvas();
-    void m_drawRectangle();
+    void m_drawMesh();
+    void m_drawField();
+    void m_createShader();
+    void m_createCellMesh(std::shared_ptr<MeshData>& data);
+    void m_createGridMesh(std::shared_ptr<MeshData>& data);
 
+    void m_deleteBuffers();
 };

@@ -12,9 +12,30 @@ namespace Domain_Tests
         void SetUp() override 
         {
             MeshFactory factory = MeshFactory();
-            mesh = std::move(factory(Vec2i(3, 4), Vec2d(3., 8.)));
+            mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
         }
         std::unique_ptr<const Mesh> mesh;
+    };
+
+    class SmallMeshEqualSetsF : public ::testing::Test
+    {
+    protected:
+        void SetUp() override 
+        {
+            MeshFactory factory = MeshFactory();
+            mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
+            mesh->addFaceSet(vecp::Vec2d(1.5, 8.), vecp::Vec2d(3., 0.001));
+            
+            std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> walls = 
+            {
+                std::make_tuple<>(vecp::Vec2d(0., 4.), vecp::Vec2d(0.001, 8.)),
+                std::make_tuple<>(vecp::Vec2d(3., 4.), vecp::Vec2d(0.001, 8.)),
+                std::make_tuple<>(vecp::Vec2d(1.5, 0.), vecp::Vec2d(3., 0.001))
+            };
+            
+            mesh->addFaceSet(walls); 
+        }
+        std::unique_ptr<Mesh> mesh;
     };
 
     TEST_F(SmallMeshEqualF, test_sets_correct_cell_center_positions)
@@ -34,8 +55,8 @@ namespace Domain_Tests
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_ids_for_cells)
     {
-        int expectedNorth[12] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
-        int expectedSouth[12] = {19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
+        int expectedSouth[12] = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27};
+        int expectedNorth[12] = {19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
         int expectedEast[12] = {1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15};
         int expectedWest[12] = {0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14};
 
@@ -145,5 +166,141 @@ namespace Domain_Tests
     {
         ASSERT_EQ(12, mesh->nCells);
         ASSERT_EQ(31, mesh->nFaces);
+    }
+
+    TEST_F(SmallMeshEqualSetsF, test_assigns_boundary_cells_to_correct_face_sets)
+    {
+        std::set<int> set_1{28, 29, 30};
+        std::set<int> set_2{0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18};
+        for (int faceId = 0; faceId < mesh->nFaces; faceId++)
+        {
+            int setId = mesh->getFaceSetId(faceId);
+            int expected = (set_1.count(faceId) == 1)
+                ? 0
+                : (set_2.count(faceId) == 1) 
+                    ? 1 
+                    : -1;
+            ASSERT_EQ(expected, setId);
+        }
+    }
+
+    TEST_F(SmallMeshEqualF, test_sets_correct_number_of_unique_vertices)
+    {
+        ASSERT_EQ(20, mesh->nVertices);
+        for (int id = 0; id < 20; id++)
+        {
+            ASSERT_EQ(id, mesh->vertices[id].vertexId);
+        }
+    }
+
+    TEST_F(SmallMeshEqualF, test_sets_correct_positions_of_vertices)
+    {
+        double expected[20][2] = {
+            {0., 0.}, {0., 2.}, {1., 2.}, {1., 0.}, 
+            {2., 2.}, {2., 0.}, {3., 2.}, {3., 0.},
+            {0., 4.}, {1., 4.}, {2., 4.}, {3., 4.},
+            {0., 6.}, {1., 6.}, {2., 6.}, {3., 6.},
+            {0., 8.}, {1., 8.}, {2., 8.}, {3., 8.}
+        };
+
+        for (int id = 0; id < 20; id++)
+        {
+            ASSERT_NEAR(expected[id][0], mesh->vertices[id].position.x, 1E-08);
+            ASSERT_NEAR(expected[id][1], mesh->vertices[id].position.y, 1E-08);
+        }
+    }
+
+    TEST_F(SmallMeshEqualF, test_sets_correct_vertex_ids_to_cells)
+    {
+        int expected[12][4] = {
+            {1, 2, 3, 0},
+            {2, 4, 5, 3},
+            {4, 6, 7, 5},
+            {8, 9, 2, 1},
+            {9, 10, 4, 2},
+            {10, 11, 6, 4},
+            {12, 13, 9, 8},
+            {13, 14, 10, 9},
+            {14, 15, 11, 10},
+            {16, 17, 13, 12},
+            {17, 18, 14, 13},
+            {18, 19, 15, 14}
+        };
+
+        for (int cellId = 0; cellId < mesh->nCells; cellId++)
+        {
+            for (size_t index = 0; index < 4; index++)
+            {
+                ASSERT_EQ(expected[cellId][index], mesh->cells[cellId].vertexId[index]);
+            }
+        }
+    }
+
+TEST_F(SmallMeshEqualF, test_sets_correct_cell_ids_to_vertices)
+    {
+        std::vector<int> expected[20] = {
+            {0}, // 0
+            {0, 3}, // 1
+            {0, 1, 3, 4}, // 2
+            {0, 1}, // 3
+            {1, 2, 4, 5}, // 4
+            {1, 2}, // 5
+            {2, 5}, // 6
+            {2}, // 7
+            {3, 6}, // 8
+            {3, 4, 6, 7}, // 9
+            {4, 5, 7, 8}, // 10
+            {5, 8}, // 11
+            {6, 9}, // 12
+            {6, 7, 9, 10}, // 13
+            {7, 8, 10, 11}, // 14
+            {8, 11}, // 15
+            {9}, // 16
+            {9, 10}, // 17
+            {10, 11}, // 18
+            {11} //19
+        };
+
+        for (int vertexId = 0; vertexId < mesh->nVertices; vertexId++)
+        {
+            for (int index = 0; index < expected[vertexId].size(); index++)
+            {
+                ASSERT_EQ(expected[vertexId][index], mesh->vertices[vertexId].cellId[index]);
+            }
+        }
+    }
+
+    TEST_F(SmallMeshEqualF, test_sets_correct_cell_weights_to_vertices)
+    {
+        std::vector<double> expected[20] = {
+            {1.}, // 0
+            {0.5, 0.5}, // 1
+            {0.25, 0.25, 0.25, 0.25}, // 2
+            {0.5, 0.5}, // 3
+            {0.25, 0.25, 0.25, 0.25}, // 4
+            {0.5, 0.5}, // 5
+            {0.5, 0.5}, // 6
+            {1.}, // 7
+            {0.5, 0.5}, // 8
+            {0.25, 0.25, 0.25, 0.25}, // 9
+            {0.25, 0.25, 0.25, 0.25}, // 10
+            {0.5, 0.5}, // 11
+            {0.5, 0.5}, // 12
+            {0.25, 0.25, 0.25, 0.25}, // 13
+            {0.25, 0.25, 0.25, 0.25}, // 14
+            {0.5, 0.5}, // 15
+            {1.}, // 16
+            {0.5, 0.5}, // 17
+            {0.5, 0.5}, // 18
+            {1.} //19
+        };
+
+        for (int vertexId = 0; vertexId < mesh->nVertices; vertexId++)
+        {
+            for (int index = 0; index < expected[vertexId].size(); index++)
+            {
+               ASSERT_NEAR(expected[vertexId][index], mesh->vertices[vertexId].cellWeight[index], 1E-08);
+            }
+        }
     }
 }
