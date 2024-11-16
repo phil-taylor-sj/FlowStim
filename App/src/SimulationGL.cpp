@@ -10,7 +10,7 @@ SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(p
 void SimulationGL::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClearColor(0.5f, 0.5f, 0.5f, 0.f);
 
     this->m_cellVao.create();
     this->m_cellVao.bind();
@@ -83,7 +83,6 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
 {
     std::lock_guard<std::mutex> guard(this->m_mutex);
     this->m_velocity = data;
-
     //this->m_cellVao.bind();
     //this->m_cellColourBuffer.bind();
 
@@ -96,8 +95,21 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     for (unsigned int vId = 0; vId < total; vId++)
     {
         colours[vId * 3] = 0.f;
-        colours[vId * 3 + 1] = (vId >= total / 2) ? 0.f : 1.f;
-        colours[vId * 3 + 2] = (vId >= total / 2) ? 1.f : 0.f;
+        //colours[vId * 3 + 1] = (vId >= total / 2) ? 0.f : 1.f;
+        //colours[vId * 3 + 2] = (vId >= total / 2) ? 1.f : 0.f;
+        if ((*m_velocity)[vId].y > 0.)
+        {
+            colours[vId * 3 + 1] = 0.f;
+            colours[vId * 3 + 2] = 1.f * abs((*m_velocity)[vId].y) / 100.f; 
+        }
+        else
+        {
+            // green velocity < 0;
+            colours[vId * 3 + 2] = 0.f;
+            colours[vId * 3 + 1] = 1.f * abs((*m_velocity)[vId].y) / 100.f; 
+        }
+        
+
     }
 
     //m_cellColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
@@ -106,7 +118,6 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     this->m_gridVao.release();
-   
 }
 
 void SimulationGL::m_updateCanvas()

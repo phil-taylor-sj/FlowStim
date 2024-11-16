@@ -1,5 +1,7 @@
 #include <Core/Solver/ExplicitIterator.h>
 
+#include <iostream>
+
 namespace fstim
 {
     template <typename T>

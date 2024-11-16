@@ -82,7 +82,8 @@ namespace fstim
         Field(int nCells) : nCells(nCells),
           m_lhs(std::make_unique<std::map<int, T>[]>(nCells)),
           m_rhs(std::make_unique<T[]>(nCells)),
-          m_values(std::make_unique<T[]>(nCells)) { }
+          m_values(std::make_unique<T[]>(nCells)),
+          m_oldValues(std::make_unique<T[]>(nCells)) { }
 
         ~Field() = default;
 

@@ -27,12 +27,12 @@ void Simulation2D::generate()
     this->m_solver->setMesh(std::move(mesh));
 
     this->m_solver->initialiseViscosity(0.001);
-    
+
     std::unique_ptr<fstim::VectorFieldEqu> velocity = std::make_unique<fstim::VectorFieldEqu>(nCells);
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0.1, 0.));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., -0.1f));
+    velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0., 0.));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.f));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.f));
 
     this->m_solver->setVelocity(std::move(velocity));
 
@@ -86,20 +86,25 @@ void Simulation2D::m_updateMeshData()
 void Simulation2D::m_updateVelocityData()
 {
     const fstim::VectorField* field = this->m_solver->getVelocity();
+    const fstim::Mesh* mesh = this->m_solver->getMesh();
     const vecp::Vec2d* velocity = field->readValues();
     
     auto data = std::make_shared<std::vector<vecp::Vec2f>>();
-    data->resize(field->nCells);
+    data->resize(mesh->nVertices);
     
-    for (int id = 0; id < field->nCells; id++)
+    for (int id = 0; id < mesh->nVertices; id++)
     {
-        (*data)[id] = velocity[id].toFloat();
+        const fstim::Vertex& vertex = mesh->vertices[id];
+        vecp::Vec2d vertexValue = vecp::Vec2d();
+        for (int index = 0; index < vertex.cellId.size(); index++)
+        {
+            vertexValue += velocity[vertex.cellId[index]] * vertex.cellId[index];
+        }
+        (*data)[id] = vertexValue.toFloat();
     }
 
     emit this->sendVelocity(data);
 }
-
-
 
 Simulation2D::~Simulation2D()
 {
@@ -113,5 +118,6 @@ void Simulation2D::m_compute()
     {
         return;
     }
+    this->m_solver->compute(0.001f);
     this->m_updateVelocityData();
 }

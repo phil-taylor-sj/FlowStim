@@ -21,7 +21,7 @@ namespace fstim
 
     private:
 
-        ExplicitIterator<vecp::Vec2d> m_velocityIterator{};
+        ExplicitIterator<vecp::Vec2d> m_velocityIterator = ExplicitIterator<vecp::Vec2d>();
 
     };
 }
