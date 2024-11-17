@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Core/Solver/SolverBase.h>
-#include <Core/Solver/ExplicitIterator.h>
+#include <Core/Solver/ExplicitMethod.h>
 
 namespace fstim
 {
@@ -21,7 +21,7 @@ namespace fstim
 
     private:
 
-        ExplicitIterator<vecp::Vec2d> m_velocityIterator = ExplicitIterator<vecp::Vec2d>();
+        ExplicitMethod<vecp::Vec2d> m_velocityIterator = ExplicitMethod<vecp::Vec2d>();
 
     };
 }

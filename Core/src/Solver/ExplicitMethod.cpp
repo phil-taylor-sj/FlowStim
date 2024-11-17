@@ -1,11 +1,11 @@
-#include <Core/Solver/ExplicitIterator.h>
+#include <Core/Solver/ExplicitMethod.h>
 
 #include <iostream>
 
 namespace fstim
 {
     template <typename T>
-    void ExplicitIterator<T>::operator()(Field<T>& field)
+    void ExplicitMethod<T>::operator()(Field<T>& field, const T* source)
     {
         T* values = field.writeValues();
         const T* oldValues = field.readOldValues();
@@ -25,9 +25,12 @@ namespace fstim
     }
 
     template <typename T>
-    ExplicitIterator<T>::ExplicitIterator() {};
+    ExplicitMethod<T>::ExplicitMethod() {};
 
-    template class ExplicitIterator<double>;
+    template <typename T>
+    ExplicitMethod<T>::~ExplicitMethod() {};
 
-    template class ExplicitIterator<vecp::Vec2d>; 
+    template class ExplicitMethod<double>;
+
+    template class ExplicitMethod<vecp::Vec2d>; 
 }

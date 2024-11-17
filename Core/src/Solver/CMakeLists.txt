@@ -4,8 +4,12 @@ add_library(Solver OBJECT
     Courant.cpp
     SolverBase.cpp
     LaplaceSolver.cpp
-    ExplicitIterator.cpp
-)
+    PointMethod.cpp
+    ExplicitMethod.cpp
+    JacobiMethod.cpp
+    JacobiScalarMethod.cpp
+    JacobiVectorMethod.cpp
+    )
 
 target_link_libraries(Solver VecPlus)
 
