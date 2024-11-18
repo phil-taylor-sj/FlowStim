@@ -15,16 +15,19 @@ set(TEST_TARGET FlowStim_Tests)
 
 add_subdirectory(Domain_Test)
 
+add_subdirectory(Solver_Test)
+
 set(TEST_SRCS
   pch.cpp
   pch.h
   Domain_Test/MeshFactory_Test.cpp
+  Solver_Test/JacobiScalarMethod_Test.cpp
   )
 
 
 add_executable(${TEST_TARGET} ${TEST_SRCS})
 target_link_libraries(${TEST_TARGET} 
-  gtest gtest_main gmock_main Domain
+  gtest gtest_main gmock_main Domain Solver Field
   )
 target_include_directories(${TEST_TARGET} PUBLIC 
   ${PUBLIC_INCLUDE_DIR}

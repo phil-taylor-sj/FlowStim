@@ -2,7 +2,6 @@
 
 namespace fstim
 {
-
     template <typename T>
     PointMethod<T>::~PointMethod() {}
     

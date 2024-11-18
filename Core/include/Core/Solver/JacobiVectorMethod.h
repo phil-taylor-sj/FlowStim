@@ -5,7 +5,7 @@
 namespace fstim
 {
     template <typename T>
-    class JacobiVectorMethod : JacobiMethod<T>
+    class JacobiVectorMethod : public JacobiMethod<T>
     {
     public:
         JacobiVectorMethod() {};

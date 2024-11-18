@@ -5,7 +5,7 @@
 namespace fstim
 {
     template <typename T>
-    class ExplicitMethod : PointMethod<T>
+    class ExplicitMethod : public PointMethod<T>
     {
     public:
 

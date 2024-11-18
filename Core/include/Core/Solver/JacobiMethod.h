@@ -6,7 +6,7 @@
 namespace fstim
 {
     template <typename T>
-    class JacobiMethod : PointMethod<T>
+    class JacobiMethod : public PointMethod<T>
     {
     public:
         void operator()(Field<T>& field, const T* source = nullptr) override;
