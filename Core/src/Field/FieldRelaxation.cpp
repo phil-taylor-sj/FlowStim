@@ -1,10 +1,10 @@
-#include <Core/Field/FIeldRelaxation.h>
+#include <Core/Field/FieldRelaxation.h>
 
 namespace fstim
 {
     void FieldRelaxation::setRelaxation(double newFactor)
     {
-        if (newFactor < 0.)
+        if (newFactor <= 0.)
         {
             newFactor = this->DEFAULT_RELAXATION;
         }

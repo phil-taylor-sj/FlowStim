@@ -8,19 +8,25 @@ namespace fstim
      
         std::unique_ptr<T[]> newValues = std::make_unique<T[]>(field.nCells);
 
-        for (size_t count = 0; count < 10; count++)
+        for (size_t count = 0; count < 100; count++)
         {
-
             this->m_iteratorLoop(field, source, newValues.get());
 
-            // TODO: call m_checkConvergence.
+            Tolerance<double> errors = this->m_calcMaxErrors(field.nCells, newValues.get(), field.readValues());
 
+            // Overwrite the current values with the new values.                      
             T* values = field.writeValues();
             for (int id = 0; id < field.nCells; id++)
             {
                 values[id] = newValues[id];
             }
-            // TODO: break if convergence criteria reach.
+
+            // Check errors against convergence criteria, and break loop if met.
+            if (errors.absolute <= field.getTolerance().absolute ||
+                errors.relative <= field.getTolerance().relative)
+            {
+                break;
+            }
         }
     }
 

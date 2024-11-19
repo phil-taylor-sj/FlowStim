@@ -15,9 +15,10 @@ namespace fstim
         for (int id = 0; id < field.nCells; id++)
         {
             values[id] = rhs[id];
+            // Cycle through the coefficient map for the lhs contributions to the current cell.
             for (const std::pair<int, T> pair : lhs[id])
             {
-                if (pair.first == id) { continue; }
+                if (pair.first == id) { continue; } // Skip primary cell coefficient (Ap)
                 values[id] -= pair.second * oldValues[pair.first];
             }
             values[id] /= lhs[id].at(id);

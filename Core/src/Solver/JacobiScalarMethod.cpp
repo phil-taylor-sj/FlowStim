@@ -4,11 +4,23 @@ namespace fstim
 {
 
     template <typename T>
-    bool JacobiScalarMethod<T>::m_checkConvergence(Tolerance<T> criteria, const T* newValues, const T* oldValues)
+    Tolerance<double> JacobiScalarMethod<T>::m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues)
     {
-        // PLACEHOLDER...
-        // TODO: write this function
-        return true;  
+        T maxAbs = 0.;
+        T maxRel = 0.;
+        for (size_t id = 0; id < nCells; id++)
+        {
+            T absErr = std::abs(newValues[id] - oldValues[id]);
+
+            T relErr = (oldValues[id] != 0.) 
+                ? absErr / std::abs(oldValues[id])
+                : 0.;
+
+            maxAbs = std::max(maxAbs, absErr);
+            maxRel = std::max(maxRel, relErr);
+        }
+        
+        return Tolerance<double>(maxAbs, maxRel);  
     }
 
     template class JacobiScalarMethod<double>;

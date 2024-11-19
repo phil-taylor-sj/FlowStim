@@ -9,7 +9,7 @@ namespace fstim
         
         this->m_tolerance = Tolerance<double>(
             (newAbs > 0. && newAbs <= 1.) ? newAbs : this->DEFAULT_ABS,
-            (newRel > 0. && newRel <= 1.) ? newRel : this->DEFAULT_REL
+            (newRel >= 0. && newRel <= 1.) ? newRel : this->DEFAULT_REL
         );
     }
 

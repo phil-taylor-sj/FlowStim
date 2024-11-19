@@ -12,7 +12,7 @@ namespace Solver_Tests
         void SetUp() override 
         {
             field = std::make_unique<Field<double>>(12);
-            
+
             std::map<int, double>* lhs = field->writeLeft();
             double* rhs = field->writeRight();
 
@@ -46,7 +46,9 @@ namespace Solver_Tests
         {
             initialValues[cellId] = 0.1;
         }
-
+        
+        field->setTolerance(Tolerance<double>(1E-06, 0.));
+        field->activateRelaxation(false);
         JacobiScalarMethod<double> solver{};
         solver(*(field.get()));
 

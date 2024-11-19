@@ -11,6 +11,6 @@ namespace fstim
         T absolute{};
         T relative{};
 
-        Tolerance(T newAbs, T newRel) : absolute(newAbs), relative(newRel) {};
+        Tolerance(T newAbs = T(), T newRel = T()) : absolute(newAbs), relative(newRel) {};
     };
 }

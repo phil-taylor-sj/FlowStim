@@ -14,6 +14,11 @@ namespace fstim
     class FieldTolerance
     {
     public:
+
+        const double DEFAULT_ABS = 0.0001;
+
+        const double DEFAULT_REL = 0.01;
+
         /**
          * \brief Set new absolute and relative tolerance values for the field.
          * 
@@ -35,9 +40,7 @@ namespace fstim
 
         ~FieldTolerance() {};
     protected:
-        const double DEFAULT_ABS = 0.0001;
-        const double DEFAULT_REL = 0.01;
 
-        Tolerance<double> m_tolerance{0.0001, 0.01};
+        Tolerance<double> m_tolerance{DEFAULT_ABS, DEFAULT_REL};
     };
 }

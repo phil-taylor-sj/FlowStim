@@ -8,6 +8,7 @@ add_library(Field OBJECT
     EulerExplicit.cpp
     FaceFlux.cpp
     FieldTolerance.cpp
+    FieldRelaxation.cpp
 )
 
 target_link_libraries(Field VecPlus)

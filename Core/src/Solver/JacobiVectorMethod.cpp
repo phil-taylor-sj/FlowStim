@@ -3,11 +3,11 @@
 namespace fstim
 {
     template <typename T>
-    bool JacobiVectorMethod<T>::m_checkConvergence(Tolerance<T> criteria, const T* newValues, const T* oldValues)
+    Tolerance<double> JacobiVectorMethod<T>::m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues)
     {
         // PLACEHOLDER...
         // TODO: write this function
-        return true;  
+        return Tolerance<double>(0., 0.);  
     }
 
     template class JacobiVectorMethod<vecp::Vec2d>;
