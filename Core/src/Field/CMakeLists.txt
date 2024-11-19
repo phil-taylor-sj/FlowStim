@@ -7,6 +7,7 @@ add_library(Field OBJECT
     Divergence.cpp
     EulerExplicit.cpp
     FaceFlux.cpp
+    FieldTolerance.cpp
 )
 
 target_link_libraries(Field VecPlus)

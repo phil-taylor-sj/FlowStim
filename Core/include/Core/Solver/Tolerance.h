@@ -5,10 +5,12 @@
 namespace fstim
 {
     template <typename T>
-    struct Tolerance
+    class Tolerance
     {
     public:
         T absolute{};
         T relative{};
+
+        Tolerance(T newAbs, T newRel) : absolute(newAbs), relative(newRel) {};
     };
 }

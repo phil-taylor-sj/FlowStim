@@ -4,13 +4,14 @@
 
 #include <VecPlus/Vec2.h>
 #include <Core/Field/BcType.h>
-
+#include <Core/Field/FieldTolerance.h>
+#include <Core/Field/FieldRelaxation.h>
 
 namespace fstim
 {
 
     template<typename T>
-    class Field
+    class Field : public FieldTolerance, public FieldRelaxation
     {
     public:
         const int nCells;
