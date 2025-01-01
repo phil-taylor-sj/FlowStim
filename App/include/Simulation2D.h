@@ -31,8 +31,8 @@ signals:
     void sendMaxCFL();
 
 private:
-    vecp::Vec2d m_length = vecp::Vec2d(100., 200.);
-    vecp::Vec2i m_size = vecp::Vec2i(100, 200);
+    vecp::Vec2d m_length = vecp::Vec2d(10., 20.);
+    vecp::Vec2i m_size = vecp::Vec2i(10, 20);
     std::unique_ptr<fstim::LaplaceSolver> m_solver = nullptr;
     
     QTimer* m_timer;

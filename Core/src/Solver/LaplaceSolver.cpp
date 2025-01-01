@@ -5,6 +5,8 @@ namespace fstim
 {
     bool LaplaceSolver::compute(double deltaTime)
     {
+        this->m_velocity->updateOldValues();
+
         this->m_deltaTime = deltaTime;
         if (this->m_mesh == nullptr || this->m_velocity == nullptr)
         {
@@ -24,7 +26,5 @@ namespace fstim
         );
 
         std::cout << maxCo << std::endl;
-
-        this->m_velocity->updateOldValues();
     }
 }

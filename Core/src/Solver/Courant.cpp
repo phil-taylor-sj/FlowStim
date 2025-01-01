@@ -13,7 +13,7 @@ namespace fstim
         for (int id = 0; id < mesh.nCells; id++)
         {
             double lengthScale = std::sqrt(mesh.cells[id].volume);
-            double cfl = values[id].mag() * timeStep / lengthScale;
+            double cfl = abs(values[id].y);// * timeStep / lengthScale;
             maxCFL = std::max(maxCFL, cfl);
         }
         return maxCFL;
@@ -30,7 +30,7 @@ namespace fstim
         for (int id = 0; id < mesh.nCells; id++)
         {
             double lengthScale = std::sqrt(mesh.cells[id].volume);
-            double cfl = values[id].mag() * timeStep / lengthScale;
+            double cfl = values[id].mag();// * timeStep / lengthScale;
             aveCFL += cfl / mesh.nCells;
         }
 

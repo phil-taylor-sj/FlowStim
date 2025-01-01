@@ -9,6 +9,7 @@ add_library(Field OBJECT
     FaceFlux.cpp
     FieldTolerance.cpp
     FieldRelaxation.cpp
+    Initialise.cpp
 )
 
 target_link_libraries(Field VecPlus)
