@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 add_library(Solver OBJECT
     Courant.cpp
     SolverBase.cpp
-    LaplaceSolver.cpp
+    BurgersSolver.cpp
     PointMethod.cpp
     ExplicitMethod.cpp
     JacobiMethod.cpp

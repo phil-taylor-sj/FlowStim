@@ -5,19 +5,19 @@
 
 namespace fstim
 {
-    class LaplaceSolver : public SolverBase
+    class BurgersSolver : public SolverBase
     {
     public:
 
         bool compute(double deltaTime) override;
 
-        LaplaceSolver() { }
+        BurgersSolver() { }
 
-        ~LaplaceSolver() = default;
+        ~BurgersSolver() = default;
 
-        LaplaceSolver(const LaplaceSolver& newSolver) = delete;
+        BurgersSolver(const BurgersSolver& newSolver) = delete;
 
-        LaplaceSolver& operator=(const LaplaceSolver& newSolver) = delete;
+        BurgersSolver& operator=(const BurgersSolver& newSolver) = delete;
 
     private:
 
