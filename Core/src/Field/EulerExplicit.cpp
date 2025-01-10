@@ -19,8 +19,10 @@ namespace fstim
             double factor = mesh.cells[cellId].volume / deltaT;
             if (rho != nullptr) { factor *= rho[cellId]; }
 
-            lhs[cellId][cellId] += factor;
+            //lhs[cellId][cellId] *= factor;
             rhs[cellId] += values[cellId] * factor;  
+            rhs[cellId] -= values[cellId] * lhs[cellId][cellId];
+            lhs[cellId][cellId] = T() + factor;
         }
     }
 

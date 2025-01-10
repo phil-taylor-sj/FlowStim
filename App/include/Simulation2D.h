@@ -7,7 +7,7 @@
 #include <VecPlus/Vec2.h>
 #include <Core/Domain/MeshFactory.h>
 #include <Core/Domain/Mesh.h>
-#include <Core/Solver/LaplaceSolver.h>
+#include <Core/Solver/BurgersSolver.h>
 #include <Core/Domain/FaceSetFactory.h>
 
 #include <MeshData.h>
@@ -31,9 +31,9 @@ signals:
     void sendMaxCFL();
 
 private:
-    vecp::Vec2d m_length = vecp::Vec2d(100., 200.);
-    vecp::Vec2i m_size = vecp::Vec2i(100, 200);
-    std::unique_ptr<fstim::LaplaceSolver> m_solver = nullptr;
+    vecp::Vec2d m_length = vecp::Vec2d(10., 20.);
+    vecp::Vec2i m_size = vecp::Vec2i(10, 20);
+    std::unique_ptr<fstim::BurgersSolver> m_solver = nullptr;
     
     QTimer* m_timer;
 

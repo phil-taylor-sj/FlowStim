@@ -24,22 +24,20 @@ namespace fstim
             {   
                 const Face& face = mesh.faces[faceId];
                 
-                // Retrive length data
-                int neighId = (face.ownerId == cellId) 
-                    ? face.neighId 
-                    : face.ownerId;
-                double distance = (neighId != -1)
-                    ? (mesh.cells[neighId].center - cell.center).mag()  
-                    : (face.center - cell.center).mag();
-                double internalWeight = (cell.center - face.center).mag() / distance;
-
                 double flux = (face.ownerId == cellId) 
                     ? fluxes[faceId]
                     : -1. * fluxes[faceId];
 
+                int neighId = (face.ownerId == cellId) 
+                    ? face.neighId 
+                    : face.ownerId;
+                
                 // Update and skip to next cycle if face is internal
                 if (neighId != -1) 
-                {
+                {                
+                    // Retrive length data
+                    double distance = (mesh.cells[neighId].center - cell.center).mag();
+                    double internalWeight = (cell.center - face.center).mag() / distance;
                     lhs[cellId][cellId] += flux * internalWeight;
                     lhs[cellId][neighId] +=  flux * (1. - internalWeight);
                     continue;

@@ -3,7 +3,7 @@
 void Simulation2D::start()
 {
     std::lock_guard<std::mutex> guard(this->m_timerMutex);
-    this->m_timer->start(16);
+    this->m_timer->start(32);
 }
 
 void Simulation2D::stop()
@@ -29,10 +29,10 @@ void Simulation2D::generate()
     this->m_solver->initialiseViscosity(0.001);
 
     std::unique_ptr<fstim::VectorFieldEqu> velocity = std::make_unique<fstim::VectorFieldEqu>(nCells);
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., -0.1f));
-    velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0., 0.));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.f));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0., 0.f));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
 
     this->m_solver->setVelocity(std::move(velocity));
 
@@ -42,7 +42,7 @@ void Simulation2D::generate()
 Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
 {
     
-    this->m_solver = std::make_unique<fstim::LaplaceSolver>();
+    this->m_solver = std::make_unique<fstim::BurgersSolver>();
 
     connect(m_timer, &QTimer::timeout, this, &Simulation2D::m_compute);
 }
@@ -98,7 +98,7 @@ void Simulation2D::m_updateVelocityData()
         vecp::Vec2d vertexValue = vecp::Vec2d();
         for (int index = 0; index < vertex.cellId.size(); index++)
         {
-            vertexValue += velocity[vertex.cellId[index]] * vertex.cellId[index];
+            vertexValue += velocity[vertex.cellId[index]]; //* vertex.cellWeight[index];
         }
         (*data)[id] = vertexValue.toFloat();
     }
@@ -118,6 +118,6 @@ void Simulation2D::m_compute()
     {
         return;
     }
-    this->m_solver->compute(0.001f);
+    this->m_solver->compute(0.032f);
     this->m_updateVelocityData();
 }

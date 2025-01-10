@@ -41,15 +41,16 @@ namespace fstim
                         // no change to equation
                         break;
                     case BcType::FIXEDVALUE:
-                        rhs[cellId] += std::get<1>(bc) * (sfMag / distance) * visc[cellId];
+                        // Incorrect: need to take gradient from fixed value
+                        // rhs[cellId] += std::get<1>(bc) * (sfMag / distance) * visc[cellId];
+                        rhs[cellId] += (std::get<1>(bc) - values[cellId])
+                            * (sfMag / distance) * visc[cellId];
                         break;
                     default:
                         break;
                 }
-
             }            
         }
-
     }
 
     template <typename T>
