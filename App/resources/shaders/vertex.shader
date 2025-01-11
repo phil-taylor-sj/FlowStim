@@ -4,6 +4,7 @@ layout (location = 1) in vec3 attrColour;
 
 out vec3 colour;
 
+
 void main()
 {
     gl_Position = vec4(attrPosition, 0.0, 1.0);

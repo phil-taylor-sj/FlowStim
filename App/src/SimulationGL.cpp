@@ -10,7 +10,7 @@ SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(p
 void SimulationGL::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.5f, 0.5f, 0.5f, 0.f);
+    glClearColor(1.f, 1.f, 1.f, 0.f);
 
     this->m_cellVao.create();
     this->m_cellVao.bind();
@@ -98,10 +98,11 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
         //colours[vId * 3 + 1] = (vId >= total / 2) ? 0.f : 1.f;
         //colours[vId * 3 + 2] = (vId >= total / 2) ? 1.f : 0.f;
         float velocity = (*m_velocity)[vId].mag();
-        if (velocity > 0.)
+        if (velocity >= 0.f)
         {
-            colours[vId * 3 + 1] = 0.f;
-            colours[vId * 3 + 2] = 1.f * abs(velocity) / 1.f; 
+            float value = std::min(1.f * abs(velocity) / 1.f, 1.f);
+            colours[vId * 3 + 1] = 1.f - value;
+            colours[vId * 3 + 2] = value; 
         }
         else
         {

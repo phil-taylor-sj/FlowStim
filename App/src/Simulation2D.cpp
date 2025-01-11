@@ -29,10 +29,10 @@ void Simulation2D::generate()
     this->m_solver->initialiseViscosity(0.001);
 
     std::unique_ptr<fstim::VectorFieldEqu> velocity = std::make_unique<fstim::VectorFieldEqu>(nCells);
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
-    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(-0.7, -0.7));
+    velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0.0, 0.0));
+    velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0.0, 0.0));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(1.0, 1.0));
+    velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0.0, 0.0));
 
     this->m_solver->setVelocity(std::move(velocity));
 
