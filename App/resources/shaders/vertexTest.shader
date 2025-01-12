@@ -14,5 +14,6 @@ void main()
     
     float relValue = attrValue - u_minValue;
     float factor = relValue / (u_maxValue - u_minValue);
-    colour = vec3(0.0, 0.0, factor);
+    
+    colour = vec3(factor, factor, factor);
 }
