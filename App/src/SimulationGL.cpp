@@ -122,7 +122,7 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     for (unsigned int vId = 0; vId < total; vId++)
     {
         //values[vId] = (*m_velocity)[vId].mag();
-        values[vId] = (float)vId;
+        values[vId] = (float)vId - 100.0;
     }
 
     m_gridColourBuffer.allocate(values.data(), values.size() * sizeof(float));
@@ -143,8 +143,12 @@ void SimulationGL::m_drawField()
     this->m_shader->bind();
     this->m_gridVao.bind();
     int loc_maxValue = m_shader->uniformLocation("u_maxValue");
+    int loc_minValue = m_shader->uniformLocation("u_minValue");
     assert(loc_maxValue != -1);
-    m_shader->setUniformValue(loc_maxValue, 200.f);
+    assert(loc_minValue != -1);
+    m_shader->setUniformValue(loc_maxValue, 100.f);
+    m_shader->setUniformValue(loc_minValue, -100.f);
+
     glDrawElements(GL_TRIANGLES, this->m_nCells * 6, GL_UNSIGNED_INT, nullptr);
     this->m_gridVao.release();
 }
