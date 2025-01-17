@@ -184,14 +184,48 @@ namespace Domain_Tests
         }
     }
 
-    TEST_F(SmallMeshEqualF, test_sets_correct_number_of_unique_vertices)
+    class Mesh_Vertex_Fixture : public testing::TestWithParam<std::tuple<vecp::Vec2i, vecp::Vec2d>>
     {
-        ASSERT_EQ(20, mesh->nVertices);
-        for (int id = 0; id < 20; id++)
+    protected:
+        void SetUp() override
         {
-            ASSERT_EQ(id, mesh->vertices[id].vertexId);
+            size = std::get<0>(GetParam());
+            length = std::get<1>(GetParam());
+            expected = (size.x + 1) * (size.y + 1);
+        }
+        MeshFactory factory{};
+        vecp::Vec2i size;
+        vecp::Vec2d length;
+        int expected;
+    };
+
+    class MeshVertex_F : public Mesh_Vertex_Fixture {};
+    TEST_P(MeshVertex_F, MeshVertex_Valid)
+    {
+        try
+        {
+           factory(size, length); 
+        }
+        catch (const std::exception& err)
+        {
+            FAIL() << err.what();
+        }
+
+        std::unique_ptr<const Mesh> mesh = factory(size, length);
+        ASSERT_EQ(mesh->nVertices, expected);
+
+        for (int id = 0; id < mesh->nVertices; id++)
+        {
+            ASSERT_EQ(mesh->vertices[id].vertexId, id);
         }
     }
+
+    INSTANTIATE_TEST_SUITE_P(MeshVertex_Valid, MeshVertex_F, testing::Values(
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
+        std::make_tuple(vecp::Vec2i(10, 20), vecp::Vec2d(10., 20.)),
+        std::make_tuple(vecp::Vec2i(100, 200), vecp::Vec2d(1000., 2000.)),
+        std::make_tuple(vecp::Vec2i(100, 200), vecp::Vec2d(1., 2.))
+    ));
 
     TEST_F(SmallMeshEqualF, test_sets_correct_positions_of_vertices)
     {

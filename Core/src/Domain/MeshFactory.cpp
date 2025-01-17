@@ -10,12 +10,26 @@ namespace fstim
         std::unique_ptr<Cell[]> cells(new Cell[nCells]);
         std::unique_ptr<Face[]> faces(new Face[nFaces]);
 
+        // Configure all cells, faces, and vertices.
         this->m_assignIds(cells, faces, size);
         this->m_assignProperties(cells, faces, size, length);
         this->m_assignVertices(cells, faces, size);
 
+        // Filter all vertices to keep onyl unique vertices.
         std::vector<Vertex> verticesArr = VertexMapping::createVertices(cells.get(), nCells, faces.get(), nFaces);
         int nVertices = verticesArr.size();
+        
+        // Verify all unique vertices are included exactly once.
+        int expected_vertices = (size.x + 1) * (size.y + 1);
+        if (nVertices != expected_vertices)
+        {
+            std::string msg = std::format(
+                "Mesh Validation Failed: Number of unique vertices ({}) not equal to expected value ({}).",
+                nVertices, expected_vertices);
+            throw std::runtime_error(msg);
+        }
+        
+        // Transfer unique vertices into a new C-style array.
         std::unique_ptr<Vertex[]> vertices(new Vertex[nVertices]);
         for (Vertex vertex : verticesArr)
         {
