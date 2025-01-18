@@ -137,8 +137,8 @@ namespace Domain_Tests
 
     INSTANTIATE_TEST_SUITE_P(CorrectFacePositions, SmallMeshEqualFaceCenter_F, testing::Values(
         std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
-        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(200., 100.))
-        //std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(1., 1.))
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(200., 100.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(1., 1.))
     ));
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_normal_vectors)
@@ -256,7 +256,7 @@ namespace Domain_Tests
         std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
         std::make_tuple(vecp::Vec2i(10, 20), vecp::Vec2d(10., 20.)),
         std::make_tuple(vecp::Vec2i(100, 200), vecp::Vec2d(1000., 2000.)),
-        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 2.))
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(0.01, 0.01))
     ));
 
     TEST_F(SmallMeshEqualF, test_sets_correct_positions_of_vertices)
