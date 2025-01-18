@@ -7,7 +7,7 @@ namespace fstim
         std::vector<double> faceCenters(nCells + 1);
         for (int i = 0; i < faceCenters.size(); i++)
         {
-            faceCenters[i] = (double) i * length / nCells;
+            faceCenters[i] = length * static_cast<double>(i) / nCells;
         }
         return std::move(this->m_calcCellProperties(std::move(faceCenters)));
     }

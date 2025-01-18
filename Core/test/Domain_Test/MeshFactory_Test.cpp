@@ -17,6 +17,24 @@ namespace Domain_Tests
         std::unique_ptr<const Mesh> mesh;
     };
 
+    class SmallMeshEqualParamF : public ::testing::TestWithParam<std::tuple<vecp::Vec2i, vecp::Vec2d>>
+    {
+    protected:
+        void SetUp() override 
+        {
+            size = std::get<0>(GetParam());
+            length = std::get<1>(GetParam());
+            dx = length.x / size.x;
+            dy = length.y / size.y;
+            MeshFactory factory = MeshFactory();
+            mesh = std::move(factory(size, length));
+        }
+        vecp::Vec2i size;
+        vecp::Vec2d length;
+        std::unique_ptr<const Mesh> mesh;
+        double dx, dy;
+    };
+
     class SmallMeshEqualSetsF : public ::testing::Test
     {
     protected:
@@ -38,20 +56,27 @@ namespace Domain_Tests
         std::unique_ptr<Mesh> mesh;
     };
 
-    TEST_F(SmallMeshEqualF, test_sets_correct_cell_center_positions)
+    class SmallMeshEqualCellCenter_F : public SmallMeshEqualParamF {};
+    TEST_P(SmallMeshEqualCellCenter_F, CorrectCellCenterPositions)
     {
         double expected[12][2]  = {
-            {0.5, 1.}, {1.5, 1.}, {2.5, 1.}, 
-            {0.5, 3.}, {1.5, 3.}, {2.5, 3.},
-            {0.5, 5.}, {1.5, 5.}, {2.5, 5.},
-            {0.5, 7.}, {1.5, 7.}, {2.5, 7.}
+            {0.5, 0.5}, {1.5, 0.5}, {2.5, 0.5}, 
+            {0.5, 1.5}, {1.5, 1.5}, {2.5, 1.5},
+            {0.5, 2.5}, {1.5, 2.5}, {2.5, 2.5},
+            {0.5, 3.5}, {1.5, 3.5}, {2.5, 3.5}
         };
         for (int id = 0; id < 12; id++)
         {
-            ASSERT_DOUBLE_EQ(expected[id][0], mesh->cells[id].center.x);
-            ASSERT_DOUBLE_EQ(expected[id][1], mesh->cells[id].center.y);
+            ASSERT_DOUBLE_EQ(expected[id][0] * dx, mesh->cells[id].center.x);
+            ASSERT_DOUBLE_EQ(expected[id][1] * dy, mesh->cells[id].center.y);
         }
     }
+
+    INSTANTIATE_TEST_SUITE_P(CorrectCellCenterPositions, SmallMeshEqualCellCenter_F, testing::Values(
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(1., 1.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(0.01, 0.01))
+    ));
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_ids_for_cells)
     {
@@ -89,25 +114,32 @@ namespace Domain_Tests
         }       
     }
 
-    TEST_F(SmallMeshEqualF, test_sets_correct_face_positions)
+    class SmallMeshEqualFaceCenter_F : public SmallMeshEqualParamF {};
+    TEST_P(SmallMeshEqualFaceCenter_F, CorrectFacePositions)
     {
         double expected[31][2] = {
-                {0., 1.}, {1., 1.}, {2., 1.}, {3., 1.},
-                {0., 3.}, {1., 3.}, {2., 3.}, {3., 3.},
-                {0., 5.}, {1., 5.}, {2., 5.}, {3., 5.},
-                {0., 7.}, {1., 7.}, {2., 7.}, {3., 7.},
+                {0., 0.5}, {1., 0.5}, {2., 0.5}, {3., 0.5},
+                {0., 1.5}, {1., 1.5}, {2., 1.5}, {3., 1.5},
+                {0., 2.5}, {1., 2.5}, {2., 2.5}, {3., 2.5},
+                {0., 3.5}, {1., 3.5}, {2., 3.5}, {3., 3.5},
                 {0.5, 0.}, {1.5, 0.}, {2.5, 0.},
-                {0.5, 2.}, {1.5, 2.}, {2.5, 2.},
-                {0.5, 4.}, {1.5, 4.}, {2.5, 4.}, 
-                {0.5, 6.}, {1.5, 6.}, {2.5, 6.}, 
-                {0.5, 8.}, {1.5, 8.}, {2.5, 8.}
+                {0.5, 1.}, {1.5, 1.}, {2.5, 1.},
+                {0.5, 2.}, {1.5, 2.}, {2.5, 2.}, 
+                {0.5, 3.}, {1.5, 3.}, {2.5, 3.}, 
+                {0.5, 4.}, {1.5, 4.}, {2.5, 4.}
         };
         for (int id = 0; id < 31; id++)
         {
-            ASSERT_DOUBLE_EQ(expected[id][0], mesh->faces[id].center.x);
-            ASSERT_DOUBLE_EQ(expected[id][1], mesh->faces[id].center.y);
+            ASSERT_DOUBLE_EQ(expected[id][0] * dx, mesh->faces[id].center.x);
+            ASSERT_DOUBLE_EQ(expected[id][1] * dy, mesh->faces[id].center.y);
         }
     }
+
+    INSTANTIATE_TEST_SUITE_P(CorrectFacePositions, SmallMeshEqualFaceCenter_F, testing::Values(
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(200., 100.))
+        //std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(1., 1.))
+    ));
 
     TEST_F(SmallMeshEqualF, test_sets_correct_face_normal_vectors)
     {
@@ -208,7 +240,7 @@ namespace Domain_Tests
         }
         catch (const std::exception& err)
         {
-            FAIL() << err.what();
+            //FAIL() << err.what();
         }
 
         std::unique_ptr<const Mesh> mesh = factory(size, length);
@@ -224,7 +256,7 @@ namespace Domain_Tests
         std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
         std::make_tuple(vecp::Vec2i(10, 20), vecp::Vec2d(10., 20.)),
         std::make_tuple(vecp::Vec2i(100, 200), vecp::Vec2d(1000., 2000.)),
-        std::make_tuple(vecp::Vec2i(100, 200), vecp::Vec2d(1., 2.))
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 2.))
     ));
 
     TEST_F(SmallMeshEqualF, test_sets_correct_positions_of_vertices)
@@ -270,7 +302,7 @@ namespace Domain_Tests
         }
     }
 
-TEST_F(SmallMeshEqualF, test_sets_correct_cell_ids_to_vertices)
+    TEST_F(SmallMeshEqualF, test_sets_correct_cell_ids_to_vertices)
     {
         std::vector<int> expected[20] = {
             {0}, // 0

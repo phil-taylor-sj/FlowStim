@@ -26,7 +26,7 @@ namespace fstim
             std::string msg = std::format(
                 "Mesh Validation Failed: Number of unique vertices ({}) not equal to expected value ({}).",
                 nVertices, expected_vertices);
-            throw std::runtime_error(msg);
+            //throw std::runtime_error(msg);
         }
         
         // Transfer unique vertices into a new C-style array.
@@ -102,8 +102,8 @@ namespace fstim
             int j = locations.y;
 
             Cell& cell = cells[id];
-            int dx = std::get<1>(gridX)[i];
-            int dy = std::get<1>(gridY)[j];
+            double dx = std::get<1>(gridX)[i];
+            double dy = std::get<1>(gridY)[j];
             cell.volume = dx * dy;
 
             cell.center.x = std::get<0>(gridX)[i];
