@@ -4,7 +4,8 @@ FlowStim is a personal project to build a lightweight fluids solver into an inte
 
 This project was inspired by the 'coding advanture' of [Sebastian Lague](https://www.youtube.com/watch?v=rSKMYc1CQHE). In that case, the [Smooth Particle Hydrodynamic (SPH)](https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics) method was implemented with Unity and C# to create a multiphase fluid render.
 
-### The Physics?
+
+### The Physics
 
 The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equation for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoinitng Faces. 
 
