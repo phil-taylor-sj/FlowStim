@@ -37,7 +37,7 @@ The following table outlines all libraries that are currentyl implemented.
 
 The below image displays an example of the current GUI implementation for Burger's equation. The corresponding mesh grid is displayed in the overlay window.
 
-<img src="https://raw.githubusercontent.com/phil-taylor-sj/images/main/flowstim-gui-example.png" alt="Logo" width="800"/>
+<img src="https://raw.githubusercontent.com/phil-taylor-sj/images/main/flowstim-gui-example.png" alt="Logo" width="1200"/>
 
 
 # Installation
