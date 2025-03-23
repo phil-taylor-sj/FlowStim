@@ -29,7 +29,8 @@ The following table outlines all libraries that are currentyl implemented.
 
 | Application | Library | Features | Status
 | --- |--- | --- | --- |
-| Core | Mesh | Builds and validates a Mesh, represented by a collection of Cells, Faces, and Verticies | Full functionality for creating a 2d structured mesh |
+| Core | Domain | Builds and validates a mesh, which comprises of a collection of Cells, Faces, Verticies, and boundary sets, encapsulated within a Mesh class object. A MeshFactory class abstracts out all functionaltiy for Mesh class construction. | Full functionality for creating a 2d structured mesh. |
+|  |  |  |  |
 
 
 # Installation
