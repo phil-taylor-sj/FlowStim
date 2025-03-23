@@ -28,6 +28,7 @@ The code has been divided into two (actually three) libraries; one library for t
 The following table outlines all libraries that are currentyl implemented.
 
 | Application | Library | Features | Status
+| --- |--- | --- | --- |
 | Core | Mesh | Builds and validates a Mesh, represented by a collection of Cells, Faces, and Verticies | Full functionality for creating a 2d structured mesh |
 
 
