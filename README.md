@@ -1,14 +1,12 @@
 # FlowStim
 
-FlowStim is a personal project to build a lightweight fluids solver into an interactive application.
+FlowStim is a personal project to build a lightweight fluids solver into an interactive application. The solver is implemented with the [Finite-Volume Method](https://www.cfd-online.com/Wiki/Finite_volume) in C++, and utilises the Qt framework to implement the user interface. The ultimate goal is to build an application which can be deployed on Android/IOS, and allow the user to explore flow physics through a few, low-cost interactive test cases (and also learn more C++ along the way).
 
-This project was inspired by the 'coding advanture' of [Sebastian Lague](https://www.youtube.com/watch?v=rSKMYc1CQHE). In that case, the [Smooth Particle Hydrodynamic (SPH)](https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics) method was implemented with Unity and C# to create a multiphase fluid render.
-
-For this project, the Finite-Volume methods is implemented in C++, and developed into an interactive application using the Qt framework.
+This project was inspired by the 'coding advanture' of [Sebastian Lague](https://www.youtube.com/watch?v=rSKMYc1CQHE), in which the [Smooth Particle Hydrodynamic (SPH)](https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics) method was implemented with C# to create a multiphase fluid renderer Unity.
 
 ### The Physics
 
-The tutorial '12 Steps to Navier-Stokes' [Lorena Barber](https://lorenabarba.com/blog/cfd-python-12-steps-to-navier-stokes/) is an excellent source for those unfamiliar with the general principles of Computational Fluid Dynamics. It provides a detailed step-by-step outline a basic solver implementation in Python, using the mesh-based Finite-Difference Method.
+Whilst some background it provided here; the tutorial '12 Steps to Navier-Stokes' by [Lorena Barber](https://lorenabarba.com/blog/cfd-python-12-steps-to-navier-stokes/) is an excellent source for those unfamiliar with the general principles of Computational Fluid Dynamics. It provides a detailed step-by-step outline a basic solver implementation in Python, using the mesh-based [Finite-Difference Method](https://www.cfd-online.com/Wiki/Finite_difference).
 
 ## Governing Equations
 
@@ -19,9 +17,11 @@ The momentum-conservation (Navier-Stokes) equations are the most critical govern
 </p>
 *Image source: [Quanta](https://www.quantamagazine.org/what-makes-the-hardest-equations-in-physics-so-difficult-20180116/)*
 
-## Finite-Volume Method
+# Finite-Volume Method
 
-The Finite-Volume Method approaches this problem by first breaking down the singluar flow domain into many thousands/millions of control volumes (Cells). Together these volumes (Cells) form the mesh of the domain. This is in contrast to the meshless SPH approach (see above) which aims to model fluid as a collection of particles in a continous domain. 
+The Finite-Volume Method approaches this problem by first breaking down the singluar flow domain into many thousands/millions of control volumes (Cells). Together these volumes (Cells) form the mesh of the domain. This is in contrast to the meshless [SPH](https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics) approach which aims to model fluid as a collection of particles in a continous domain. This is also in contrast to the mesh-based [Finite-Difference](https://www.cfd-online.com/Wiki/Finite_difference) method, where the domain is represented by a series of discrete points 
+
+
 
 ### Installation
 
