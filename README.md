@@ -8,14 +8,15 @@ This project was inspired by the 'coding advanture' of [Sebastian Lague](https:/
 ### The Physics
 
 The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equationz for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoining Faces.
+The image source cannot be controlled and the forgotten
+
+<p align="center">
+	<img src="https://www.quantamagazine.org/wp-content/uploads/2018/01/Navier-StokesEquation_560.jpg" alt="Logo" width="950"/>
+</p>
 
 ![Finite-volume diagram](https://www.quantamagazine.org/wp-content/uploads/2018/01/Navier-StokesEquation_560.jpg)
 
 *Image source: [Quanta](https://www.quantamagazine.org/what-makes-the-hardest-equations-in-physics-so-difficult-20180116/)*
-
-### Organisation
-
-
 
 ### Installation
 
