@@ -19,9 +19,7 @@ The momentum-conservation (Navier-Stokes) equations are the most critical govern
 
 ## Finite-Volume Method
 
-
-The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equationz for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoining Faces.
-
+The Finite-Volume Method approaches this problem by first breaking down the singluar flow domain into many thousands/millions of control volumes (Cells). Together these volumes (Cells) form the mesh of the domain. This is in contrast to the meshless SPH approach (see above) which aims to model fluid as a collection of particles in a continous domain. 
 
 ### Installation
 
