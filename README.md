@@ -35,9 +35,9 @@ The following table outlines all libraries that are currentyl implemented.
 | App | App | Implements the GUI with the QtWidgets framework. | |
 | AppQML | ApQML | Implements a modern cross-platform GUI with the QtQuick framwework | Still in the exploratory spiking phase. |
 
-The below image displays an example of the current GUI implementation for Burger's equation. The corresponding mesh is displayed in the overlay window.
+The below image displays an example of the current GUI implementation for Burger's equation. The corresponding mesh grid is displayed in the overlay window.
 
-<img src="https://raw.githubusercontent.com/phil-taylor-sj/images/main/flowstim-gui-example.png" alt="Logo" width="400"/>
+<img src="https://raw.githubusercontent.com/phil-taylor-sj/images/main/flowstim-gui-example.png" alt="Logo" width="800"/>
 
 
 # Installation
