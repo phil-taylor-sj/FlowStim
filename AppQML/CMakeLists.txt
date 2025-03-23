@@ -10,13 +10,18 @@ set(CMAKE_AUTOUIC ON)
 
 set(APP_NAME FlowStimQML)
 
-find_package(Qt6 COMPONENTS Quick Gui REQUIRED )
+find_package(Qt6 COMPONENTS Core Quick Gui REQUIRED )
 qt_standard_project_setup()
+
+qt6_wrap_cpp(MOC_FILES 
+    ${PROJECT_SOURCE_DIR}/AppQML/include/QFlowSolver.h
+    )
 
 qt_add_resources(RESOURCE_FILES resources/qml.qrc)
 
 qt_add_executable(${APP_NAME} ${RESOURCE_FILES}
     src/main.cpp
+    src/QFlowSolver.cpp
     ${MOC_FILES}
 )
 
@@ -26,8 +31,13 @@ qt_add_executable(${APP_NAME} ${RESOURCE_FILES}
 #)
 
 target_link_libraries(${APP_NAME} PRIVATE
+    Qt6:Core
     Qt6::Gui
     Qt6::Quick
+    VecPlus
+    Domain
+    Field
+    Solver 
     )
 
 target_include_directories(${APP_NAME} PRIVATE

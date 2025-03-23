@@ -10,7 +10,7 @@ SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(p
 void SimulationGL::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(1.f, 1.f, 1.f, 0.f);
+    glClearColor(0.1f, 0.1f, 0.1f, 0.f);
 
     this->m_cellVao.create();
     this->m_cellVao.bind();
@@ -121,8 +121,8 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     std::vector<float> values(this->m_nVertices);
     for (unsigned int vId = 0; vId < total; vId++)
     {
-        //values[vId] = (*m_velocity)[vId].mag();
-        values[vId] = (float)vId - 100.0;
+        values[vId] = (*m_velocity)[vId].mag();
+        //values[vId] = (float)vId - 100.0;
     }
 
     m_gridColourBuffer.allocate(values.data(), values.size() * sizeof(float));
@@ -146,8 +146,8 @@ void SimulationGL::m_drawField()
     int loc_minValue = m_shader->uniformLocation("u_minValue");
     assert(loc_maxValue != -1);
     assert(loc_minValue != -1);
-    m_shader->setUniformValue(loc_maxValue, 100.f);
-    m_shader->setUniformValue(loc_minValue, -100.f);
+    m_shader->setUniformValue(loc_maxValue, 1.f);
+    m_shader->setUniformValue(loc_minValue, 0.f);
 
     glDrawElements(GL_TRIANGLES, this->m_nCells * 6, GL_UNSIGNED_INT, nullptr);
     this->m_gridVao.release();
