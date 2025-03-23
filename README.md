@@ -11,7 +11,7 @@ The Finite-Volume Method is a mesh based approach to solving the momentum-conser
 The image source cannot be controlled and the forgotten
 
 <p align="center">
-	<img src="https://www.quantamagazine.org/wp-content/uploads/2018/01/Navier-StokesEquation_560.jpg" alt="Logo" width="950"/>
+	<img src="https://www.quantamagazine.org/wp-content/uploads/2018/01/Navier-StokesEquation_560.jpg" alt="Logo" width="700"/>
 </p>
 
 ![Finite-volume diagram](https://www.quantamagazine.org/wp-content/uploads/2018/01/Navier-StokesEquation_560.jpg)
