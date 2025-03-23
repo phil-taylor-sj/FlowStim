@@ -54,7 +54,7 @@ namespace fstim
         for (size_t i = 0; i < allVertices.size(); i++) 
         {
             Vertex& vertex = allVertices[i];
-            VertexKey key = VertexMapping::quantisePosition(vertex, 0.001);
+            VertexKey key = VertexMapping::quantisePosition(vertex, 0.00001);
 
             auto it = vertexMap.find(key);
             if (it != vertexMap.end()) {

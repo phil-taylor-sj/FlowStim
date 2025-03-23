@@ -1,0 +1,42 @@
+
+QPushButton
+{
+    background-image: linear-gradient(#f7f8fa ,#e7e9ec);
+    border-color: grey;
+    border-style: solid;
+    max-width: 60px;
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 4px;
+}
+
+QPushButton:pressed {
+    background-color: black;
+}
+
+QProgressBar {
+    border-color: #59515f;  /* [DARK] - duplicated from QPushButton */
+    border-color: #9f95a3;  /* [LIGHT] - duplicated from QPushButton */
+    border-width: 1px;
+    border-style: solid;
+
+    background-color: #0f0f0f; /* [DARK] - almost black */
+    background-color: #fbfbfb; /* [LIGHT] - almost white */
+
+    height: 26px; /* hardcoded, could break with large fonts */
+    border-radius: 13px; /* half the height, hardcoded */
+
+    text-align: right; /* NOT SUPPORTED: 6px padding on the right of the text */
+    /* NOT SUPPORTED: painting a gradient on the outline, up until the current progress value */
+}
+
+QProgressBar:chunk {
+    /* looks buggy somehow */
+    border-color: qlineargradient(0, 1, 1, 0, 0 #11c2e1, 1 #893a94);
+    border-width: 1px;
+    border-style: solid;
+    /* same as border-color but with 37% opacity */
+    background-color: qlineargradient(0, 1, 1, 0, 0 #6011c2e1, 1 #60893a94);
+    border-radius: 11px;
+    margin: 2px;
+}

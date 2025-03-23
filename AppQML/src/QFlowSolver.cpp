@@ -1,18 +1,38 @@
-#include <Simulation2D.h>
+#include <AppQML/QFlowSolver.h>
 
-void Simulation2D::start()
+void QFlowSolver::run()
 {
-    std::lock_guard<std::mutex> guard(this->m_timerMutex);
-    this->m_timer->start(32);
+    clock_t minLoopTime = 32;
+    clock_t loopTime = minLoopTime;
+    while (true)
+    {
+        clock_t startTime = clock();
+        if (!this->m_pause)
+        {
+            this->m_compute();
+        }
+        loopTime = clock() - startTime;
+        if (loopTime < minLoopTime)
+        {
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(minLoopTime - loopTime)
+                );
+            loopTime = minLoopTime; 
+        }
+    }
 }
 
-void Simulation2D::stop()
+void QFlowSolver::start()
 {
-    std::lock_guard<std::mutex> guard(this->m_timerMutex);
-    this->m_timer->stop();
+    this->m_pause = true;
 }
 
-void Simulation2D::generate()
+void QFlowSolver::stop()
+{
+    this->m_pause = false;
+}
+
+void QFlowSolver::generate()
 {
     
     this->stop();
@@ -39,21 +59,19 @@ void Simulation2D::generate()
     this->m_updateMeshData();
 }
 
-Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
+QFlowSolver::QFlowSolver(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
 {
     
     this->m_solver = std::make_unique<fstim::BurgersSolver>();
-
-    connect(m_timer, &QTimer::timeout, this, &Simulation2D::m_compute);
 }
 
-void Simulation2D::m_updateMeshData()
+void QFlowSolver::m_updateMeshData()
 {
     std::shared_ptr<MeshData> data = std::make_shared<MeshData>();
     const fstim::Mesh* mesh = this->m_solver->getMesh();
     data->length = mesh->length.toFloat();
     data->nCells = mesh->nCells;
-    //data->vertices.resize(2 * 4 * mesh->nCells);
+
     data->vertices.resize(mesh->nVertices);
     data->cellElements.resize(mesh->nCells);
     
@@ -72,18 +90,12 @@ void Simulation2D::m_updateMeshData()
     for (const fstim::Cell* cell = begin; cell != end; cell++)
     {
         data->cellElements[cell->id] = cell->vertexId;
-        //for (vecp::Vec2f vertex : cell->vertices)
-        //{
-
-            //data->vertices[index++] = (vertex.x - halfLength.x) / (0.55f * maxLength);
-            //data->vertices[index++] = (vertex.y - halfLength.y) / (0.55f * maxLength);
-        //}
     }
 
     emit this->sendMesh(data);
 }
 
-void Simulation2D::m_updateVelocityData()
+void QFlowSolver::m_updateVelocityData()
 {
     const fstim::VectorField* field = this->m_solver->getVelocity();
     const fstim::Mesh* mesh = this->m_solver->getMesh();
@@ -106,18 +118,19 @@ void Simulation2D::m_updateVelocityData()
     emit this->sendVelocity(data);
 }
 
-Simulation2D::~Simulation2D()
+QFlowSolver::~QFlowSolver2D()
 {
     delete this->m_timer;
 }
 
-void Simulation2D::m_compute()
+void QFlowSolver::m_compute()
 {
-    std::lock_guard<std::mutex> guard(this->m_mutex);
-    if (this->m_solver->getMesh() == nullptr)
-    {
-        return;
-    }
-    this->m_solver->compute(0.032f);
-    this->m_updateVelocityData();
+        std::lock_guard<std::mutex> guard(this->m_mutex);
+        if (this->m_solver->getMesh() == nullptr)
+        {
+            return;
+        }
+        this->m_solver->compute(0.032f);
+        this->m_updateVelocityData();
 }
+

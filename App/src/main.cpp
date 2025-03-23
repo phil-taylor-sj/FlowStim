@@ -5,6 +5,7 @@
 #include <QtGUI>
 #include <QProgressBar>
 #include <QOpenGLFunctions>
+#include <QFile>
 
 #include <Core/Domain/Cell.h>
 #include <SimulationGL.h>
@@ -20,7 +21,16 @@ int main(int argc, char **argv)
     QApplication app (argc, argv);
     
     //QFont font("Courier");
-
+    QFile file(":/stylesheets/mainStyle.qss");
+    if (file.open(QFile::ReadOnly))
+    {
+        QString stylesheet = QLatin1String(file.readAll());
+        app.setStyleSheet(stylesheet);
+    }
+    else
+    {
+        qWarning("Could not open stylesheet resource.");
+    }
 
 
     QWidget window;
@@ -57,7 +67,7 @@ int main(int argc, char **argv)
     QPushButton* stopButton = new QPushButton("Stop");
     QObject::connect(stopButton, &QPushButton::clicked, 
         solver, &Simulation2D::stop, Qt::QueuedConnection);
-    
+
     QPushButton* resetButton = new QPushButton("Reset");
     QObject::connect(resetButton, &QPushButton::clicked, 
         solver, &Simulation2D::generate, Qt::QueuedConnection);

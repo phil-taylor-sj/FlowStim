@@ -25,6 +25,6 @@ namespace fstim
             *(this->m_velocity)
         );
 
-        std::cout << maxCo << std::endl;
+        //std::cout << maxCo << std::endl;
     }
 }

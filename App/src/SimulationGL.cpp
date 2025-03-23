@@ -10,7 +10,7 @@ SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(p
 void SimulationGL::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.5f, 0.5f, 0.5f, 0.f);
+    glClearColor(0.1f, 0.1f, 0.1f, 0.f);
 
     this->m_cellVao.create();
     this->m_cellVao.bind();
@@ -91,6 +91,8 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
 
     //unsigned int total = this->m_nCells * 4;
     unsigned int total = this->m_nVertices;
+    
+    /**
     std::vector<float> colours(total * 3);
     for (unsigned int vId = 0; vId < total; vId++)
     {
@@ -98,10 +100,11 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
         //colours[vId * 3 + 1] = (vId >= total / 2) ? 0.f : 1.f;
         //colours[vId * 3 + 2] = (vId >= total / 2) ? 1.f : 0.f;
         float velocity = (*m_velocity)[vId].mag();
-        if (velocity > 0.)
+        if (velocity >= 0.f)
         {
-            colours[vId * 3 + 1] = 0.f;
-            colours[vId * 3 + 2] = 1.f * abs(velocity) / 1.f; 
+            float value = std::min(1.f * abs(velocity) / 1.f, 1.f);
+            colours[vId * 3 + 1] = 1.f - value;
+            colours[vId * 3 + 2] = value; 
         }
         else
         {
@@ -109,15 +112,24 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
             colours[vId * 3 + 2] = 0.f;
             colours[vId * 3 + 1] = 1.f * abs(velocity) / 1.f; 
         }
-        
-
     }
-
-    //m_cellColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
     m_gridColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    */
 
+    std::vector<float> values(this->m_nVertices);
+    for (unsigned int vId = 0; vId < total; vId++)
+    {
+        values[vId] = (*m_velocity)[vId].mag();
+        //values[vId] = (float)vId - 100.0;
+    }
+
+    m_gridColourBuffer.allocate(values.data(), values.size() * sizeof(float));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    //m_cellColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
     this->m_gridVao.release();
 }
 
@@ -130,6 +142,13 @@ void SimulationGL::m_drawField()
 {
     this->m_shader->bind();
     this->m_gridVao.bind();
+    int loc_maxValue = m_shader->uniformLocation("u_maxValue");
+    int loc_minValue = m_shader->uniformLocation("u_minValue");
+    assert(loc_maxValue != -1);
+    assert(loc_minValue != -1);
+    m_shader->setUniformValue(loc_maxValue, 1.f);
+    m_shader->setUniformValue(loc_minValue, 0.f);
+
     glDrawElements(GL_TRIANGLES, this->m_nCells * 6, GL_UNSIGNED_INT, nullptr);
     this->m_gridVao.release();
 }
@@ -257,8 +276,10 @@ void SimulationGL::m_createShader()
     //this->m_fragmentShader->compileSourceCode(QString::fromStdString(fragmentShader));
     //this->m_shader->addShader(this->m_vertexShader.get());
     //this->m_shader->addShader(this->m_fragmentShader.get());
-    m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vertex.shader");
+    m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vertexTest.shader");
     m_shader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fragment.shader");
+    m_shader->link();
+
     //this->m_shader = ShaderGL::createShader(vertexShader, fragmentShader); 
     //glUseProgram(this->m_shader);
 

@@ -1,8 +1,10 @@
 #pragma once
 
-#include <QWidget>
 #include <QDebug>
 #include <QTimer>
+
+#include <chrono>
+#include <thread>
 
 #include <VecPlus/Vec2.h>
 #include <Core/Domain/MeshFactory.h>
@@ -10,15 +12,17 @@
 #include <Core/Solver/BurgersSolver.h>
 #include <Core/Domain/FaceSetFactory.h>
 
-#include <MeshData.h>
+#include <AppQML/MeshData.h>
 
 
-class Simulation2D : public QObject
+class QFlowSolver : public QObject
 {
     Q_OBJECT
 public:
-    explicit Simulation2D(QObject *parent = nullptr);
-    ~Simulation2D();
+    void run();
+
+    explicit QFlowSolver(QObject *parent = nullptr);
+    ~QFlowSolver();
 
 public slots:
     void start();
@@ -27,7 +31,7 @@ public slots:
 
 signals:
     void sendMesh(std::shared_ptr<MeshData> data);
-    void sendVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> data);
+    void sendField(std::shared_ptr<std::vector<vecp::Vec2f>> data);
     void sendMaxCFL();
 
 private:
@@ -36,6 +40,7 @@ private:
     std::unique_ptr<fstim::BurgersSolver> m_solver = nullptr;
     
     QTimer* m_timer;
+    std::atomic<bool> m_pause = true;
 
     std::mutex m_mutex;
     std::mutex m_timerMutex;

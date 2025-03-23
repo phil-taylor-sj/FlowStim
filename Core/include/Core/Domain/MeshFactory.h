@@ -1,5 +1,8 @@
 #pragma once 
 
+#include <stdexcept>
+#include <format>
+
 #include <VecPlus/Vec2.h>
 
 #include <Core/Domain/Cell.h>
