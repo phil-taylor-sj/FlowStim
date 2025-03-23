@@ -8,6 +8,8 @@ For this project, the Finite-Volume methods is implemented in C++, and developed
 
 ### The Physics
 
+The tutorial '12 Steps to Navier-Stokes' [Lorena Barber](https://lorenabarba.com/blog/cfd-python-12-steps-to-navier-stokes/) is an excellent source for those unfamiliar with the general principles of Computational Fluid Dynamics. It provides a detailed step-by-step outline a basic solver implementation in Python, using the mesh-based Finite-Difference Method.
+
 ## Governing Equations
 
 The momentum-conservation (Navier-Stokes) equations are the most critical governing equations in fluid mechanics. They relate the Advaction, Diffusion, Pressure and Source terms together. Although they cannot be solved directly, there are a wide array of numerical methods for discretising the euqations such that they can be solved iteratively. Collectively, these methods form the field fo Computational Fluid Mechanics. 
