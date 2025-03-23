@@ -7,7 +7,7 @@ This project was inspired by the 'coding advanture' of [Sebastian Lague](https:/
 
 ### The Physics
 
-The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equation for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoinitng Faces. 
+The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equationz for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoining Faces.
 
 ### Organisation
 
