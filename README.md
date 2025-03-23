@@ -8,12 +8,20 @@ For this project, the Finite-Volume methods is implemented in C++, and developed
 
 ### The Physics
 
-The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equationz for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoining Faces.
+## Governing Equations
+
+The momentum-conservation (Navier-Stokes) equations are the most critical governing equations in fluid mechanics. They relate the Advaction, Diffusion, Pressure and Source terms together. Although they cannot be solved directly, there are a wide array of numerical methods for discretising the euqations such that they can be solved iteratively. Collectively, these methods form the field fo Computational Fluid Mechanics. 
 
 <p align="center">
 	<img src="https://www.quantamagazine.org/wp-content/uploads/2018/01/Navier-StokesEquation_560.jpg" alt="Logo" width="600"/>
 </p>
 *Image source: [Quanta](https://www.quantamagazine.org/what-makes-the-hardest-equations-in-physics-so-difficult-20180116/)*
+
+## Finite-Volume Method
+
+
+The Finite-Volume Method is a mesh based approach to solving the momentum-conservation equationz for fluid flow. The domain is divided into a number of control volumes (Cells), which are connected through adjoining Faces.
+
 
 ### Installation
 
