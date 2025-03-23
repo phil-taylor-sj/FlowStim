@@ -21,7 +21,7 @@ The momentum-conservation (Navier-Stokes) equations are the most critical govern
 
 The Finite-Volume Method approaches this problem by first breaking down the singluar flow domain into many thousands/millions of control volumes (Cells). Together these volumes (Cells) form the mesh of the domain. This is in contrast to the meshless [SPH](https://en.wikipedia.org/wiki/Smoothed-particle_hydrodynamics) approach which aims to model fluid as a collection of particles in a continous domain. This is also in contrast to the mesh-based [Finite-Difference](https://www.cfd-online.com/Wiki/Finite_difference) method, where the domain is represented by a series of discrete points 
 
-# Organisation
+# Structure
 
 The code has been divided into two (actually three) libraries; one library for the numerical modelling code (Core), and one library for the graphical user interface (App). There is also a new library for a potential alternaitve to the current user interface; this is the AppQML library, which implements a GUI using the more modern QtQuick framework.
 
@@ -30,7 +30,8 @@ The following table outlines all libraries that are currentyl implemented.
 | Application | Library | Features | Status
 | --- |--- | --- | --- |
 | Core | Domain | Builds and validates a mesh, which comprises of a collection of Cells, Faces, Verticies, and boundary sets, encapsulated within a Mesh class object. A MeshFactory class abstracts out all functionaltiy for Mesh class construction. | Full functionality for creating a 2d structured mesh. |
-|  |  |  |  |
+|  | Field | Constructs and manages all variable fields (i.e. velocity and pressure), for the domain. A 'FieldEquation' class encapsulates all cell center values and boundary conditions which must map to the Cells and boundaries in a corresponding Mesh class object. The 'FieldEquation' class also emcapsulates all discretisation schemes for a specific field, which are implements as components through composition | Fully functions for constructing 2D velocity fields with 1st and 2nd order spatial discretisation, and implicit temporal schemes. |
+
 
 
 # Installation
