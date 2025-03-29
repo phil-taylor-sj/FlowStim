@@ -1,3 +1,5 @@
+#pragma once
+
 #include <VecPlus/Vec2.h>
 #include <Core/Field/Field.h>
 #include <Core/Domain/Mesh.h>
