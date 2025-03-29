@@ -9,6 +9,7 @@ add_library(Solver OBJECT
     JacobiMethod.cpp
     JacobiScalarMethod.cpp
     JacobiVectorMethod.cpp
+    RhieChow.cpp
     )
 
 target_link_libraries(Solver VecPlus)
