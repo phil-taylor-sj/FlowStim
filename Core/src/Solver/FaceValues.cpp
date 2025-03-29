@@ -43,7 +43,11 @@ namespace fstim
                     break;
             }
         }
-        
+
         return std::move(faceValues)
     }
+
+    template class FaceValues<double>;
+    
+    template class FaceValues<vecp::Vec2d>;
 }

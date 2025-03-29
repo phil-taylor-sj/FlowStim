@@ -61,4 +61,8 @@ namespace fstim
 
         return std::move(momentum)
     }
+
+    template class RhieChow<double>;
+
+    template class RhieChow<vecp::Vec2d>;
 }
