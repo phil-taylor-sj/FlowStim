@@ -3,11 +3,11 @@
 namespace fstim
 {
     template <typename T>
-    std::unique_ptr<T[]> interpolate(const Field<T>& field, const Mesh& mesh)
+    std::unique_ptr<T[]> FaceValues<T>::interpolate(const Field<T>& field, const Mesh& mesh)
     {
-        std::unique_ptr<T[]> faceValues = std::make_unique<T[]>(mesh.nFaces)
+        std::unique_ptr<T[]> faceValues = std::make_unique<T[]>(mesh.nFaces);
 
-        const T* cellValues = field.getValues();
+        const T* cellValues = field.readValues();
 
         for (int faceId = 0; faceId < mesh.nFaces; faceId++)
         {
@@ -18,15 +18,15 @@ namespace fstim
             if (face.neighId != -1)
             {
                 // --- Replace ---
-                T ownerCenter = mesh.cells[face.ownerId].center;
-                T neighCenter = mesh.cells[face.neighId].center;
+                vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
+                vecp::Vec2d neighCenter = mesh.cells[face.neighId].center;
                 
                 double internalWeight = (ownerCenter - neighCenter).mag() / 
                     (ownerCenter - face.center).mag();
                 // --------------
 
-                faceValues[faceId] = momentum[face.ownerId] * internalWeight
-                    + momentum[face.neighId] * (1. - internalWeight);          
+                faceValues[faceId] = cellValues[face.ownerId] * internalWeight
+                    + cellValues[face.neighId] * (1. - internalWeight);          
 
                 continue;
             }
@@ -44,7 +44,7 @@ namespace fstim
             }
         }
 
-        return std::move(faceValues)
+        return std::move(faceValues);
     }
 
     template class FaceValues<double>;

@@ -11,6 +11,7 @@ add_library(Solver OBJECT
     JacobiVectorMethod.cpp
     RhieChow.cpp
     FaceValues.cpp
+    PressureExplicit.cpp
     )
 
 target_link_libraries(Solver VecPlus)

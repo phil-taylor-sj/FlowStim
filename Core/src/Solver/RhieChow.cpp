@@ -17,8 +17,8 @@ namespace fstim
             if (face.neighId != -1)
             {
                 // --- Replace ---
-                T ownerCenter = mesh.cells[face.ownerId].center;
-                T neighCenter = mesh.cells[face.neighId].center;
+                vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
+                vecp::Vec2d neighCenter = mesh.cells[face.neighId].center;
                 
                 double internalWeight = (ownerCenter - neighCenter).mag() / 
                     (ownerCenter - face.center).mag();
@@ -30,7 +30,7 @@ namespace fstim
                 continue;
             }
             
-            faceValues[faceId] = momentum[face.ownerId]
+            faceValues[faceId] = momentum[face.ownerId];
         }
 
         return std::move(faceValues);
@@ -55,11 +55,11 @@ namespace fstim
                 sum -= pair.second * values[pair.first];
             }
             sum += rhs[cellId];
-            sum /= lhs[cellId][cellId];
+            sum /= lhs[cellId].at(cellId);
             momentum[cellId] = sum;
         }
 
-        return std::move(momentum)
+        return std::move(momentum);
     }
 
     template class RhieChow<double>;
