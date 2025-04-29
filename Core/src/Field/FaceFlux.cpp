@@ -39,6 +39,8 @@ namespace fstim
             double cellRho = (rho == nullptr) ? 1. : rho[face.ownerId];
             std::tuple<BcType, vecp::Vec2d> fluxBc = velocity.getBc(mesh.getFaceSetId(faceId));
             switch (std::get<0>(fluxBc)) {
+                case BcType::NONE:
+                    [[fallthrough]];
                 case BcType::ZEROGRADIENT:
                     flux[faceId] = face.normal.dot(values[face.ownerId] * cellRho);
                     break;

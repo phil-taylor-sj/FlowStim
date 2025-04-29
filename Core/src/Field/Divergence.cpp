@@ -47,6 +47,8 @@ namespace fstim
                 // Retrieve boudnary condition and update accordingly
                 std::tuple<BcType, T> bc = field.getBc(mesh.getFaceSetId(face.id));              
                 switch (std::get<0>(bc)) {
+                    case BcType::NONE:
+                        [[fallthrough]];
                     case BcType::ZEROGRADIENT:
                         lhs[cellId][cellId] += flux;
                         break;
