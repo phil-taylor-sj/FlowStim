@@ -8,18 +8,20 @@ namespace fstim
     )
     {
         std::unique_ptr<vecp::Vec2d[]> sources = std::make_unique<vecp::Vec2d[]>(mesh.nCells);
-
-        std::unique_ptr<double[]> faceValues = FaceValues<double>::interpolate(pressure, mesh);
+        std::unique_ptr<vecp::Vec2d[]> faceGradients = FaceValues<double>::gradient(pressure, mesh);
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
         {
+            vecp::Vec2d sum {};
+
             const Cell& cell = mesh.cells[cellId];
+            for (int faceId: cell.faceId)
+            {
+                sum += faceGradients[faceId];
+            }
+            sources[cellId] = sum / cell.faceId.size();
 
-            const Face west = mesh.faces[cell.faceId[int(Compass::WEST)]];
-            const Face east = mesh.faces[cell.faceId[int(Compass::EAST)]];
-            const Face north = mesh.faces[cell.faceId[int(Compass::NORTH)]];
-            const Face south = mesh.faces[cell.faceId[int(Compass::SOUTH)]];
-
+            /*
             double xGradient =  (faceValues[east.id] - faceValues[west.id])
                     / (east.center.x - west.center.x);
             double yGradient =  (faceValues[south.id] - faceValues[north.id])
@@ -29,6 +31,7 @@ namespace fstim
                 cell.volume * xGradient,
                 cell.volume * yGradient
             );
+            */
         }
 
         return std::move(sources);

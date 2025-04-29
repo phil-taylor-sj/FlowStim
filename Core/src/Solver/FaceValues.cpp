@@ -5,6 +5,7 @@ namespace fstim
     template <typename T>
     std::unique_ptr<T[]> FaceValues<T>::interpolate(const Field<T>& field, const Mesh& mesh)
     {
+
         std::unique_ptr<T[]> faceValues = std::make_unique<T[]>(mesh.nFaces);
 
         const T* cellValues = field.readValues();
@@ -21,18 +22,19 @@ namespace fstim
                 vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
                 vecp::Vec2d neighCenter = mesh.cells[face.neighId].center;
                 
-                double internalWeight = (ownerCenter - neighCenter).mag() / 
-                    (ownerCenter - face.center).mag();
+                double internalWeight = (ownerCenter - face.center).mag() /
+                    (ownerCenter - neighCenter).mag();
                 // --------------
 
                 faceValues[faceId] = cellValues[face.ownerId] * internalWeight
                     + cellValues[face.neighId] * (1. - internalWeight);          
-
                 continue;
             }
 
             std::tuple<BcType, T> bc = field.getBc(mesh.getFaceSetId(face.id));              
             switch (std::get<0>(bc)) {
+                case BcType::NONE:
+                    [[fallthrough]];
                 case BcType::ZEROGRADIENT:
                     faceValues[faceId] = cellValues[face.ownerId];
                     break;
@@ -64,8 +66,8 @@ namespace fstim
                 vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
                 vecp::Vec2d neighCenter = mesh.cells[face.neighId].center;
                 
-                double internalWeight = (ownerCenter - neighCenter).mag() / 
-                    (ownerCenter - face.center).mag();
+                double internalWeight = (ownerCenter - face.center).mag() /
+                    (ownerCenter - neighCenter).mag();
                 // --------------
 
                 faceValues[faceId] = cellValues[face.ownerId] * internalWeight

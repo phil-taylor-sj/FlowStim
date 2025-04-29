@@ -21,6 +21,7 @@ set(TEST_SRCS
   pch.cpp
   pch.h
   Domain_Test/MeshFactory_Test.cpp
+  Solver_Test/FaceValues_Test.cpp
   Solver_Test/JacobiScalarMethod_Test.cpp
   Field_Test/FieldTolerance_Test.cpp
   Field_Test/Field_Test.cpp

@@ -5,7 +5,7 @@ namespace fstim
     template <typename T>
     std::tuple<BcType, T> Field<T>::getBc(int faceSetId) const
     {
-        if(faceSetId > this->m_boundaries.size() - 1)
+        if(faceSetId > this->m_boundaries.size() - 1 || faceSetId == -1 )
         {
             return std::make_tuple(BcType::NONE, T());
         }
