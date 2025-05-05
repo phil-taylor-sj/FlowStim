@@ -11,6 +11,7 @@
 #include <Core/Domain/Compass.h>
 #include <Core/Domain/GridProfileEquidistant.h>
 #include <Core/Domain/VertexMapping.h>
+#include <Core/Domain/MeshDomainData.h>
 
 using namespace vecp;
 
@@ -19,6 +20,7 @@ namespace fstim
     class MeshFactory
     {
     public:
+
         std::unique_ptr<Mesh> operator()(Vec2i size, Vec2d length);
         
         MeshFactory() : m_profile(std::make_unique<GridProfileEquidistant>()) {};

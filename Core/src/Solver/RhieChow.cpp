@@ -5,33 +5,9 @@ namespace fstim
     template <typename T>
     std::unique_ptr<T[]> RhieChow<T>::interpolate(Field<T>& field, Mesh& mesh)
     {   
-        std::unique_ptr<T[]> faceValues = std::make_unique<T[]>(mesh.nFaces);
         std::unique_ptr<T[]> momentum = RhieChow<T>::sumMomentum(field);
 
-        for (int faceId = 0; faceId < mesh.nFaces; faceId++)
-        {
-            const Face& face = mesh.faces[faceId];
-
-            // TODO: Add an owner weight property to each cell to remove need
-            // for weight to be recaluclated during simulations.
-            if (face.neighId != -1)
-            {
-                // --- Replace ---
-                vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
-                vecp::Vec2d neighCenter = mesh.cells[face.neighId].center;
-                
-                double internalWeight = (ownerCenter - neighCenter).mag() / 
-                    (ownerCenter - face.center).mag();
-                // --------------
-
-                faceValues[faceId] = momentum[face.ownerId] * internalWeight
-                    + momentum[face.neighId] * (1. - internalWeight);          
-
-                continue;
-            }
-            
-            faceValues[faceId] = momentum[face.ownerId];
-        }
+        std::unique_ptr<T[]> faceValues = FaceValues<T>::interpolate(momentum.get(), mesh);
 
         return std::move(faceValues);
     }
@@ -60,6 +36,24 @@ namespace fstim
         }
 
         return std::move(momentum);
+    }
+
+    template <typename T>
+    std::unique_ptr<T[]> RhieChow<T>::interpolatePrimaryCoefficients(Field<T>& field, Mesh& mesh)
+    {
+        const std::map<int, T>* lhs = field.readLeft();
+        std::unique_ptr<T[]> primaryCellCoefficients = std::make_unique<T[]>(field.nCells);
+
+        for (int cellId = 0; cellId < field.nCells; cellId++)
+        {
+            primaryCellCoefficients[cellId] = lhs[cellId].at(cellId);
+        }
+
+        std::unique_ptr<T[]> faceValues = FaceValues<T>::interpolate(
+            primaryCellCoefficients.get(), mesh
+        );
+
+        return std::move(faceValues);
     }
 
     template class RhieChow<double>;

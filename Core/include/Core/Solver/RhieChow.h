@@ -3,6 +3,7 @@
 #include <VecPlus/Vec2.h>
 #include <Core/Field/Field.h>
 #include <Core/Domain/Mesh.h>
+#include <Core/Solver/FaceValues.h>
 
 namespace fstim
 {
@@ -51,6 +52,8 @@ namespace fstim
          *         The array size matches the number of cells in the mesh (nCells).
          */
         static std::unique_ptr<T[]> sumMomentum(Field<T>& field);
+
+        static std::unique_ptr<T[]> interpolatePrimaryCoefficients(Field<T>& field, Mesh& mesh);
 
     };
 }
