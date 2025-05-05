@@ -8,7 +8,7 @@ namespace fstim
     )
     {
         std::unique_ptr<vecp::Vec2d[]> sources = std::make_unique<vecp::Vec2d[]>(mesh.nCells);
-        std::unique_ptr<vecp::Vec2d[]> faceGradients = FaceValues<double>::gradient(pressure, mesh);
+        std::unique_ptr<vecp::Vec2d[]> faceGradients = FaceGradients<double>::calculate(pressure, mesh);
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
         {

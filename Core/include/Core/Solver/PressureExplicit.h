@@ -3,7 +3,7 @@
 #include <VecPlus/Vec2.h>
 #include <Core/Field/Field.h>
 #include <Core/Domain/Mesh.h>
-#include <Core/Solver/FaceValues.h>
+#include <Core/Solver/FaceGradients.h>
 #include <Core/Domain/Compass.h>
 
 namespace fstim

@@ -34,7 +34,5 @@ namespace fstim
         static std::unique_ptr<T[]> interpolate(const Field<T>& field, const Mesh& mesh);
 
         static std::unique_ptr<T[]> interpolate(const T* cellValues, const Mesh& mesh);
-
-        static std::unique_ptr<vecp::Vec2d[]> gradient(const Field<T>& field, const Mesh& mesh);
     };
 }

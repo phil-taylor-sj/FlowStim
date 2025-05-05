@@ -11,6 +11,7 @@ add_library(Solver OBJECT
     JacobiVectorMethod.cpp
     RhieChow.cpp
     FaceValues.cpp
+    FaceGradients.cpp
     PressureExplicit.cpp
     )
 

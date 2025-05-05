@@ -61,46 +61,6 @@ namespace FaceValue_Tests
         vecp::Vec2d(1., 1.), vecp::Vec2d(4., 4.), vecp::Vec2d(0.2, 0.4)
     ));
 
-    class FaceGradientsZeroGradient_F : public FaceValues_Fixture {};
-    TEST_P(FaceGradientsZeroGradient_F, CorrectFaceGradients)
-    {
-        //std::set<int> boundaryIds = {
-        //    0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18, 28, 29, 30
-        //};
-        
-        std::vector<vecp::Vec2d> expected = {
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0), 
-            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.4, 0.0),
-            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0),
-            vecp::Vec2d(0.4, 0.0), vecp::Vec2d(0.0, 0.0),
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0),
-            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-    
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 3.6),
-            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 2.8),
-            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 3.6),
-            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, -6.2),
-            vecp::Vec2d(0.0, -6.2), vecp::Vec2d(0.0, -5.4),
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
-            vecp::Vec2d(0.0, 0.0)
-        };
-    
-        std::unique_ptr<vecp::Vec2d[]> output = FaceValues<double>::gradient(*field.get(), *mesh.get());
-
-        for (int id = 0; id < 31; id++)
-        {
-            ASSERT_NEAR(expected[id].x / cellWidth.x, output[id].x, 1e-06);
-            ASSERT_NEAR(expected[id].y / cellWidth.y, output[id].y, 1e-06);
-        }
-    }
-
-    INSTANTIATE_TEST_SUITE_P(CorrectFaceGradients, FaceGradientsZeroGradient_F, testing::Values(
-        vecp::Vec2d(1., 1.), vecp::Vec2d(4., 4.), vecp::Vec2d(0.2, 0.4)
-    ));
-
 
     class FaceValuesFixedValueBC_F : public FaceValues_Fixture {};
     TEST_P(FaceValuesFixedValueBC_F, CorrectFaceValuesFixedValueBC)
@@ -130,54 +90,6 @@ namespace FaceValue_Tests
     }
 
     INSTANTIATE_TEST_SUITE_P(CorrectFaceValuesFixedValueBC, FaceValuesFixedValueBC_F, testing::Values(
-        vecp::Vec2d(1., 1.), vecp::Vec2d(4., 4.), vecp::Vec2d(0.2, 0.4)
-    ));
-
-    class FaceGradientsFixedValueBC_F : public FaceValues_Fixture {};
-    TEST_P(FaceGradientsFixedValueBC_F, CorrectFaceGradientsFixedValueBC)
-    {
-        std::set<int> boundaryIds = {
-            0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18, 28, 29, 30
-        };
-        
-        std::vector<vecp::Vec2d> expected = {
-            vecp::Vec2d(-4.6, 0.0), vecp::Vec2d(1.2, 0.0), 
-            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-            
-            vecp::Vec2d(2.6, 0.0), vecp::Vec2d(0.4, 0.0),
-            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-            
-            vecp::Vec2d(8.2, 0.0), vecp::Vec2d(1.2, 0.0),
-            vecp::Vec2d(0.4, 0.0), vecp::Vec2d(0.0, 0.0),
-            
-            vecp::Vec2d(-4.2, 0.0), vecp::Vec2d(1.2, 0.0),
-            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-    
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
-            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 3.6),
-            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 2.8),
-            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 3.6),
-            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, -6.2),
-            vecp::Vec2d(0.0, -6.2), vecp::Vec2d(0.0, -5.4),
-            vecp::Vec2d(0.0, -12.8), vecp::Vec2d(0.0, -15.2),
-            vecp::Vec2d(0.0, -17.6)
-        };
-    
-        FaceSetFactory::defineNewFaceSetByCompass(*mesh.get(), Compass::NORTH);
-        FaceSetFactory::defineNewFaceSetByCompass(*mesh.get(), Compass::WEST);
-        field->addBc(BcType::FIXEDVALUE, -5.); // north
-        field->addBc(BcType::FIXEDVALUE, 3.5); // west
-
-        std::unique_ptr<vecp::Vec2d[]> output = FaceValues<double>::gradient(*field.get(), *mesh.get());
-
-        for (int id = 0; id < 31; id++)
-        {
-            ASSERT_NEAR(expected[id].x / cellWidth.x, output[id].x, 1e-06);
-            ASSERT_NEAR(expected[id].y / cellWidth.y, output[id].y, 1e-06);
-        }
-    }
-
-    INSTANTIATE_TEST_SUITE_P(CorrectFaceGradientsFixedValueBC, FaceGradientsFixedValueBC_F, testing::Values(
         vecp::Vec2d(1., 1.), vecp::Vec2d(4., 4.), vecp::Vec2d(0.2, 0.4)
     ));
 
