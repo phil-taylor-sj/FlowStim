@@ -35,6 +35,33 @@ namespace FaceValue_Tests
         vecp::Vec2d cellWidth;
     };
 
+    class FaceValuesFixedValue_Fixture : public ::testing::TestWithParam<vecp::Vec2d>
+    {
+    protected:
+        void SetUp() override 
+        {
+            // Set mesh properties and build mesh.
+            vecp::Vec2i size {3, 4};
+            cellWidth =  GetParam();
+            vecp::Vec2d length = size.toDouble() * cellWidth;
+            MeshFactory factory = MeshFactory();
+            mesh = factory(vecp::Vec2i(3, 4), length);
+
+            // Create field with specified cell centre values.
+            std::vector<double> test_values = {
+                1.2, 2.4, 3.6, 4.8, 5.2, 6.4,
+                7.6, 8.8, 9.2, 1.4, 2.6, 3.8
+            };
+
+            field = std::make_unique<Field<double>>(mesh->nCells);
+            double* values = field->writeValues();
+            std::copy(test_values.begin(), test_values.end(), values);
+        }
+        std::unique_ptr<Mesh> mesh = nullptr;
+        std::unique_ptr<Field<double>> field = nullptr;
+        vecp::Vec2d cellWidth;
+    };
+
     class FaceValuesZeroGradient_F : public FaceValues_Fixture {};
     TEST_P(FaceValuesZeroGradient_F, CorrectFaceValues)
     {
@@ -61,24 +88,45 @@ namespace FaceValue_Tests
         vecp::Vec2d(1., 1.), vecp::Vec2d(4., 4.), vecp::Vec2d(0.2, 0.4)
     ));
 
-    std::vector<vecp::Vec2d> expected_gradients = {
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0), 
-        vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.4, 0.0),
-        vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0),
-        vecp::Vec2d(0.4, 0.0), vecp::Vec2d(0.0, 0.0),
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0),
-        vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
+    class FaceGradientsZeroGradient_F : public FaceValues_Fixture {};
+    TEST_P(FaceGradientsZeroGradient_F, CorrectFaceGradients)
+    {
+        //std::set<int> boundaryIds = {
+        //    0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18, 28, 29, 30
+        //};
+        
+        std::vector<vecp::Vec2d> expected = {
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0), 
+            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.4, 0.0),
+            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0),
+            vecp::Vec2d(0.4, 0.0), vecp::Vec2d(0.0, 0.0),
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(1.2, 0.0),
+            vecp::Vec2d(1.2, 0.0), vecp::Vec2d(0.0, 0.0),
+    
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 3.6),
+            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 2.8),
+            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 3.6),
+            vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, -6.2),
+            vecp::Vec2d(0.0, -6.2), vecp::Vec2d(0.0, -5.4),
+            vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
+            vecp::Vec2d(0.0, 0.0)
+        };
+    
+        std::unique_ptr<vecp::Vec2d[]> output = FaceValues<double>::gradient(*field.get(), *mesh.get());
 
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 3.6),
-        vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 2.8),
-        vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, 3.6),
-        vecp::Vec2d(0.0, 2.8), vecp::Vec2d(0.0, -6.2),
-        vecp::Vec2d(0.0, -6.2), vecp::Vec2d(0.0, -5.4),
-        vecp::Vec2d(0.0, 0.0), vecp::Vec2d(0.0, 0.0),
-        vecp::Vec2d(0.0, 0.0)
-    };
+        for (int id = 0; id < 31; id++)
+        {
+            ASSERT_NEAR(expected[id].x / cellWidth.x, output[id].x, 1e-06);
+            ASSERT_NEAR(expected[id].y / cellWidth.y, output[id].y, 1e-06);
+        }
+    }
+
+    INSTANTIATE_TEST_SUITE_P(CorrectFaceGradients, FaceGradientsZeroGradient_F, testing::Values(
+        vecp::Vec2d(1., 1.), vecp::Vec2d(4., 4.), vecp::Vec2d(0.2, 0.4)
+    ));
+
 
 }
