@@ -30,7 +30,7 @@ namespace fstim
     {
     public:
         static std::unique_ptr<vecp::Vec2d[]> calculateStructured(
-            const Field<double>& pressure, const Mesh& mesh 
+            const Field<double>& pressure, const Mesh2d& mesh 
         );
 
 

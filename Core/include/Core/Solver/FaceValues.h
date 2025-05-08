@@ -31,8 +31,8 @@ namespace fstim
      * \return A unique pointer to an array of interpolated face values. The array size matches the 
      *         total number of faces in the mesh.
     */
-        static std::unique_ptr<T[]> interpolate(const Field<T>& field, const Mesh& mesh);
+        static std::unique_ptr<T[]> interpolate(const Field<T>& field, const Mesh2d& mesh);
 
-        static std::unique_ptr<T[]> interpolate(const T* cellValues, const Mesh& mesh);
+        static std::unique_ptr<T[]> interpolate(const T* cellValues, const Mesh2d& mesh);
     };
 }

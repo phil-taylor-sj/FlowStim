@@ -10,13 +10,13 @@ namespace fstim
     public:
         double static calculateMax(
             double timeStep,
-            const Mesh& mesh,
+            const Mesh2d& mesh,
             const VectorField& velocity
         );
 
         double static calculateAve(
             double timeStep,
-            const Mesh& mesh,
+            const Mesh2d& mesh,
             const VectorField& velocity
         );   
     };

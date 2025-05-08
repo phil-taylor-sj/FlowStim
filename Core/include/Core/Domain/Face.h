@@ -13,7 +13,7 @@ namespace fstim
      * area, center position, boundary status, and associated cell identifiers. It provides a constructor to initialize
      * the face with a given ID and a destructor for cleanup.
      */
-    class Face
+    class Face2d
     {
     public:
         /**
@@ -52,13 +52,13 @@ namespace fstim
         /**
          * \brief Constructor that initializes the Face with a given ID.
          */
-        Face() : id(-1), ownerId(-1), neighId(-1) {};
+        Face2d() : id(-1), ownerId(-1), neighId(-1) {};
 
         /**
          * \attention Destructor for the Face class.
          *
          * Cleans up any resources used by the Face object.
          */
-        ~Face() {};
+        ~Face2d() {};
     };
 }

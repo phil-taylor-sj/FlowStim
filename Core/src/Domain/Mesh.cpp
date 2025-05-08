@@ -4,7 +4,7 @@
 
 namespace fstim
 {
-    int Mesh::addFaceSet(vecp::Vec2d center, vecp::Vec2d lengths)
+    int Mesh2d::addFaceSet(vecp::Vec2d center, vecp::Vec2d lengths)
     {
         std::set<int> newSet;
         this->m_addFacesToSet(newSet, center, lengths);
@@ -12,7 +12,7 @@ namespace fstim
         return m_faceSets.size() - 1;
     }
 
-    int Mesh::addFaceSet(std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> boundaries)
+    int Mesh2d::addFaceSet(std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> boundaries)
     {
         std::set<int> newSet;
         for (std::tuple<vecp::Vec2d, vecp::Vec2d> boundary : boundaries)
@@ -24,7 +24,7 @@ namespace fstim
         return m_faceSets.size() - 1;
     }
 
-    void Mesh::m_addFacesToSet(std::set<int>& newSet, vecp::Vec2d center, vecp::Vec2d lengths)
+    void Mesh2d::m_addFacesToSet(std::set<int>& newSet, vecp::Vec2d center, vecp::Vec2d lengths)
     {
         for (int id = 0; id < nFaces; id++)
         {
@@ -38,7 +38,7 @@ namespace fstim
         }
     }
 
-    int Mesh::getFaceSetId(int faceId) const
+    int Mesh2d::getFaceSetId(int faceId) const
     {
         for (int setId = 0; setId < m_faceSets.size(); setId++)
         {
@@ -50,12 +50,10 @@ namespace fstim
         return -1;
     }
 
-    Mesh::Mesh(int nCellsIn, int nFacesIn, int nVerticesIn,
-        std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, std::unique_ptr<Vertex[]> verticesIn,
-        vecp::Vec2d lengthIn) 
-        : nCells(nCellsIn), nFaces(nFacesIn), nVertices(nVerticesIn), 
-        cells(std::move(cellsIn)), faces(std::move(facesIn)), vertices(std::move(verticesIn)),
-        length(lengthIn)
+    Mesh2d::Mesh2d(MeshDomainData& meshData) 
+        : nCells(meshData.nCells), nFaces(meshData.nFaces), nVertices(meshData.nVertices), 
+        cells(std::move(meshData.cells)), faces(std::move(meshData.faces)), vertices(std::move(meshData.vertices)),
+        length(meshData.length)
     {
         m_faceSets.resize(0);        
     }

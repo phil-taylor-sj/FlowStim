@@ -11,7 +11,7 @@ namespace fstim
         };
     }
 
-    std::vector<Vertex> VertexMapping::createVertices(Cell* cells, size_t nCells, Face* faces, size_t nFaces)
+    std::vector<Vertex> VertexMapping::createVertices(Cell2d* cells, size_t nCells, Face2d* faces, size_t nFaces)
     {
         std::vector<Vertex> allVertices = VertexMapping::m_getAllVertices(faces, nFaces);
         std::vector<size_t> indexMapping(allVertices.size());
@@ -29,12 +29,12 @@ namespace fstim
         return std::move(vertices);
     }
 
-    std::vector<Vertex> VertexMapping::m_getAllVertices(Face* faces, int nFaces)
+    std::vector<Vertex> VertexMapping::m_getAllVertices(Face2d* faces, int nFaces)
     {
         std::vector<Vertex> vertices(nFaces * 2);
         for (int faceId = 0; faceId < nFaces; faceId++)
         {
-                Face& face = faces[faceId];
+                Face2d& face = faces[faceId];
                 vecp::Vec2d tangent = (face.normal.rotate(90.)) * 0.5;
                 
                 face.vertexId[0] = faceId * 2;
@@ -73,32 +73,32 @@ namespace fstim
         return std::move(uniqueVertices);
     }
 
-    void VertexMapping::m_assignFaceVertexIds(Face* faces, size_t nFaces, const std::vector<size_t>& indexMapping)
+    void VertexMapping::m_assignFaceVertexIds(Face2d* faces, size_t nFaces, const std::vector<size_t>& indexMapping)
     {
        for (int faceId = 0; faceId < nFaces; faceId++)
        {
-            Face& face = faces[faceId];
+            Face2d& face = faces[faceId];
             face.vertexId[0] = indexMapping[face.vertexId[0]];
             face.vertexId[1] = indexMapping[face.vertexId[1]];
        }
     }
 
-    void VertexMapping::m_assignCellVertexIds(Cell* cells, size_t nCells, const Face* faces)
+    void VertexMapping::m_assignCellVertexIds(Cell2d* cells, size_t nCells, const Face2d* faces)
     {
        for (size_t cellId = 0; cellId < nCells; cellId++)
        {
-            Cell& cell = cells[cellId];
+            Cell2d& cell = cells[cellId];
             std::vector<size_t> cornerIds = {};
             for (int faceId : cell.faceId)
             {
-                const Face& face = faces[faceId];
+                const Face2d& face = faces[faceId];
                 cornerIds.push_back((cellId == face.ownerId) ? face.vertexId[0] : face.vertexId[1]);
             }
             cell.vertexId = cornerIds;
        }
     }
 
-    void VertexMapping::m_assignVertexFaceIds(const Face* faces, size_t nFaces, std::vector<Vertex>& vertices)
+    void VertexMapping::m_assignVertexFaceIds(const Face2d* faces, size_t nFaces, std::vector<Vertex>& vertices)
     {
         for (size_t faceId = 0; faceId < nFaces; faceId++)
         {
@@ -109,7 +109,7 @@ namespace fstim
         }
     }
 
-    void VertexMapping::m_assignVertexCellIds(const Cell* cells, size_t nCells, std::vector<Vertex>& vertices)
+    void VertexMapping::m_assignVertexCellIds(const Cell2d* cells, size_t nCells, std::vector<Vertex>& vertices)
     {
         for (size_t cellId = 0; cellId < nCells; cellId++)
         {

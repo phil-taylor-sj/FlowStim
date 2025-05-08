@@ -24,12 +24,12 @@ protected:
     void paintGL() override;
 
 private:
-    std::unique_ptr<const fstim::Mesh> m_mesh;
+    std::unique_ptr<const fstim::Mesh2d> m_mesh;
     vecp::Vec2d m_length;
     
     QTimer* m_timer;
     
     void m_updateCanvas();
-    void m_drawRectangle(const fstim::Cell& cell);
+    void m_drawRectangle(const fstim::Cell2d& cell);
 
 };

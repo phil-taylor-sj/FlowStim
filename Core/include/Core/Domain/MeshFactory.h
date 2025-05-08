@@ -21,7 +21,7 @@ namespace fstim
     {
     public:
 
-        std::unique_ptr<Mesh> operator()(Vec2i size, Vec2d length);
+        std::unique_ptr<Mesh2d> operator()(Vec2i size, Vec2d length);
         
         MeshFactory() : m_profile(std::make_unique<GridProfileEquidistant>()) {};
 
@@ -39,11 +39,11 @@ namespace fstim
         
         Vec2i m_getCellLocations(int id, Vec2i size);
 
-        void m_assignIds(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, Vec2i size);
+        void m_assignIds(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, Vec2i size);
 
-        void m_assignProperties(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, Vec2i size, Vec2d length);
+        void m_assignProperties(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, Vec2i size, Vec2d length);
         
-        void m_assignVertices(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, vecp::Vec2i size);
+        void m_assignVertices(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size);
 
     };
     

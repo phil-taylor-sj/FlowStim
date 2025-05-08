@@ -10,7 +10,7 @@ namespace fstim
     {
     public:
 
-        void operator()(const Mesh& mesh, Field<T>& field, const double* visc);
+        void operator()(const Mesh2d& mesh, Field<T>& field, const double* visc);
 
         Laplacian();
 

@@ -12,7 +12,7 @@ namespace fstim
     public:
 
        void operator()(
-            const Mesh& mesh, 
+            const Mesh2d& mesh, 
             Field<T>& field, 
             const VectorField& velocity,
             const double* rho = nullptr

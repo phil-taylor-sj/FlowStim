@@ -5,7 +5,7 @@ namespace fstim
     template <typename T>
     void EulerExplicit<T>::operator()( 
             double deltaT,
-            const Mesh& mesh, 
+            const Mesh2d& mesh, 
             Field<T>& field, 
             const double* rho
             )

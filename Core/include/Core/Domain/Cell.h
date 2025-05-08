@@ -15,7 +15,7 @@ namespace fstim
      * width, center position, and the IDs of the faces that make up 
      * the cell's boundaries.
      */
-    class Cell
+    class Cell2d
     {
     public:
 
@@ -72,7 +72,7 @@ namespace fstim
          * 
          * Initializes a cell with default values.
          */
-        Cell() : id(-1) {};
+        Cell2d() : id(-1) {};
 
         /**
          * \brief Parameterized constructor.
@@ -84,13 +84,13 @@ namespace fstim
          * \param iLoc The i-location of the cell (not currently used).
          * \param jLoc The j-location of the cell (not currently used).
          */
-        Cell(int cellId) : id(cellId) {};
+        Cell2d(int cellId) : id(cellId) {};
 
         /**
          * \brief Destructor.
          * 
          * Cleans up any resources used by the cell, if necessary.
          */
-        ~Cell() {};
+        ~Cell2d() {};
     };
 }

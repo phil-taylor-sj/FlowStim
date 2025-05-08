@@ -4,7 +4,7 @@ namespace fstim
 {
 
     std::unique_ptr<vecp::Vec2d[]> PressureExplicit::calculateStructured(
-        const Field<double>& pressure, const Mesh& mesh 
+        const Field<double>& pressure, const Mesh2d& mesh 
     )
     {
         std::unique_ptr<vecp::Vec2d[]> sources = std::make_unique<vecp::Vec2d[]>(mesh.nCells);
@@ -14,7 +14,7 @@ namespace fstim
         {
             vecp::Vec2d sum {};
 
-            const Cell& cell = mesh.cells[cellId];
+            const Cell2d& cell = mesh.cells[cellId];
             for (int faceId: cell.faceId)
             {
                 sum += faceGradients[faceId];

@@ -11,7 +11,7 @@ namespace fstim
     public:
        void operator()(
             double deltaT,
-            const Mesh& mesh, 
+            const Mesh2d& mesh, 
             Field<T>& field, 
             const double* rho = nullptr
             );

@@ -38,7 +38,7 @@ void Simulation::m_updateCanvas()
     update(); // Triggers a repaint
 }
 
-void Simulation::m_drawRectangle(const fstim::Cell& cell)
+void Simulation::m_drawRectangle(const fstim::Cell2d& cell)
 {
     qInfo() << "Cell Id = " << cell.id << ":" 
     << cell.vertices[0].x << cell.vertices[0].y << ",  "

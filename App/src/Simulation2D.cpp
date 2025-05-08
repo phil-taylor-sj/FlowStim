@@ -19,7 +19,7 @@ void Simulation2D::generate()
     std::lock_guard<std::mutex> guard(this->m_mutex);
     
     fstim::MeshFactory factory = fstim::MeshFactory();
-    std::unique_ptr<fstim::Mesh> mesh = factory(this->m_size, this->m_length);
+    std::unique_ptr<fstim::Mesh2d> mesh = factory(this->m_size, this->m_length);
     fstim::FaceSetFactory::fourWalls(*(mesh.get()));
     
     int nCells = mesh->nCells;
@@ -50,7 +50,7 @@ Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTime
 void Simulation2D::m_updateMeshData()
 {
     std::shared_ptr<MeshData> data = std::make_shared<MeshData>();
-    const fstim::Mesh* mesh = this->m_solver->getMesh();
+    const fstim::Mesh2d* mesh = this->m_solver->getMesh();
     data->length = mesh->length.toFloat();
     data->nCells = mesh->nCells;
     //data->vertices.resize(2 * 4 * mesh->nCells);
@@ -66,10 +66,10 @@ void Simulation2D::m_updateMeshData()
         data->vertices[id] = (position - halfLength) / (0.55f * maxLength);
     }
 
-    const fstim::Cell* begin = mesh->cells.get(); 
-    const fstim::Cell* end = begin + mesh->nCells;
+    const fstim::Cell2d* begin = mesh->cells.get(); 
+    const fstim::Cell2d* end = begin + mesh->nCells;
 
-    for (const fstim::Cell* cell = begin; cell != end; cell++)
+    for (const fstim::Cell2d* cell = begin; cell != end; cell++)
     {
         data->cellElements[cell->id] = cell->vertexId;
         //for (vecp::Vec2f vertex : cell->vertices)
@@ -86,7 +86,7 @@ void Simulation2D::m_updateMeshData()
 void Simulation2D::m_updateVelocityData()
 {
     const fstim::VectorField* field = this->m_solver->getVelocity();
-    const fstim::Mesh* mesh = this->m_solver->getMesh();
+    const fstim::Mesh2d* mesh = this->m_solver->getMesh();
     const vecp::Vec2d* velocity = field->readValues();
     
     auto data = std::make_shared<std::vector<vecp::Vec2f>>();

@@ -3,7 +3,7 @@
 
 namespace fstim
 {
-    void SolverBase::setMesh(std::unique_ptr<Mesh> mesh)
+    void SolverBase::setMesh(std::unique_ptr<Mesh2d> mesh)
     {
         this->m_mesh = std::move(mesh);
         this->m_viscosity = std::make_unique<double[]>(this->m_mesh->nCells);
@@ -21,7 +21,7 @@ namespace fstim
         }
     }
 
-    const Mesh* SolverBase::getMesh()
+    const Mesh2d* SolverBase::getMesh()
     {
         return  this->m_mesh.get();
     }
@@ -45,7 +45,7 @@ namespace fstim
 
     double SolverBase::getMaxCFL()
     {
-        Mesh& mesh = *(this->m_mesh.get());
+        Mesh2d& mesh = *(this->m_mesh.get());
         VectorField& velocity = *(this->m_velocity.get());
 
         return Courant::calculateMax(this->m_deltaTime, mesh, velocity);
@@ -53,7 +53,7 @@ namespace fstim
 
     double SolverBase::getAveCFL()
     {
-        Mesh& mesh = *(this->m_mesh.get());
+        Mesh2d& mesh = *(this->m_mesh.get());
         VectorField& velocity = *(this->m_velocity.get());
 
         return Courant::calculateAve(this->m_deltaTime, mesh, velocity);
@@ -69,7 +69,7 @@ namespace fstim
     {
         field.clear();
 
-        Mesh& mesh = *(this->m_mesh.get());
+        Mesh2d& mesh = *(this->m_mesh.get());
         VectorField& velocity = *(this->m_velocity.get());
         double* viscosity = this->m_viscosity.get();
 

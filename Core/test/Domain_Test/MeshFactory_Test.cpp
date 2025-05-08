@@ -14,7 +14,7 @@ namespace Domain_Tests
             MeshFactory factory = MeshFactory();
             mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
         }
-        std::unique_ptr<const Mesh> mesh;
+        std::unique_ptr<const Mesh2d> mesh;
     };
 
     class SmallMeshEqualParamF : public ::testing::TestWithParam<std::tuple<vecp::Vec2i, vecp::Vec2d>>
@@ -31,7 +31,7 @@ namespace Domain_Tests
         }
         vecp::Vec2i size;
         vecp::Vec2d length;
-        std::unique_ptr<const Mesh> mesh;
+        std::unique_ptr<const Mesh2d> mesh;
         double dx, dy;
     };
 
@@ -53,7 +53,7 @@ namespace Domain_Tests
             
             mesh->addFaceSet(walls); 
         }
-        std::unique_ptr<Mesh> mesh;
+        std::unique_ptr<Mesh2d> mesh;
     };
 
     class SmallMeshEqualCellCenter_F : public SmallMeshEqualParamF {};
@@ -176,7 +176,7 @@ namespace Domain_Tests
         };
         for (int id = 0; id < 31; id++)
         {
-            const Face& face = mesh->faces[id];
+            const Face2d& face = mesh->faces[id];
             Vec2d centerOne = mesh->cells[face.ownerId].center;
             Vec2d centerTwo = (face.neighId != -1)
                 ? mesh->cells[face.neighId].center
@@ -243,7 +243,7 @@ namespace Domain_Tests
             //FAIL() << err.what();
         }
 
-        std::unique_ptr<const Mesh> mesh = factory(size, length);
+        std::unique_ptr<const Mesh2d> mesh = factory(size, length);
         ASSERT_EQ(mesh->nVertices, expected);
 
         for (int id = 0; id < mesh->nVertices; id++)

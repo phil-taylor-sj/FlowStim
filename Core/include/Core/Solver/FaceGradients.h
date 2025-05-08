@@ -10,7 +10,7 @@ namespace fstim
     class FaceGradients
     {
     public:
-        static std::unique_ptr<vecp::Vec2d[]> calculate(const Field<T>& field, const Mesh& mesh);
+        static std::unique_ptr<vecp::Vec2d[]> calculate(const Field<T>& field, const Mesh2d& mesh);
 
     };
 }

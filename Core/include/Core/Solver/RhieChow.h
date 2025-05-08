@@ -26,7 +26,7 @@ namespace fstim
          * \return A unique pointer to an array containing the interpolated face velocities.
          *         The array size corresponds to the number of faces in the mesh (nFaces).
          */
-        static std::unique_ptr<T[]> interpolate(Field<T>& field, Mesh& mesh);
+        static std::unique_ptr<T[]> interpolate(Field<T>& field, Mesh2d& mesh);
 
         /**
          * \brief Calculates the momentum predictor values at cell centers.
@@ -53,7 +53,7 @@ namespace fstim
          */
         static std::unique_ptr<T[]> sumMomentum(Field<T>& field);
 
-        static std::unique_ptr<T[]> interpolatePrimaryCoefficients(Field<T>& field, Mesh& mesh);
+        static std::unique_ptr<T[]> interpolatePrimaryCoefficients(Field<T>& field, Mesh2d& mesh);
 
     };
 }

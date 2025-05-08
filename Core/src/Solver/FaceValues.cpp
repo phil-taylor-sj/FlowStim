@@ -3,7 +3,7 @@
 namespace fstim
 {
     template <typename T>
-    std::unique_ptr<T[]> FaceValues<T>::interpolate(const Field<T>& field, const Mesh& mesh)
+    std::unique_ptr<T[]> FaceValues<T>::interpolate(const Field<T>& field, const Mesh2d& mesh)
     {
 
         std::unique_ptr<T[]> faceValues = std::make_unique<T[]>(mesh.nFaces);
@@ -12,7 +12,7 @@ namespace fstim
 
         for (int faceId = 0; faceId < mesh.nFaces; faceId++)
         {
-            const Face& face = mesh.faces[faceId];
+            const Face2d& face = mesh.faces[faceId];
 
             // TODO: Add an owner weight property to each cell to remove need
             // for weight to be recaluclated during simulations.
@@ -50,13 +50,13 @@ namespace fstim
     }
 
     template <typename T>
-    std::unique_ptr<T[]> FaceValues<T>::interpolate(const T* cellValues, const Mesh& mesh)
+    std::unique_ptr<T[]> FaceValues<T>::interpolate(const T* cellValues, const Mesh2d& mesh)
     {
         std::unique_ptr<T[]> faceValues = std::make_unique<T[]>(mesh.nFaces);
 
         for (int faceId = 0; faceId < mesh.nFaces; faceId++)
         {
-            const Face& face = mesh.faces[faceId];
+            const Face2d& face = mesh.faces[faceId];
 
             // TODO: Add an owner weight property to each cell to remove need
             // for weight to be recaluclated during simulations.

@@ -3,7 +3,7 @@
 namespace fstim
 {
     template <typename T>
-    void Laplacian<T>::operator()(const Mesh& mesh, Field<T>& field, const double* visc)
+    void Laplacian<T>::operator()(const Mesh2d& mesh, Field<T>& field, const double* visc)
     {
         const T* values = field.readValues();
         std::map<int, T>* lhs = field.writeLeft();
@@ -11,10 +11,10 @@ namespace fstim
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
         {
-            const Cell& cell = mesh.cells[cellId];
+            const Cell2d& cell = mesh.cells[cellId];
             for (int faceId : cell.faceId)
             {   
-                const Face& face = mesh.faces[faceId];
+                const Face2d& face = mesh.faces[faceId];
                 
                 // Retrive length data
                 int neighId = (face.ownerId == cellId) 

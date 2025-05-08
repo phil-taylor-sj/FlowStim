@@ -2,7 +2,7 @@
 
 namespace fstim
 {
-    void FaceSetFactory::fourWalls(Mesh& mesh)
+    void FaceSetFactory::fourWalls(Mesh2d& mesh)
     {
         vecp::Vec2d length = mesh.length;
         defineNewFaceSetByCompass(mesh, Compass::NORTH);
@@ -19,7 +19,7 @@ namespace fstim
         //mesh.addFaceSet(vecp::Vec2d(length.x, 0.5 * length.y), vecp::Vec2d(0.001, length.y));
     }
 
-    int FaceSetFactory::defineNewFaceSetByCompass(Mesh& mesh, Compass direction)
+    int FaceSetFactory::defineNewFaceSetByCompass(Mesh2d& mesh, Compass direction)
     {
         vecp::Vec2d length = mesh.length;
 

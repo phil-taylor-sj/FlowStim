@@ -3,7 +3,7 @@
 namespace fstim
 {
     template <typename T>
-    std::unique_ptr<vecp::Vec2d[]> FaceGradients<T>::calculate(const Field<T>& field, const Mesh& mesh)
+    std::unique_ptr<vecp::Vec2d[]> FaceGradients<T>::calculate(const Field<T>& field, const Mesh2d& mesh)
     {
         std::unique_ptr<vecp::Vec2d[]> faceGradients = std::make_unique<vecp::Vec2d[]>(mesh.nFaces);
 
@@ -11,7 +11,7 @@ namespace fstim
 
         for (int faceId = 0; faceId < mesh.nFaces; faceId++)
         {
-            const Face& face = mesh.faces[faceId];
+            const Face2d& face = mesh.faces[faceId];
 
             if (face.neighId != -1)
             {

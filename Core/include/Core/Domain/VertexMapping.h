@@ -39,19 +39,19 @@ namespace fstim
     public:
         static VertexKey quantisePosition(const Vertex& v, double gridSize);
     
-        static std::vector<Vertex> createVertices(Cell* cells, size_t nCells, Face* faces, size_t nFaces);
+        static std::vector<Vertex> createVertices(Cell2d* cells, size_t nCells, Face2d* faces, size_t nFaces);
 
     private:
-        static std::vector<Vertex> m_getAllVertices(Face* faces, int nFaces);
+        static std::vector<Vertex> m_getAllVertices(Face2d* faces, int nFaces);
 
         static std::vector<Vertex> m_getUniqueVertices(std::vector<Vertex>& allVertices, std::vector<size_t>& indexMapping);
     
-        static void m_assignFaceVertexIds(Face* faces, size_t nFaces, const std::vector<size_t>& indexMapping);
+        static void m_assignFaceVertexIds(Face2d* faces, size_t nFaces, const std::vector<size_t>& indexMapping);
 
-        static void m_assignCellVertexIds(Cell* cells, size_t nCells, const Face* faces);
+        static void m_assignCellVertexIds(Cell2d* cells, size_t nCells, const Face2d* faces);
 
-        static void m_assignVertexFaceIds(const Face* faces, size_t nFaces, std::vector<Vertex>& vertices);
+        static void m_assignVertexFaceIds(const Face2d* faces, size_t nFaces, std::vector<Vertex>& vertices);
 
-        static void m_assignVertexCellIds(const Cell* cells, size_t nCells, std::vector<Vertex>& vertices);
+        static void m_assignVertexCellIds(const Cell2d* cells, size_t nCells, std::vector<Vertex>& vertices);
     };
 }

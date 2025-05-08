@@ -30,7 +30,7 @@ namespace FaceValue_Tests
             double* values = field->writeValues();
             std::copy(test_values.begin(), test_values.end(), values);
         }
-        std::unique_ptr<Mesh> mesh = nullptr;
+        std::unique_ptr<Mesh2d> mesh = nullptr;
         std::unique_ptr<Field<double>> field = nullptr;
         vecp::Vec2d cellWidth;
     };

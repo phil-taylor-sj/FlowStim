@@ -4,7 +4,7 @@ namespace fstim
 {
     void FaceFlux::Linear(
             double* flux,
-            const Mesh& mesh, 
+            const Mesh2d& mesh, 
             const VectorField& velocity,
             const double* rho)
     {
@@ -12,7 +12,7 @@ namespace fstim
 
         for (int faceId = 0; faceId < mesh.nFaces; faceId++)
         {
-            const Face& face = mesh.faces[faceId];
+            const Face2d& face = mesh.faces[faceId];
 
             if (face.neighId != -1)
             {
@@ -56,7 +56,7 @@ namespace fstim
     }
 
     std::unique_ptr<double[]> FaceFlux::Linear(
-        const Mesh& mesh, 
+        const Mesh2d& mesh, 
         const VectorField& velocity,
         const double* rho
         )

@@ -3,7 +3,7 @@
 namespace fstim
 {
     template <typename T>
-    std::unique_ptr<T[]> RhieChow<T>::interpolate(Field<T>& field, Mesh& mesh)
+    std::unique_ptr<T[]> RhieChow<T>::interpolate(Field<T>& field, Mesh2d& mesh)
     {   
         std::unique_ptr<T[]> momentum = RhieChow<T>::sumMomentum(field);
 
@@ -39,7 +39,7 @@ namespace fstim
     }
 
     template <typename T>
-    std::unique_ptr<T[]> RhieChow<T>::interpolatePrimaryCoefficients(Field<T>& field, Mesh& mesh)
+    std::unique_ptr<T[]> RhieChow<T>::interpolatePrimaryCoefficients(Field<T>& field, Mesh2d& mesh)
     {
         const std::map<int, T>* lhs = field.readLeft();
         std::unique_ptr<T[]> primaryCellCoefficients = std::make_unique<T[]>(field.nCells);

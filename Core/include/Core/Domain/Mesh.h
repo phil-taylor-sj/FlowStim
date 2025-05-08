@@ -7,6 +7,8 @@
 #include <Core/Domain/Face.h>
 #include <Core/Domain/Vertex.h>
 
+#include <Core/Domain/MeshDomainData.h>
+
 namespace fstim
 {
     /**
@@ -39,11 +41,11 @@ namespace fstim
      * An std::vector array contianing sets of faceIds which belong to the face set
      * with an id denoted by the index.
      */
-    class Mesh
+    class Mesh2d
     {
     public:
-        const std::unique_ptr<const Cell[]> cells;
-        const std::unique_ptr<const Face[]> faces;
+        const std::unique_ptr<const Cell2d[]> cells;
+        const std::unique_ptr<const Face2d[]> faces;
         const std::unique_ptr<const Vertex[]> vertices;
 
         const int nCells;
@@ -87,11 +89,9 @@ namespace fstim
          */
         int getFaceSetId(int faceId) const;
 
-        Mesh(int nCellsIn, int nFacesIn, int nVerticesIn, 
-            std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, std::unique_ptr<Vertex[]> verticesIn,
-            vecp::Vec2d lengthIn);
+        Mesh2d(MeshDomainData& data);
  
-        virtual ~Mesh() = default;
+        virtual ~Mesh2d() = default;
     
     private:
         std::vector<std::set<int>> m_faceSets{};
