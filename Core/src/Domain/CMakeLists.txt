@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 add_library(Domain OBJECT
     Mesh.cpp
+    Face.cpp
+    Cell.cpp
     MeshFactory.cpp
     GridProfile.cpp
     GridProfileEquidistant.cpp
