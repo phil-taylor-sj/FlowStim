@@ -1,16 +1,18 @@
 #pragma once 
 
 #include <VecPlus/Vec2.h>
+#include <VecPlus/Vec3.h>
 #include <vector>
 
 namespace fstim
 {
+    template <typename T>
     class Vertex
     {
     public:
         size_t vertexId = 0;
 
-        vecp::Vec2d position{};
+        T position{};
 
         std::vector<size_t> faceId = {};
 
@@ -18,10 +20,16 @@ namespace fstim
 
         std::vector<double> cellWeight = {};
 
-        Vertex() : position(vecp::Vec2d(0., 0.)){}
+        Vertex() : position(T()){}
 
-        Vertex(vecp::Vec2d newPosition) : position(newPosition){}
+        Vertex(T newPosition) : position(newPosition){}
 
-        Vertex(double newX, double newY) : position(vecp::Vec2d(newX, newY)){}
+        //Vertex2d(double newX, double newY) : position(vecp::Vec2d(newX, newY)){}
     };
+
+    extern template class Vertex<vecp::Vec2d>;
+    extern template class Vertex<vecp::Vec3d>;
+
+    using Vertex2d = Vertex<vecp::Vec2d>;
+    using Vertex3d = Vertex<vecp::Vec3d>;
 }

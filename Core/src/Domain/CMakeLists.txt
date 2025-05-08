@@ -4,6 +4,7 @@ add_library(Domain OBJECT
     Mesh.cpp
     Face.cpp
     Cell.cpp
+    Vertex.cpp
     MeshFactory.cpp
     GridProfile.cpp
     GridProfileEquidistant.cpp

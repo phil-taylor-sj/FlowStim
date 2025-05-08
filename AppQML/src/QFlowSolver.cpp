@@ -106,7 +106,7 @@ void QFlowSolver::m_updateVelocityData()
     
     for (int id = 0; id < mesh->nVertices; id++)
     {
-        const fstim::Vertex& vertex = mesh->vertices[id];
+        const fstim::Vertex2d& vertex = mesh->vertices[id];
         vecp::Vec2d vertexValue = vecp::Vec2d();
         for (int index = 0; index < vertex.cellId.size(); index++)
         {

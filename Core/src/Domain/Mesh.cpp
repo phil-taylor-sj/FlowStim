@@ -4,7 +4,8 @@
 
 namespace fstim
 {
-    int Mesh2d::addFaceSet(vecp::Vec2d center, vecp::Vec2d lengths)
+    template <typename T, typename U>
+    int Mesh<T, U>::addFaceSet(T center, T lengths)
     {
         std::set<int> newSet;
         this->m_addFacesToSet(newSet, center, lengths);
@@ -12,10 +13,11 @@ namespace fstim
         return m_faceSets.size() - 1;
     }
 
-    int Mesh2d::addFaceSet(std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> boundaries)
+    template <typename T, typename U>
+    int Mesh<T, U>::addFaceSet(std::vector<std::tuple<T, T>> boundaries)
     {
         std::set<int> newSet;
-        for (std::tuple<vecp::Vec2d, vecp::Vec2d> boundary : boundaries)
+        for (std::tuple<T, T> boundary : boundaries)
         {
             this->m_addFacesToSet(newSet, std::get<0>(boundary), std::get<1>(boundary));
         }
@@ -24,11 +26,13 @@ namespace fstim
         return m_faceSets.size() - 1;
     }
 
-    void Mesh2d::m_addFacesToSet(std::set<int>& newSet, vecp::Vec2d center, vecp::Vec2d lengths)
+    template <typename T, typename U>
+    void Mesh<T, U>::m_addFacesToSet(std::set<int>& newSet, T center, T lengths)
     {
         for (int id = 0; id < nFaces; id++)
         {
-            vecp::Vec2d offset = faces[id].center - center;
+            // TODO: Create function which can be used for either 2 or 3 dimensions.
+            T offset = faces[id].center - center;
             if (std::abs(offset.x) <= 0.5 * lengths.x &&
                 std::abs(offset.y) <= 0.5 * lengths.y)
                 {
@@ -38,7 +42,8 @@ namespace fstim
         }
     }
 
-    int Mesh2d::getFaceSetId(int faceId) const
+    template <typename T, typename U>
+    int Mesh<T, U>::getFaceSetId(int faceId) const
     {
         for (int setId = 0; setId < m_faceSets.size(); setId++)
         {
@@ -50,11 +55,15 @@ namespace fstim
         return -1;
     }
 
-    Mesh2d::Mesh2d(MeshDomainData& meshData) 
+    template <typename T, typename U>
+    Mesh<T, U>::Mesh(MeshDomainData<T, U>& meshData) 
         : nCells(meshData.nCells), nFaces(meshData.nFaces), nVertices(meshData.nVertices), 
         cells(std::move(meshData.cells)), faces(std::move(meshData.faces)), vertices(std::move(meshData.vertices)),
         length(meshData.length)
     {
         m_faceSets.resize(0);        
     }
+
+    template class Mesh< vecp::Vec2d, vecp::Vec2f >;
+    template class Mesh< vecp::Vec3d, vecp::Vec3f >;
 }

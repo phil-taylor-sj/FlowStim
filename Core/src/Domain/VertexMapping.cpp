@@ -2,7 +2,7 @@
 
 namespace fstim
 {
-    VertexKey VertexMapping::quantisePosition(const Vertex& vertex, double gridSize) {
+    VertexKey VertexMapping::quantisePosition(const Vertex2d& vertex, double gridSize) {
         return VertexKey {
             vecp::Vec2i(
                 static_cast<int>(std::floor(vertex.position.x / gridSize + 0.5)),
@@ -11,12 +11,12 @@ namespace fstim
         };
     }
 
-    std::vector<Vertex> VertexMapping::createVertices(Cell2d* cells, size_t nCells, Face2d* faces, size_t nFaces)
+    std::vector<Vertex2d> VertexMapping::createVertices(Cell2d* cells, size_t nCells, Face2d* faces, size_t nFaces)
     {
-        std::vector<Vertex> allVertices = VertexMapping::m_getAllVertices(faces, nFaces);
+        std::vector<Vertex2d> allVertices = VertexMapping::m_getAllVertices(faces, nFaces);
         std::vector<size_t> indexMapping(allVertices.size());
         
-        std::vector<Vertex> vertices = VertexMapping::m_getUniqueVertices(allVertices, indexMapping);
+        std::vector<Vertex2d> vertices = VertexMapping::m_getUniqueVertices(allVertices, indexMapping);
 
         VertexMapping::m_assignFaceVertexIds(faces, nFaces, indexMapping);
 
@@ -29,9 +29,9 @@ namespace fstim
         return std::move(vertices);
     }
 
-    std::vector<Vertex> VertexMapping::m_getAllVertices(Face2d* faces, int nFaces)
+    std::vector<Vertex2d> VertexMapping::m_getAllVertices(Face2d* faces, int nFaces)
     {
-        std::vector<Vertex> vertices(nFaces * 2);
+        std::vector<Vertex2d> vertices(nFaces * 2);
         for (int faceId = 0; faceId < nFaces; faceId++)
         {
                 Face2d& face = faces[faceId];
@@ -47,13 +47,13 @@ namespace fstim
         return std::move(vertices);
     }
 
-    std::vector<Vertex> VertexMapping::m_getUniqueVertices(std::vector<Vertex>& allVertices, std::vector<size_t>& indexMapping )
+    std::vector<Vertex2d> VertexMapping::m_getUniqueVertices(std::vector<Vertex2d>& allVertices, std::vector<size_t>& indexMapping )
     {
         std::unordered_map<VertexKey, size_t> vertexMap;
-        std::vector<Vertex> uniqueVertices;
+        std::vector<Vertex2d> uniqueVertices;
         for (size_t i = 0; i < allVertices.size(); i++) 
         {
-            Vertex& vertex = allVertices[i];
+            Vertex2d& vertex = allVertices[i];
             VertexKey key = VertexMapping::quantisePosition(vertex, 0.00001);
 
             auto it = vertexMap.find(key);
@@ -98,7 +98,7 @@ namespace fstim
        }
     }
 
-    void VertexMapping::m_assignVertexFaceIds(const Face2d* faces, size_t nFaces, std::vector<Vertex>& vertices)
+    void VertexMapping::m_assignVertexFaceIds(const Face2d* faces, size_t nFaces, std::vector<Vertex2d>& vertices)
     {
         for (size_t faceId = 0; faceId < nFaces; faceId++)
         {
@@ -109,7 +109,7 @@ namespace fstim
         }
     }
 
-    void VertexMapping::m_assignVertexCellIds(const Cell2d* cells, size_t nCells, std::vector<Vertex>& vertices)
+    void VertexMapping::m_assignVertexCellIds(const Cell2d* cells, size_t nCells, std::vector<Vertex2d>& vertices)
     {
         for (size_t cellId = 0; cellId < nCells; cellId++)
         {
@@ -119,7 +119,7 @@ namespace fstim
             }
         }
 
-       for (Vertex& vertex : vertices)
+       for (Vertex2d& vertex : vertices)
        {
             double total = 0.;
             for (size_t cellId : vertex.cellId)

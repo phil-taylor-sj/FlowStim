@@ -16,7 +16,7 @@ namespace fstim
         this->m_assignVertices(cells, faces, size);
 
         // Filter all vertices to keep onyl unique vertices.
-        std::vector<Vertex> verticesArr = VertexMapping::createVertices(cells.get(), nCells, faces.get(), nFaces);
+        std::vector<Vertex2d> verticesArr = VertexMapping::createVertices(cells.get(), nCells, faces.get(), nFaces);
         int nVertices = verticesArr.size();
         
         // Verify all unique vertices are included exactly once.
@@ -30,13 +30,13 @@ namespace fstim
         }
         
         // Transfer unique vertices into a new C-style array.
-        std::unique_ptr<Vertex[]> vertices(new Vertex[nVertices]);
-        for (Vertex vertex : verticesArr)
+        std::unique_ptr<Vertex2d[]> vertices(new Vertex2d[nVertices]);
+        for (Vertex2d vertex : verticesArr)
         {
             vertices[vertex.vertexId] = vertex;
         }
 
-        MeshDomainData meshData {};
+        MeshDomainData2d meshData {};
         meshData.nCells = nCells;
         meshData.nFaces = nFaces;
         meshData.nVertices = nVertices;
