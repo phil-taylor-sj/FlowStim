@@ -32,13 +32,13 @@ namespace fstim
         for (int id = 0; id < nFaces; id++)
         {
             // TODO: Create function which can be used for either 2 or 3 dimensions.
-            T offset = faces[id].center - center;
-            if (std::abs(offset.x) <= 0.5 * lengths.x &&
-                std::abs(offset.y) <= 0.5 * lengths.y)
-                {
-                    newSet.insert(id);
-                }
-           
+            T offset = (faces[id].center - center).abs();
+            T ratio = offset / (lengths * 0.5);         
+
+            if (ratio.max() <= 1.0)
+            {
+                newSet.insert(id);
+            }
         }
     }
 
