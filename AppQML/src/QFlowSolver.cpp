@@ -38,7 +38,7 @@ void QFlowSolver::generate()
     this->stop();
     std::lock_guard<std::mutex> guard(this->m_mutex);
     
-    fstim::MeshFactory factory = fstim::MeshFactory();
+    fstim::MeshFactory2dStructured factory = fstim::MeshFactory2dStructured();
     std::unique_ptr<fstim::Mesh2d> mesh = factory(this->m_size, this->m_length);
     fstim::FaceSetFactory::fourWalls(*(mesh.get()));
     

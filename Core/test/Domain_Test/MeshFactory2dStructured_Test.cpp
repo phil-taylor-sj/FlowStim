@@ -1,6 +1,6 @@
 #include "../pch.h"
 
-#include <Core/Domain/MeshFactory.h>
+#include <Core/Domain/MeshFactory2dStructured.h>
 
 using namespace fstim;
 
@@ -11,7 +11,7 @@ namespace Domain_Tests
     protected:
         void SetUp() override 
         {
-            MeshFactory factory = MeshFactory();
+            MeshFactory2dStructured factory = MeshFactory2dStructured();
             mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
         }
         std::unique_ptr<const Mesh2d> mesh;
@@ -26,7 +26,7 @@ namespace Domain_Tests
             length = std::get<1>(GetParam());
             dx = length.x / size.x;
             dy = length.y / size.y;
-            MeshFactory factory = MeshFactory();
+            MeshFactory2dStructured factory = MeshFactory2dStructured();
             mesh = std::move(factory(size, length));
         }
         vecp::Vec2i size;
@@ -40,7 +40,7 @@ namespace Domain_Tests
     protected:
         void SetUp() override 
         {
-            MeshFactory factory = MeshFactory();
+            MeshFactory2dStructured factory = MeshFactory2dStructured();
             mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
             mesh->addFaceSet(vecp::Vec2d(1.5, 8.), vecp::Vec2d(3., 0.001));
             
@@ -225,7 +225,7 @@ namespace Domain_Tests
             length = std::get<1>(GetParam());
             expected = (size.x + 1) * (size.y + 1);
         }
-        MeshFactory factory{};
+        MeshFactory2dStructured factory{};
         vecp::Vec2i size;
         vecp::Vec2d length;
         int expected;

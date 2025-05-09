@@ -6,6 +6,7 @@ add_library(Domain OBJECT
     Cell.cpp
     Vertex.cpp
     MeshFactory.cpp
+    MeshFactory2dStructured.cpp
     GridProfile.cpp
     GridProfileEquidistant.cpp
     FaceSetFactory.cpp

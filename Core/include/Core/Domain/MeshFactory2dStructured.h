@@ -17,17 +17,17 @@ using namespace vecp;
 
 namespace fstim
 {
-    class MeshFactory
+    class MeshFactory2dStructured
     {
     public:
 
         std::unique_ptr<Mesh2d> operator()(Vec2i size, Vec2d length);
         
-        MeshFactory() : m_profile(std::make_unique<GridProfileEquidistant>()) {};
+        MeshFactory2dStructured() : m_profile(std::make_unique<GridProfileEquidistant>()) {};
 
-        MeshFactory(std::unique_ptr<GridProfile> profile) : m_profile(std::move(profile)) {};
+        MeshFactory2dStructured(std::unique_ptr<GridProfile> profile) : m_profile(std::move(profile)) {};
 
-        ~MeshFactory() {};
+        ~MeshFactory2dStructured() {};
 
     private:
 

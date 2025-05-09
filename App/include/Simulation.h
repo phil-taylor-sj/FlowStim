@@ -6,7 +6,7 @@
 #include <QTimer>
 
 #include <VecPlus/Vec2.h>
-#include <Core/Domain/MeshFactory.h>
+#include <Core/Domain/MeshFactory2dStructured.h>
 #include <Core/Domain/Mesh.h>
 
 class Simulation : public QOpenGLWindow, protected QOpenGLFunctions

@@ -3,7 +3,7 @@
 Simulation::Simulation(QOpenGLWindow::UpdateBehavior updateBehavior, QWindow *parent) : QOpenGLWindow(updateBehavior, parent), m_timer(new QTimer(this))
 {
     qInfo() << this << "Constructed";
-    fstim::MeshFactory factory = fstim::MeshFactory();
+    fstim::MeshFactory2dStructured factory = fstim::MeshFactory2dStructured();
     this->m_length = vecp::Vec2d(10., 20.);
     this->m_mesh = factory(vecp::Vec2i(10, 20), this->m_length);
     connect(m_timer, &QTimer::timeout, this, &Simulation::m_updateCanvas);

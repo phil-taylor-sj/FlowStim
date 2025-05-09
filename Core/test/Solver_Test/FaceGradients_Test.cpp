@@ -1,7 +1,7 @@
 #include "../pch.h"
 #include <algorithm>
 
-#include <Core/Domain/MeshFactory.h>
+#include <Core/Domain/MeshFactory2dStructured.h>
 #include <Core/Solver/FaceGradients.h>
 #include <Core/Domain/FaceSetFactory.h>
 
@@ -18,7 +18,7 @@ namespace FaceGradients_Tests
             vecp::Vec2i size {3, 4};
             cellWidth =  GetParam();
             vecp::Vec2d length = size.toDouble() * cellWidth;
-            MeshFactory factory = MeshFactory();
+            MeshFactory2dStructured factory = MeshFactory2dStructured();
             mesh = factory(vecp::Vec2i(3, 4), length);
 
             // Create field with specified cell centre values.
