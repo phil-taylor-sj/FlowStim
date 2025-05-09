@@ -177,8 +177,8 @@ namespace Domain_Tests
         for (int id = 0; id < 31; id++)
         {
             const Face2d& face = mesh->faces[id];
-            Vec2d centerOne = mesh->cells[face.ownerId].center;
-            Vec2d centerTwo = (face.neighId != -1)
+            vecp::Vec2d centerOne = mesh->cells[face.ownerId].center;
+            vecp::Vec2d centerTwo = (face.neighId != -1)
                 ? mesh->cells[face.neighId].center
                 : face.center;
             double spacing = centerOne.mag(centerTwo);

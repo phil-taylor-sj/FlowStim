@@ -13,15 +13,16 @@
 #include <Core/Domain/VertexMapping.h>
 #include <Core/Domain/MeshDomainData.h>
 
-using namespace vecp;
+#include <Core/Domain/MeshFactory.h>
+
 
 namespace fstim
 {
-    class MeshFactory2dStructured
+    class MeshFactory2dStructured : public MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>
     {
     public:
 
-        std::unique_ptr<Mesh2d> operator()(Vec2i size, Vec2d length);
+        std::unique_ptr<Mesh2d> operator()(vecp::Vec2i size, vecp::Vec2d length);
         
         MeshFactory2dStructured() : m_profile(std::make_unique<GridProfileEquidistant>()) {};
 
@@ -35,16 +36,18 @@ namespace fstim
 
         const Compass m_directions[4] = {Compass::NORTH, Compass::SOUTH, Compass::EAST, Compass::WEST};
 
-        int m_calcCellId(int i, int j, Vec2i size);
+        int m_calcCellId(int i, int j, vecp::Vec2i size);
         
-        Vec2i m_getCellLocations(int id, Vec2i size);
+        vecp::Vec2i m_getCellLocations(int id, vecp::Vec2i size);
 
-        void m_assignIds(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, Vec2i size);
+        void m_assignIds(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size);
 
-        void m_assignProperties(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, Vec2i size, Vec2d length);
+        void m_assignProperties(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size, vecp::Vec2d length);
         
         void m_assignVertices(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size);
 
     };
     
+    extern template class MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>;
+
 }
