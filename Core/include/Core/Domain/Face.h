@@ -39,6 +39,10 @@ namespace fstim
          */
         T center{};
 
+        double cellToCellSpacing {1.0};
+
+        double ownerWeight = 1.;
+
         /**
          * \brief Indicates whether the face is on the boundary.
          *

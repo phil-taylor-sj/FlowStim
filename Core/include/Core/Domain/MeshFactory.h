@@ -23,6 +23,12 @@ namespace fstim
         MeshFactory() {};
         
         virtual ~MeshFactory() {};
+
+    protected:
+        
+        void m_calcCellToCellSpacing(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells) {};
+
+        void m_calcOwnerWeights(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells) {};
     };
     
     extern template class MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>;
