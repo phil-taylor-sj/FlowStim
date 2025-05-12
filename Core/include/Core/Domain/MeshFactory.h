@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <span>
 
 #include <Core/Domain/Cell.h>
 #include <Core/Domain/Face.h>
@@ -26,9 +27,9 @@ namespace fstim
 
     protected:
         
-        void m_calcCellToCellSpacing(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells) {};
+        void m_calcCellToCellSpacing(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
 
-        void m_calcOwnerWeights(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells) {};
+        void m_calcOwnerWeights(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
     };
     
     extern template class MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>;
