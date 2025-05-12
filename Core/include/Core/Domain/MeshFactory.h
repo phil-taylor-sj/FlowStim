@@ -27,9 +27,19 @@ namespace fstim
 
     protected:
         
+        int m_nCells = 4;
+        int m_nFaces = 4;
+        int m_nVertices = 4;
+        std::unique_ptr<Cell<D, F>> m_cells = nullptr;
+        std::unique_ptr<Face<D>> m_faces = nullptr;
+        std::unique_ptr<Vertex<D>> m_vertices = nullptr;
+        D length {};
+        
         void m_calcCellToCellSpacing(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
 
         void m_calcOwnerWeights(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
+
+        void m_createMesh();
     };
     
     extern template class MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>;

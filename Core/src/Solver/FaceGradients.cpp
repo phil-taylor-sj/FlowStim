@@ -15,11 +15,9 @@ namespace fstim
 
             if (face.neighId != -1)
             {
-                vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
-                vecp::Vec2d neighCenter = mesh.cells[face.neighId].center;
-                
+                               
                 T gradient = (cellValues[face.neighId] - cellValues[face.ownerId])
-                    / (neighCenter - ownerCenter).mag();
+                    / face.cellToCellSpacing;
 
                 faceGradients[faceId] = face.normal.normalise() * gradient;
                 continue;
@@ -36,7 +34,7 @@ namespace fstim
                     vecp::Vec2d ownerCenter = mesh.cells[face.ownerId].center;
                     T faceValue = std::get<1>(bc);
                     T gradient = (faceValue - cellValues[face.ownerId])
-                        / (face.center - ownerCenter).mag();
+                        / face.cellToCellSpacing;
                     faceGradients[faceId] = face.normal.normalise() * gradient;
                     break;
                 }

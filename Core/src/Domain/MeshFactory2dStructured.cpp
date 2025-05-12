@@ -39,8 +39,7 @@ namespace fstim
         m_calcCellToCellSpacing(faces.get(), nFaces, cells.get(), nCells);
         m_calcOwnerWeights(faces.get(), nFaces, cells.get(), nCells);
 
-
-
+        
         MeshDomainData2d meshData {};
         meshData.nCells = nCells;
         meshData.nFaces = nFaces;
