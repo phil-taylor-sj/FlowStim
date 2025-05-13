@@ -39,17 +39,9 @@ namespace fstim
         m_calcCellToCellSpacing(m_faces.get(), m_nFaces, m_cells.get(), m_nCells);
         m_calcOwnerWeights(m_faces.get(), m_nFaces, m_cells.get(), m_nCells);
 
+        std::unique_ptr<Mesh2d> mesh = this->m_createMesh(length);
 
-        MeshDomainData2d meshData {};
-        meshData.nCells = m_nCells;
-        meshData.nFaces = m_nFaces;
-        meshData.nVertices = this->m_nVertices;
-        meshData.cells = std::move(m_cells);
-        meshData.faces = std::move(m_faces);
-        meshData.vertices = std::move(m_vertices);
-        meshData.length = length;
-
-        return std::move(std::make_unique<Mesh2d>(meshData));
+        return std::move(mesh);
     }
 
     vecp::Vec2i MeshFactory2dStructured::m_getCellLocations(int id, vecp::Vec2i size)
