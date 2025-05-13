@@ -40,11 +40,11 @@ namespace fstim
         
         vecp::Vec2i m_getCellLocations(int id, vecp::Vec2i size);
 
-        void m_assignIds(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size);
+        void m_assignIds(vecp::Vec2i size);
 
-        void m_assignProperties(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size, vecp::Vec2d length);
+        void m_assignProperties(vecp::Vec2i size, vecp::Vec2d length);
         
-        void m_assignVertices(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size);
+        void m_assignVertices(vecp::Vec2i size);
 
     };
     

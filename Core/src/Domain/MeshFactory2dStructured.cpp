@@ -4,49 +4,49 @@ namespace fstim
 {
     std::unique_ptr<Mesh2d> MeshFactory2dStructured::operator()(vecp::Vec2i size, vecp::Vec2d length)
     {
-        int nCells = size.x * size.y;
-        int nFaces = (size.x + 1) * size.y + (size.y + 1) * size.x;
-        
-        std::unique_ptr<Cell2d[]> cells(new Cell2d[nCells]);
-        std::unique_ptr<Face2d[]> faces(new Face2d[nFaces]);
+        m_nCells = size.x * size.y;
+        m_nFaces = (size.x + 1) * size.y + (size.y + 1) * size.x;
+
+        m_cells = std::make_unique<Cell2d[]>(m_nCells);
+        m_faces = std::make_unique<Face2d[]>(m_nFaces);
 
         // Configure all cells, faces, and vertices.
-        this->m_assignIds(cells, faces, size);
-        this->m_assignProperties(cells, faces, size, length);
-        this->m_assignVertices(cells, faces, size);
+        this->m_assignIds(size);
+        this->m_assignProperties(size, length);
+        this->m_assignVertices(size);
 
         // Filter all vertices to keep onyl unique vertices.
-        std::vector<Vertex2d> verticesArr = VertexMapping::createVertices(cells.get(), nCells, faces.get(), nFaces);
-        int nVertices = verticesArr.size();
+        std::vector<Vertex2d> verticesArr = VertexMapping::createVertices(m_cells.get(), m_nCells, m_faces.get(), m_nFaces);
+        m_nVertices = verticesArr.size();
         
         // Verify all unique vertices are included exactly once.
         int expected_vertices = (size.x + 1) * (size.y + 1);
-        if (nVertices != expected_vertices)
+        if (this->m_nVertices != expected_vertices)
         {
             std::string msg = std::format(
                 "Mesh Validation Failed: Number of unique vertices ({}) not equal to expected value ({}).",
-                nVertices, expected_vertices);
+                this->m_nVertices, expected_vertices);
             //throw std::runtime_error(msg);
         }
         
         // Transfer unique vertices into a new C-style array.
-        std::unique_ptr<Vertex2d[]> vertices(new Vertex2d[nVertices]);
+        this->m_vertices = std::make_unique<Vertex2d[]>(this->m_nVertices);
         for (Vertex2d vertex : verticesArr)
         {
-            vertices[vertex.vertexId] = vertex;
+            this->m_vertices[vertex.vertexId] = vertex;
         }
 
-        m_calcCellToCellSpacing(faces.get(), nFaces, cells.get(), nCells);
-        m_calcOwnerWeights(faces.get(), nFaces, cells.get(), nCells);
+        m_calcCellToCellSpacing(m_faces.get(), m_nFaces, m_cells.get(), m_nCells);
+        m_calcOwnerWeights(m_faces.get(), m_nFaces, m_cells.get(), m_nCells);
 
-        
+
         MeshDomainData2d meshData {};
-        meshData.nCells = nCells;
-        meshData.nFaces = nFaces;
-        meshData.nVertices = nVertices;
-        meshData.cells = std::move(cells);
-        meshData.faces = std::move(faces);
-        meshData.vertices = std::move(vertices);
+        meshData.nCells = m_nCells;
+        meshData.nFaces = m_nFaces;
+        meshData.nVertices = this->m_nVertices;
+        meshData.cells = std::move(m_cells);
+        meshData.faces = std::move(m_faces);
+        meshData.vertices = std::move(m_vertices);
         meshData.length = length;
 
         return std::move(std::make_unique<Mesh2d>(meshData));
@@ -67,7 +67,7 @@ namespace fstim
             : j * size.x + i;
     }
 
-    void MeshFactory2dStructured::m_assignIds(std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size)
+    void MeshFactory2dStructured::m_assignIds(vecp::Vec2i size)
     { 
 
         int northStart = 2 + (size.x - 1) + (size.y - 1) * (size.x + 1);
@@ -76,7 +76,7 @@ namespace fstim
             for (int j = 0; j < size.y; j++)
             {
                 int cellId = this->m_calcCellId(i, j, size);
-                Cell2d& cell = cells[cellId];
+                Cell2d& cell = this->m_cells[cellId];
                 cell.id = cellId;
 
                 std::map<Compass, int> faceIds = {
@@ -90,7 +90,7 @@ namespace fstim
                 cell.vertices.resize(4);
                 for (Compass direction : this->m_directions)
                 {
-                    Face2d& face = faces[faceIds[direction]];
+                    Face2d& face = m_faces[faceIds[direction]];
                     if (face.ownerId == -1) {face.ownerId = cell.id;}
                     else {face.neighId = cell.id;};
                     cell.faceId[(int)direction] = faceIds[direction];
@@ -100,9 +100,7 @@ namespace fstim
         
     }
 
-    void MeshFactory2dStructured::m_assignProperties(
-        std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, 
-        vecp::Vec2i size, vecp::Vec2d length)
+    void MeshFactory2dStructured::m_assignProperties(vecp::Vec2i size, vecp::Vec2d length)
     {
         int nCells = size.x * size.y;
         std::tuple<std::vector<double>, std::vector<double>> gridX = (*this->m_profile)(size.x, length.x);
@@ -114,7 +112,7 @@ namespace fstim
             int i = locations.x;
             int j = locations.y;
 
-            Cell2d& cell = cells[id];
+            Cell2d& cell = this->m_cells[id];
             double dx = std::get<1>(gridX)[i];
             double dy = std::get<1>(gridY)[j];
             cell.volume = dx * dy;
@@ -134,7 +132,7 @@ namespace fstim
                 int faceId = cell.faceId[(int)direction];
                 double area = std::get<0>(properties[direction]);
                 
-                Face2d& face = faces[faceId];
+                Face2d& face = this->m_faces[faceId];
                 face.center = cell.center + std::get<1>(properties[direction]);
                 if (face.ownerId == cell.id) 
                 {
@@ -146,26 +144,23 @@ namespace fstim
         int nFaces = (size.x + 1) * size.y + (size.y + 1) * size.x;
         for (int id = 0; id < nFaces; id++)
         {       
-            Face2d& face = faces[id];
+            Face2d& face = this->m_faces[id];
             face.id = id;      
-            Cell2d owner = cells[face.ownerId]; 
+            Cell2d owner = this->m_cells[face.ownerId]; 
             //face.spacing = (face.neighId >= 0)
             //    ? (cells[face.neighId].center - owner.center).mag()
             //    : (face.center - owner.center).mag();
         }
     }
 
-    void MeshFactory2dStructured::m_assignVertices(
-        std::unique_ptr<Cell2d[]>& cells, std::unique_ptr<Face2d[]>& faces, vecp::Vec2i size
-    )
+    void MeshFactory2dStructured::m_assignVertices(vecp::Vec2i size)
     {
-        int nCells = size.x * size.y;
-        for (int id = 0; id < nCells; id++)
+        for (int id = 0; id < this->m_nCells; id++)
         {
-            Cell2d& cell = cells[id];
+            Cell2d& cell = this->m_cells[id];
             for (int sideId = 0; sideId < cell.faceId.size(); sideId++)
             {
-                Face2d& face = faces[cell.faceId[sideId]];
+                Face2d& face = this->m_faces[cell.faceId[sideId]];
                 double angle = (face.ownerId == cell.id) ? -90. : 90.;
                 vecp::Vec2d tangent = (face.normal.rotate(angle)) * 0.5;
                 cell.vertices[sideId] = (face.center + tangent).toFloat(); 
