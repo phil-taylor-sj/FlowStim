@@ -39,7 +39,7 @@ namespace fstim
 
         void m_calcOwnerWeights(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
 
-        std::unique_ptr<Mesh<D, F>> m_createMesh(D length);
+        [[nodiscard]] std::unique_ptr<Mesh<D, F>> m_createMesh(D length);
     };
     
     extern template class MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>;

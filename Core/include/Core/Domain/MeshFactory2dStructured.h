@@ -22,7 +22,7 @@ namespace fstim
     {
     public:
 
-        std::unique_ptr<Mesh2d> operator()(vecp::Vec2i size, vecp::Vec2d length);
+        [[nodiscard]] std::unique_ptr<Mesh2d> operator()(vecp::Vec2i size, vecp::Vec2d length);
         
         MeshFactory2dStructured() : m_profile(std::make_unique<GridProfileEquidistant>()) {};
 
