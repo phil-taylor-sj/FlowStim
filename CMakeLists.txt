@@ -18,6 +18,7 @@ else()
     set(PROJECT_IS_TOP_LEVEL OFF)
 endif()
 
+set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
 
 set(BUILD_BIN_DIR ${PROJECT_SOURCE_DIR}/build/bin)
 

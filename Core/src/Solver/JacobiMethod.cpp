@@ -12,7 +12,7 @@ namespace fstim
         {
             this->m_iteratorLoop(field, source, newValues.get());
 
-            Tolerance<double> errors = this->m_calcMaxErrors(field.nCells, newValues.get(), field.readValues());
+            Tolerance<T> errors = this->m_calcMaxErrors(field.nCells, newValues.get(), field.readValues());
 
             // Overwrite the current values with the new values.                      
             T* values = field.writeValues();
@@ -22,8 +22,7 @@ namespace fstim
             }
 
             // Check errors against convergence criteria, and break loop if met.
-            if (errors.absolute <= field.getTolerance().absolute ||
-                errors.relative <= field.getTolerance().relative)
+            if (count != 0 && m_isConverged(errors, field.getTolerance()))
             {
                 break;
             }
