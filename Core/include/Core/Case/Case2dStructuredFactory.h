@@ -8,7 +8,7 @@
 namespace fstim
 {
 
-    class CaseStructured2dFactory : public CaseFactory<vecp::Vec2d>
+    class Case2dStructuredFactory : public CaseFactory<vecp::Vec2d>
     {
     public:
         void setDomainSize(vecp::Vec2i size);
@@ -19,9 +19,9 @@ namespace fstim
 
         vecp::Vec2d getDomainLength();
 
-        CaseStructured2dFactory() {};
+        Case2dStructuredFactory() {};
 
-        virtual ~CaseStructured2dFactory() {}; 
+        virtual ~Case2dStructuredFactory() {}; 
     
     private:
         const vecp::Vec2i m_minimumDomainSize {4, 4};

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 add_library(Case OBJECT
     CaseFactory.cpp
-    CaseStructured2dFactory.cpp
+    Case2dStructuredFactory.cpp
 )
 
 target_link_libraries(Case VecPlus)

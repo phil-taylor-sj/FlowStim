@@ -1,4 +1,4 @@
-#include <Core/Case/CaseStructured2dFactory.h>
+#include <Core/Case/Case2dStructuredFactory.h>
 
 #include <Core/Domain/Mesh2dStructuredFactory.h>
 
@@ -10,7 +10,7 @@
 
 namespace fstim
 {
-    void CaseStructured2dFactory::setDomainSize(vecp::Vec2i size)
+    void Case2dStructuredFactory::setDomainSize(vecp::Vec2i size)
     {
         std::string message = "Component {0} of domain size cannot be less than {1}:"
             "Setting domain size to default values.";
@@ -30,12 +30,12 @@ namespace fstim
         }
     }
 
-    vecp::Vec2i CaseStructured2dFactory::getDomainSize()
+    vecp::Vec2i Case2dStructuredFactory::getDomainSize()
     {
         return m_domainSize;
     }
 
-    void CaseStructured2dFactory::setDomainLength(vecp::Vec2d length)
+    void Case2dStructuredFactory::setDomainLength(vecp::Vec2d length)
     {        
         std::string message = "Component {0} of domain length cannot be less than {1}:"
             "Setting domain length to default values.";
@@ -55,12 +55,12 @@ namespace fstim
         }
     }
 
-    vecp::Vec2d CaseStructured2dFactory::getDomainLength()
+    vecp::Vec2d Case2dStructuredFactory::getDomainLength()
     {
         return m_domainLength;
     }
 
-    std::unique_ptr<Mesh2d> CaseStructured2dFactory::m_createMesh()
+    std::unique_ptr<Mesh2d> Case2dStructuredFactory::m_createMesh()
     {
         Mesh2dStructuredFactory factory;
         return std::move(factory(m_domainSize, m_domainLength));
