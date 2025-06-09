@@ -5,7 +5,7 @@
 #include <QTimer>
 
 #include <VecPlus/Vec2.h>
-#include <Core/Domain/MeshFactory2dStructured.h>
+#include <Core/Domain/Mesh2dStructuredFactory.h>
 #include <Core/Domain/Mesh.h>
 #include <Core/Solver/BurgersSolver.h>
 #include <Core/Domain/FaceSetFactory.h>

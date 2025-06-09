@@ -1,7 +1,7 @@
 #include "../pch.h"
 #include <algorithm>
 
-#include <Core/Domain/MeshFactory2dStructured.h>
+#include <Core/Domain/Mesh2dStructuredFactory.h>
 #include <Core/Solver/FaceValues.h>
 #include <Core/Domain/FaceSetFactory.h>
 
@@ -18,7 +18,7 @@ namespace FaceValue_Tests
             vecp::Vec2i size {3, 4};
             cellWidth =  GetParam();
             vecp::Vec2d length = size.toDouble() * cellWidth;
-            MeshFactory2dStructured factory = MeshFactory2dStructured();
+            Mesh2dStructuredFactory factory = Mesh2dStructuredFactory();
             mesh = factory(vecp::Vec2i(3, 4), length);
 
             // Create field with specified cell centre values.

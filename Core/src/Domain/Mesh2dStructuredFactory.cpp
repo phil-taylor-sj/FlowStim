@@ -1,8 +1,8 @@
-#include <Core/Domain/MeshFactory2dStructured.h>
+#include <Core/Domain/Mesh2dStructuredFactory.h>
 
 namespace fstim
 {
-    std::unique_ptr<Mesh2d> MeshFactory2dStructured::operator()(vecp::Vec2i size, vecp::Vec2d length)
+    std::unique_ptr<Mesh2d> Mesh2dStructuredFactory::operator()(vecp::Vec2i size, vecp::Vec2d length)
     {
         m_nCells = size.x * size.y;
         m_nFaces = (size.x + 1) * size.y + (size.y + 1) * size.x;
@@ -44,14 +44,14 @@ namespace fstim
         return std::move(mesh);
     }
 
-    vecp::Vec2i MeshFactory2dStructured::m_getCellLocations(int id, vecp::Vec2i size)
+    vecp::Vec2i Mesh2dStructuredFactory::m_getCellLocations(int id, vecp::Vec2i size)
     {
         int j = id / size.x;
         int i = id - j * size.x;
         return vecp::Vec2i(i, j);
     }
 
-    int MeshFactory2dStructured::m_calcCellId(int i, int j, vecp::Vec2i size)
+    int Mesh2dStructuredFactory::m_calcCellId(int i, int j, vecp::Vec2i size)
     {
         int nCells = size.x * size.y;
         return (i < 0 || i >= size.x || j < 0 || j >= size.y)
@@ -59,7 +59,7 @@ namespace fstim
             : j * size.x + i;
     }
 
-    void MeshFactory2dStructured::m_assignIds(vecp::Vec2i size)
+    void Mesh2dStructuredFactory::m_assignIds(vecp::Vec2i size)
     { 
 
         int northStart = 2 + (size.x - 1) + (size.y - 1) * (size.x + 1);
@@ -92,7 +92,7 @@ namespace fstim
         
     }
 
-    void MeshFactory2dStructured::m_assignProperties(vecp::Vec2i size, vecp::Vec2d length)
+    void Mesh2dStructuredFactory::m_assignProperties(vecp::Vec2i size, vecp::Vec2d length)
     {
         int nCells = size.x * size.y;
         std::tuple<std::vector<double>, std::vector<double>> gridX = (*this->m_profile)(size.x, length.x);
@@ -145,7 +145,7 @@ namespace fstim
         }
     }
 
-    void MeshFactory2dStructured::m_assignVertices(vecp::Vec2i size)
+    void Mesh2dStructuredFactory::m_assignVertices(vecp::Vec2i size)
     {
         for (int id = 0; id < this->m_nCells; id++)
         {

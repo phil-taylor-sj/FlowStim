@@ -22,7 +22,7 @@ add_subdirectory(Solver_Test)
 set(TEST_SRCS
   pch.cpp
   pch.h
-  Domain_Test/MeshFactory2dStructured_Test.cpp
+  Domain_Test/Mesh2dStructuredFactory_Test.cpp
   Solver_Test/FaceValues_Test.cpp
   Solver_Test/FaceGradients_Test.cpp
   Solver_Test/JacobiScalarMethod_Test.cpp

@@ -18,7 +18,7 @@ void Simulation2D::generate()
     this->stop();
     std::lock_guard<std::mutex> guard(this->m_mutex);
     
-    fstim::MeshFactory2dStructured factory = fstim::MeshFactory2dStructured();
+    fstim::Mesh2dStructuredFactory factory = fstim::Mesh2dStructuredFactory();
     std::unique_ptr<fstim::Mesh2d> mesh = factory(this->m_size, this->m_length);
     fstim::FaceSetFactory::fourWalls(*(mesh.get()));
     
