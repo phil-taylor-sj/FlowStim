@@ -5,7 +5,7 @@ namespace fstim
     template <typename T>
     void CaseFactory<T>::setReferenceDirection(Compass direction)
     {
-        if (m_validReferenceDirections.count(direction) != 0)
+        if (m_isReferenceDirectionValid(direction))
         {
             this->m_referenceDirection = direction;   
         }

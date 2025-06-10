@@ -23,7 +23,7 @@ namespace fstim
 
         virtual ~Case2dStructuredFactory() {}; 
     
-    private:
+    protected:
         const vecp::Vec2i m_minimumDomainSize {4, 4};
         const vecp::Vec2d m_minimumDomainLength {1e-06, 1e-06};
 
@@ -32,8 +32,12 @@ namespace fstim
 
         vecp::Vec2i m_domainSize = m_defaultDomainSize;
         vecp::Vec2d m_domainLength = m_defaultDomainLength;
-        
+
+        int m_nCells = 16;
+
         std::unique_ptr<Mesh2d> m_createMesh();
+
+        bool m_isReferenceDirectionValid(Compass direction) override;
 
     };
 }

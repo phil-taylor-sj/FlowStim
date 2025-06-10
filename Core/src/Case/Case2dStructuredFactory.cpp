@@ -28,6 +28,7 @@ namespace fstim
         {
             m_domainSize = size;
         }
+        m_nCells = size.x * size.y;
     }
 
     vecp::Vec2i Case2dStructuredFactory::getDomainSize()
@@ -64,5 +65,14 @@ namespace fstim
     {
         Mesh2dStructuredFactory factory;
         return std::move(factory(m_domainSize, m_domainLength));
+    }
+
+    bool Case2dStructuredFactory::m_isReferenceDirectionValid(Compass direction)
+    {
+        std::set<Compass> m_validReferenceDirections = {
+            Compass::NORTH, Compass::SOUTH, Compass::WEST, Compass::EAST
+        };
+
+        return m_validReferenceDirections.count(direction) != 0;
     }
 }

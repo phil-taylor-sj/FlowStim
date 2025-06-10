@@ -32,7 +32,7 @@ namespace fstim
         Compass m_referenceDirection = Compass::NORTH;
         T m_referenceVelocity = T();
 
-        std::set<Compass> m_validReferenceDirections {};
+        virtual bool m_isReferenceDirectionValid(Compass direction) = 0;
 
     };
 
