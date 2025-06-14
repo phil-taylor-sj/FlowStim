@@ -28,7 +28,7 @@ namespace fstim
 
         virtual ~CaseFactory() {};
 
-    private:
+    protected:
         Compass m_referenceDirection = Compass::NORTH;
         T m_referenceVelocity = T();
 

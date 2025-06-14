@@ -16,7 +16,7 @@ namespace fstim
         ~Case2dCouetteFlowFactory() {};
         
     private:
-        std::unique_ptr<VectorField> m_createVelocityField();
+        std::unique_ptr<VectorFieldEqu> m_createVelocityField(Mesh2d& mesh);
     
         void m_assignMeshBoundaries(Mesh2d& mesh);
 
