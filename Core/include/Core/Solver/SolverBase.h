@@ -29,7 +29,7 @@ namespace fstim
 
         SolverBase() { }
 
-        ~SolverBase() = default;
+        virtual ~SolverBase() = default;
 
         SolverBase(const SolverBase& newSolver) = delete;
 

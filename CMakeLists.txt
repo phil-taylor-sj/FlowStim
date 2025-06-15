@@ -25,7 +25,7 @@ set(BUILD_BIN_DIR ${PROJECT_SOURCE_DIR}/build/bin)
 set(PUBLIC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/Core/include)
 
 add_subdirectory(Core/src)
-#add_subdirectory(App)
+add_subdirectory(App)
 #add_subdirectory(AppQML)
 
 if(PROJECT_IS_TOP_LEVEL)

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Core/Case/Case2dStructuredFactory.h>
 #include <Core/Field/Field.h>
 #include <Core/Domain/Mesh.h>

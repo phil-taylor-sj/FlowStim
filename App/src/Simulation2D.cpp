@@ -1,5 +1,10 @@
 #include <Simulation2D.h>
 
+#include <Core/Case/Case2dCouetteFlowFactory.h>
+#include <Core/Domain/Compass.h>
+
+#include <stdexcept>
+
 void Simulation2D::start()
 {
     std::lock_guard<std::mutex> guard(this->m_timerMutex);
@@ -14,27 +19,48 @@ void Simulation2D::stop()
 
 void Simulation2D::generate()
 {
-    
     this->stop();
     std::lock_guard<std::mutex> guard(this->m_mutex);
     
+    // Try block for primarily error logging 
+    // If thrown the programme will crash for a segmentation fault.
+    try
+    {
+        fstim::Case2dCouetteFlowFactory caseFactory{};
+        caseFactory.setDomainSize(this->m_size);
+        caseFactory.setDomainLength(this->m_length);
+        caseFactory.setReferenceVelocity(vecp::Vec2d(1.0, 0.0));
+        caseFactory.setReferenceDirection(fstim::Compass::WEST);
+        
+        this->m_solver = caseFactory.buildCase(); 
+    }
+    catch (std::out_of_range& err)
+    {
+        std::cerr << "[Out of Range] error thrown during Solver construction.\n"
+            << err.what() << std::endl;
+    }
+    catch (std::exception& err)
+    {
+        std::cerr << "An unknown error has occurred during Solver construction.\n"
+            << err.what() << std::endl;
+    }
+
+    //int nCells = m_solver->getMesh()->nCells;
+
+    /**
     fstim::Mesh2dStructuredFactory factory = fstim::Mesh2dStructuredFactory();
     std::unique_ptr<fstim::Mesh2d> mesh = factory(this->m_size, this->m_length);
     fstim::FaceSetFactory::fourWalls(*(mesh.get()));
-    
     int nCells = mesh->nCells;
-
     this->m_solver->setMesh(std::move(mesh));
-
-    this->m_solver->initialiseViscosity(0.001);
-
     std::unique_ptr<fstim::VectorFieldEqu> velocity = std::make_unique<fstim::VectorFieldEqu>(nCells);
     velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0.0, 0.0));
     velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0.0, 0.0));
     velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(1.0, 1.0));
     velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0.0, 0.0));
-
     this->m_solver->setVelocity(std::move(velocity));
+    */
+    this->m_solver->initialiseViscosity(0.001);
 
     this->m_updateMeshData();
 }

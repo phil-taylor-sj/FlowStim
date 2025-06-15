@@ -26,6 +26,7 @@ namespace fstim
         std::unique_ptr<BurgersSolver> solver = std::make_unique<BurgersSolver>();
         solver->setMesh(std::move(mesh));
         solver->setVelocity(std::move(velocity));
+
         return std::move(solver);
     }
 
@@ -46,17 +47,16 @@ namespace fstim
         };
         Compass reversedReference = CompassUtils::getReverseDirection(m_referenceDirection);
         
-        auto assign = [&](Compass directionToAssign) {
+        auto assignAndErase = [&](Compass directionToAssign) {
             FaceSetFactory::defineNewFaceSetByCompass(mesh, directionToAssign);
             m_directionsToAssign.erase(directionToAssign);
         };
         
-        assign(m_referenceDirection);
-        assign(reversedReference);
+        assignAndErase(m_referenceDirection);
+        assignAndErase(reversedReference);
         for (Compass direction : m_directionsToAssign)
         {
-            assign(direction);
-            assign(direction);
+            FaceSetFactory::defineNewFaceSetByCompass(mesh, direction);
         }
     }
 

@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include <Core/Case/CaseFactory.h>
 #include <Core/Domain/Mesh.h>
 

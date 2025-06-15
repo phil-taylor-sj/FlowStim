@@ -33,7 +33,7 @@ signals:
 private:
     vecp::Vec2d m_length = vecp::Vec2d(10., 20.);
     vecp::Vec2i m_size = vecp::Vec2i(20, 40);
-    std::unique_ptr<fstim::BurgersSolver> m_solver = nullptr;
+    std::unique_ptr<fstim::SolverBase> m_solver = nullptr;
     
     QTimer* m_timer;
 
