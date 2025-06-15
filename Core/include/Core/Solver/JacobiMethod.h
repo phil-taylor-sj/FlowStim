@@ -34,4 +34,8 @@ namespace fstim
 
         bool virtual m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits) = 0;
     };
+
+    extern template class JacobiMethod<double>;
+
+    extern template class JacobiMethod<vecp::Vec2d>;
 }

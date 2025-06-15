@@ -21,8 +21,8 @@ void Simulation2D::generate()
 {
     this->stop();
     std::lock_guard<std::mutex> guard(this->m_mutex);
-    
-    // Try block for primarily error logging 
+
+    // Try block for primarily error logging
     // If thrown the programme will crash for a segmentation fault.
     try
     {

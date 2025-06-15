@@ -4,6 +4,7 @@ add_library(Case OBJECT
     CaseFactory.cpp
     Case2dStructuredFactory.cpp
     Case2dCouetteFlowFactory.cpp
+    #Case2dCavityFlowFactory.cpp
 )
 
 target_link_libraries(Case VecPlus)
