@@ -5,7 +5,7 @@ namespace fstim
     template <typename T>
     void JacobiMethod<T>::operator()(Field<T>& field, const T* source)
     {
-     
+    
         std::unique_ptr<T[]> newValues = std::make_unique<T[]>(field.nCells);
 
         for (size_t count = 0; count < 100; count++)

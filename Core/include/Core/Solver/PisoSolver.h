@@ -33,5 +33,10 @@ namespace fstim
         JacobiVectorMethod<vecp::Vec2d> m_velocityIterator = JacobiVectorMethod<vecp::Vec2d>();
         JacobiScalarMethod<double> m_pressureIterator = JacobiScalarMethod<double>();
 
+        void m_solveMomentumPredictor();
+        void m_discretisePressureEquation(const vecp::Vec2d* primaryCoeffsAtFaces);
+
+        void m_solvePressureEquation(const vecp::Vec2d* primaryCoeffsAtFaces);
+        void m_updateVelocityExplicitly();
     };
 }

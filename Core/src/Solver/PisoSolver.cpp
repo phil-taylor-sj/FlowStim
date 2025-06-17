@@ -1,6 +1,8 @@
 #include <Core/Solver/PisoSolver.h>
 
 #include <Core/Solver/PressureExplicit.h>
+#include <Core/Solver/RhieChow.h>
+#include <Core/Solver/ExplicitMethod.h>
 
 namespace fstim
 {
@@ -17,24 +19,25 @@ namespace fstim
         }
 
         this->m_velocity->clear();
+        this->m_pressure->clear();
 
+        // Discretise all equations.
         this->m_discretise(*(this->m_velocity.get()));
+        std::unique_ptr<vecp::Vec2d[]> primaryCoeffsAtFaces = 
+            RhieChow<vecp::Vec2d>::interpolatePrimaryCoefficients(*(this->m_velocity), *(this->m_mesh));
+        this->m_discretisePressureEquation(primaryCoeffsAtFaces.get());
         
-        this->m_velocityIterator(*(this->m_velocity.get()));
+        // Solve velocity field implicitly.
+        this->m_solveMomentumPredictor();
         
-        std::unique_ptr<vecp::Vec2d[]> pressureSource = PressureExplicit::calculateStructured(
-            *(this->m_pressure.get()), *(this->m_mesh.get())
-        );
-        
-        this->m_pressureIterator(*(this->m_pressure.get()));
+        // Solve pressure field and correct velocity.
+        for (int count = 0; count < 4; count++)
+        {
+            this->m_solvePressureEquation(primaryCoeffsAtFaces.get());
+            this->m_updateVelocityExplicitly();        
+        }
 
-
-
-        //double maxCo = Courant::calculateMax(
-        //    deltaTime,
-        //    *(this->m_mesh),
-        //    *(this->m_velocity)
-        //);
+        double maxCo = Courant::calculateMax(deltaTime, *(this->m_mesh), *(this->m_velocity));
 
         return true;
     };
@@ -54,6 +57,54 @@ namespace fstim
     const ScalarField* PisoSolver::getPressure()
     {
         return this->m_pressure.get();
+    }
+
+    void PisoSolver::m_discretisePressureEquation(const vecp::Vec2d* primaryCoeffsAtFaces)
+    {
+        
+    }
+
+    void PisoSolver::m_solveMomentumPredictor()
+    {
+        std::unique_ptr<vecp::Vec2d[]> pressureSource = PressureExplicit::calculateStructured(
+            *(this->m_pressure.get()), *(this->m_mesh.get())
+        );
+        this->m_velocityIterator(*(this->m_velocity.get()), pressureSource.get());
+    }
+
+    void PisoSolver::m_solvePressureEquation(const vecp::Vec2d* primaryCoeffsAtFaces)
+    {
+        std::unique_ptr<vecp::Vec2d[]> momentumTermsAtFaces
+            = RhieChow<vecp::Vec2d>::interpolate(*(this->m_velocity), *(this->m_mesh));
+
+        std::unique_ptr<double[]> momentumSumAtCells = std::make_unique<double[]>(this->m_mesh->nCells);
+        for (int cellId = 0; cellId < this->m_mesh->nCells; cellId++)
+        {
+            const Cell2d& cell = this->m_mesh->cells[cellId];
+            double momentumSum = 0.;
+            for (int faceId : cell.faceId)
+            {
+                const Face2d& face = this->m_mesh->faces[faceId];
+                vecp::Vec2d normalVector = face.normal.normalise();
+                if (face.ownerId != cellId)
+                {
+                    normalVector *= -1.;
+                }
+                momentumSum -= normalVector.dot((momentumTermsAtFaces[faceId] / primaryCoeffsAtFaces[faceId]));
+            }
+            momentumSumAtCells[cellId] = momentumSum;      
+        }
+
+        this->m_pressureIterator(*(this->m_pressure.get()), momentumSumAtCells.get());
+    }
+
+    void PisoSolver::m_updateVelocityExplicitly()
+    {
+        std::unique_ptr<vecp::Vec2d[]> pressureSource = PressureExplicit::calculateStructured(
+            *(this->m_pressure.get()), *(this->m_mesh.get())
+        );
+        ExplicitMethod<vecp::Vec2d> velocityIterator {};
+        velocityIterator(*(this->m_velocity.get()), pressureSource.get());
     }
 
 
