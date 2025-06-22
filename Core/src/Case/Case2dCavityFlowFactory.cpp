@@ -35,7 +35,7 @@ namespace fstim
         velocityField->addBc(BcType::FIXEDVALUE, m_referenceVelocity); // Moving Wall
         velocityField->addBc(BcType::FIXEDVALUE, vecp::Vec2d(0., 0.)); // Static Wall
         velocityField->addBc(BcType::FIXEDVALUE, vecp::Vec2d(0., 0.)); // Static Wall
-        velocityField->addBc(BcType::ZEROGRADIENT, vecp::Vec2d(0., 0.)); // Static Wall
+        velocityField->addBc(BcType::FIXEDVALUE, vecp::Vec2d(0., 0.)); // Static Wall
         return std::move(velocityField);
     }
 

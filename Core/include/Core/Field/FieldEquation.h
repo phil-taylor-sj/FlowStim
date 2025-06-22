@@ -12,7 +12,7 @@ namespace fstim
     {
 
     public:
-        std::unique_ptr<Divergence<T>> divergence = nullptr; //std::make_unique<Divergence<T>>();
+        std::unique_ptr<Divergence<T>> divergence = std::make_unique<Divergence<T>>();
         std::unique_ptr<Laplacian<T>> laplacian = std::make_unique<Laplacian<T>>();
         std::unique_ptr<EulerExplicit<T>> temporal = std::make_unique<EulerExplicit<T>>();
 

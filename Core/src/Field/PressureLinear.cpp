@@ -15,12 +15,12 @@ namespace fstim
             for (int faceId : cell.faceId)
             {   
                 const Face<D>& face = mesh.faces[faceId];
-                D surfaceNormal = (cellId == face.ownerId) 
+                D surfaceNormal = (cellId == face.ownerId)
                     ? face.normal.normalise()
                     : face.normal.normalise() * -1.;
                 
                 int neighId = (face.ownerId == cellId) 
-                    ? face.neighId 
+                    ? face.neighId
                     : face.ownerId;
 
                 double factor = (surfaceNormal / primaryCoeffsAtFaces[faceId]).dot(

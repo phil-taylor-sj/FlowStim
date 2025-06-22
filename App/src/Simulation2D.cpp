@@ -1,6 +1,7 @@
 #include <Simulation2D.h>
 
 #include <Core/Case/Case2dCouetteFlowFactory.h>
+#include <Core/Case/Case2dCavityFlowFactory.h>
 #include <Core/Domain/Compass.h>
 
 #include <stdexcept>
@@ -26,11 +27,11 @@ void Simulation2D::generate()
     // If thrown the programme will crash for a segmentation fault.
     try
     {
-        fstim::Case2dCouetteFlowFactory caseFactory{};
-        caseFactory.setDomainSize(this->m_size);
-        caseFactory.setDomainLength(this->m_length);
+        fstim::Case2dCavityFlowFactory caseFactory{};
+        caseFactory.setDomainSize(vecp::Vec2i(20, 20));
+        caseFactory.setDomainLength(vecp::Vec2d(1., 1.));
         caseFactory.setReferenceVelocity(vecp::Vec2d(1.0, 0.0));
-        caseFactory.setReferenceDirection(fstim::Compass::WEST);
+        caseFactory.setReferenceDirection(fstim::Compass::NORTH);
         
         this->m_solver = caseFactory.buildCase(); 
     }
@@ -68,7 +69,7 @@ void Simulation2D::generate()
 Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
 {
     
-    this->m_solver = std::make_unique<fstim::BurgersSolver>();
+    //this->m_solver = std::make_unique<fstim::BurgersSolver>();
 
     connect(m_timer, &QTimer::timeout, this, &Simulation2D::m_compute);
 }
@@ -144,6 +145,6 @@ void Simulation2D::m_compute()
     {
         return;
     }
-    this->m_solver->compute(0.032f);
+    this->m_solver->compute(0.005f);
     this->m_updateVelocityData();
 }

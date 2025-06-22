@@ -21,7 +21,7 @@ namespace fstim
                 values[id] = newValues[id];
             }
 
-            // Check errors against convergence criteria, and break loop if met.
+            //Check errors against convergence criteria, and break loop if met.
             if (count != 0 && m_isConverged(errors, field.getTolerance()))
             {
                 break;
@@ -52,6 +52,7 @@ namespace fstim
                 if (pair.first == id) { continue; }
                 newValues[id] -= pair.second * values[pair.first];
             }
+
             newValues[id] /= lhs[id].at(id);
         }
     }

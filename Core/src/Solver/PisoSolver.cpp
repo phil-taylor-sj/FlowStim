@@ -1,8 +1,12 @@
 #include <Core/Solver/PisoSolver.h>
 
 #include <Core/Solver/PressureExplicit.h>
+#include <Core/Field/PressureLinear.h>
 #include <Core/Solver/RhieChow.h>
 #include <Core/Solver/ExplicitMethod.h>
+
+#include <iostream>
+#include <stdexcept>
 
 namespace fstim
 {
@@ -17,7 +21,6 @@ namespace fstim
         {
             return false;
         }
-
         this->m_velocity->clear();
         this->m_pressure->clear();
 
@@ -26,10 +29,8 @@ namespace fstim
         std::unique_ptr<vecp::Vec2d[]> primaryCoeffsAtFaces = 
             RhieChow<vecp::Vec2d>::interpolatePrimaryCoefficients(*(this->m_velocity), *(this->m_mesh));
         this->m_discretisePressureEquation(primaryCoeffsAtFaces.get());
-        
         // Solve velocity field implicitly.
         this->m_solveMomentumPredictor();
-        
         // Solve pressure field and correct velocity.
         for (int count = 0; count < 4; count++)
         {
@@ -38,6 +39,7 @@ namespace fstim
         }
 
         double maxCo = Courant::calculateMax(deltaTime, *(this->m_mesh), *(this->m_velocity));
+
 
         return true;
     };
@@ -61,7 +63,8 @@ namespace fstim
 
     void PisoSolver::m_discretisePressureEquation(const vecp::Vec2d* primaryCoeffsAtFaces)
     {
-        
+        PressureLinear2d pressureLinear {};
+        pressureLinear(*(this->m_mesh.get()), *(this->m_pressure.get()), primaryCoeffsAtFaces);
     }
 
     void PisoSolver::m_solveMomentumPredictor()
@@ -94,7 +97,7 @@ namespace fstim
             }
             momentumSumAtCells[cellId] = momentumSum;      
         }
-
+        
         this->m_pressureIterator(*(this->m_pressure.get()), momentumSumAtCells.get());
     }
 
