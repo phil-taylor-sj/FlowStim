@@ -2,6 +2,7 @@
 
 #include <Core/Case/Case2dStructuredFactory.h>
 #include <Core/Solver/SolverBase.h>
+#include <Core/Field/FieldEquation.h>
 
 #include <memory>
 
@@ -12,9 +13,9 @@ namespace fstim
     public:
         virtual std::unique_ptr<SolverBase> buildCase() override;
 
-        Case2dCavityFlowFactory();
+        Case2dCavityFlowFactory() {};
 
-        ~Case2dCavityFlowFactory();
+        ~Case2dCavityFlowFactory() {};
 
     private:
         std::unique_ptr<VectorFieldEqu> m_createVelocityField(Mesh2d& mesh);

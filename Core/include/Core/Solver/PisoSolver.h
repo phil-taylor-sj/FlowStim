@@ -19,9 +19,9 @@ namespace fstim
 
         const ScalarField* getPressure();
 
-        PisoSolver() { }
+        PisoSolver() {};
 
-        ~PisoSolver() = default;
+        ~PisoSolver() {};
 
         PisoSolver(const PisoSolver& newSolver) = delete;
 

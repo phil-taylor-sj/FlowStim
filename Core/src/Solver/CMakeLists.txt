@@ -13,6 +13,7 @@ add_library(Solver OBJECT
     FaceValues.cpp
     FaceGradients.cpp
     PressureExplicit.cpp
+    PisoSolver.cpp
     )
 
 target_link_libraries(Solver VecPlus)
