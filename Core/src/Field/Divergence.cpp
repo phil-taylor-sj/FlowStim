@@ -4,7 +4,7 @@ namespace fstim
 {
     template <typename T>
     void Divergence<T>::operator()(
-            const Mesh& mesh, 
+            const Mesh2d& mesh, 
             Field<T>& field, 
             const VectorField& velocity,
             const double* rho)
@@ -19,10 +19,10 @@ namespace fstim
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
         {
-            const Cell& cell = mesh.cells[cellId];
+            const Cell2d& cell = mesh.cells[cellId];
             for (int faceId : cell.faceId)
             {   
-                const Face& face = mesh.faces[faceId];
+                const Face2d& face = mesh.faces[faceId];
                 
                 double flux = (face.ownerId == cellId) 
                     ? fluxes[faceId]
@@ -47,6 +47,8 @@ namespace fstim
                 // Retrieve boudnary condition and update accordingly
                 std::tuple<BcType, T> bc = field.getBc(mesh.getFaceSetId(face.id));              
                 switch (std::get<0>(bc)) {
+                    case BcType::NONE:
+                        [[fallthrough]];
                     case BcType::ZEROGRADIENT:
                         lhs[cellId][cellId] += flux;
                         break;

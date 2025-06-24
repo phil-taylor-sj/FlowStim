@@ -10,6 +10,7 @@ add_library(Field OBJECT
     FieldTolerance.cpp
     FieldRelaxation.cpp
     Initialise.cpp
+    PressureLinear.cpp
 )
 
 target_link_libraries(Field VecPlus)

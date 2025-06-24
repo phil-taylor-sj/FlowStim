@@ -13,6 +13,8 @@ FetchContent_MakeAvailable(googletest)
 
 set(TEST_TARGET FlowStim_Tests)
 
+#set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
+
 add_subdirectory(Domain_Test)
 
 add_subdirectory(Solver_Test)
@@ -20,8 +22,11 @@ add_subdirectory(Solver_Test)
 set(TEST_SRCS
   pch.cpp
   pch.h
-  Domain_Test/MeshFactory_Test.cpp
+  Domain_Test/Mesh2dStructuredFactory_Test.cpp
+  Solver_Test/FaceValues_Test.cpp
+  Solver_Test/FaceGradients_Test.cpp
   Solver_Test/JacobiScalarMethod_Test.cpp
+  Solver_Test/JacobiVectorMethod_Test.cpp 
   Field_Test/FieldTolerance_Test.cpp
   Field_Test/Field_Test.cpp
   Field_Test/FieldRelaxation_Test.cpp

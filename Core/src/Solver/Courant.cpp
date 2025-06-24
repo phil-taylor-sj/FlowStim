@@ -4,7 +4,7 @@ namespace fstim
 {        
     double Courant::calculateMax(
             double timeStep,
-            const Mesh& mesh,
+            const Mesh2d& mesh,
             const VectorField& velocity)
     {
         const vecp::Vec2d* values = velocity.readValues();
@@ -21,7 +21,7 @@ namespace fstim
 
     double Courant::calculateAve(
             double timeStep,
-            const Mesh& mesh,
+            const Mesh2d& mesh,
             const VectorField& velocity)
     {
         const vecp::Vec2d* values = velocity.readValues();

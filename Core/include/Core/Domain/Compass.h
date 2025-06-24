@@ -26,6 +26,7 @@ namespace fstim
         NORTH = 0,
         SOUTH = 2,
         EAST = 1,
-        WEST = 3
+        WEST = 3,
+        NONE = 5
     };
 }

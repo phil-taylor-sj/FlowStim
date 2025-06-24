@@ -2,6 +2,7 @@
 #include <map>
 
 #include <VecPlus/Vec2.h>
+#include <VecPlus/Vec3.h>
 
 namespace fstim
 {
@@ -13,6 +14,7 @@ namespace fstim
      * area, center position, boundary status, and associated cell identifiers. It provides a constructor to initialize
      * the face with a given ID and a destructor for cleanup.
      */
+    template <typename T>
     class Face
     {
     public:
@@ -28,14 +30,18 @@ namespace fstim
          *
          * Represents the surface area of the face in 2D space.
          */
-        vecp::Vec2d normal{0., 0.}; 
+        T normal{}; 
 
         /**
          * \brief The center of the face.
          *
          * A Vec2d object representing the coordinates of the center of the face.
          */
-        vecp::Vec2d center{0., 0.};
+        T center{};
+
+        double cellToCellSpacing {1.0};
+
+        double ownerWeight = 1.;
 
         /**
          * \brief Indicates whether the face is on the boundary.
@@ -61,4 +67,10 @@ namespace fstim
          */
         ~Face() {};
     };
+
+    extern template class Face<vecp::Vec2d>;
+    extern template class Face<vecp::Vec3d>;
+
+    using Face2d = Face<vecp::Vec2d>;
+    using Face3d = Face<vecp::Vec3d>;
 }

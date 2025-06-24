@@ -1,5 +1,11 @@
 #include <Simulation2D.h>
 
+#include <Core/Case/Case2dCouetteFlowFactory.h>
+#include <Core/Case/Case2dCavityFlowFactory.h>
+#include <Core/Domain/Compass.h>
+
+#include <stdexcept>
+
 void Simulation2D::start()
 {
     std::lock_guard<std::mutex> guard(this->m_timerMutex);
@@ -14,27 +20,48 @@ void Simulation2D::stop()
 
 void Simulation2D::generate()
 {
-    
     this->stop();
     std::lock_guard<std::mutex> guard(this->m_mutex);
-    
-    fstim::MeshFactory factory = fstim::MeshFactory();
-    std::unique_ptr<fstim::Mesh> mesh = factory(this->m_size, this->m_length);
+
+    // Try block for primarily error logging
+    // If thrown the programme will crash for a segmentation fault.
+    try
+    {
+        fstim::Case2dCavityFlowFactory caseFactory{};
+        caseFactory.setDomainSize(vecp::Vec2i(20, 20));
+        caseFactory.setDomainLength(vecp::Vec2d(1., 1.));
+        caseFactory.setReferenceVelocity(vecp::Vec2d(1.0, 0.0));
+        caseFactory.setReferenceDirection(fstim::Compass::NORTH);
+        
+        this->m_solver = caseFactory.buildCase(); 
+    }
+    catch (std::out_of_range& err)
+    {
+        std::cerr << "[Out of Range] error thrown during Solver construction.\n"
+            << err.what() << std::endl;
+    }
+    catch (std::exception& err)
+    {
+        std::cerr << "An unknown error has occurred during Solver construction.\n"
+            << err.what() << std::endl;
+    }
+
+    //int nCells = m_solver->getMesh()->nCells;
+
+    /**
+    fstim::Mesh2dStructuredFactory factory = fstim::Mesh2dStructuredFactory();
+    std::unique_ptr<fstim::Mesh2d> mesh = factory(this->m_size, this->m_length);
     fstim::FaceSetFactory::fourWalls(*(mesh.get()));
-    
     int nCells = mesh->nCells;
-
     this->m_solver->setMesh(std::move(mesh));
-
-    this->m_solver->initialiseViscosity(0.001);
-
     std::unique_ptr<fstim::VectorFieldEqu> velocity = std::make_unique<fstim::VectorFieldEqu>(nCells);
     velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0.0, 0.0));
     velocity->addBc(fstim::BcType::ZEROGRADIENT, vecp::Vec2d(0.0, 0.0));
     velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(1.0, 1.0));
     velocity->addBc(fstim::BcType::FIXEDVALUE, vecp::Vec2d(0.0, 0.0));
-
     this->m_solver->setVelocity(std::move(velocity));
+    */
+    this->m_solver->initialiseViscosity(0.001);
 
     this->m_updateMeshData();
 }
@@ -42,7 +69,7 @@ void Simulation2D::generate()
 Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTimer(this))
 {
     
-    this->m_solver = std::make_unique<fstim::BurgersSolver>();
+    //this->m_solver = std::make_unique<fstim::BurgersSolver>();
 
     connect(m_timer, &QTimer::timeout, this, &Simulation2D::m_compute);
 }
@@ -50,7 +77,7 @@ Simulation2D::Simulation2D(QObject *parent) : QObject(parent), m_timer(new QTime
 void Simulation2D::m_updateMeshData()
 {
     std::shared_ptr<MeshData> data = std::make_shared<MeshData>();
-    const fstim::Mesh* mesh = this->m_solver->getMesh();
+    const fstim::Mesh2d* mesh = this->m_solver->getMesh();
     data->length = mesh->length.toFloat();
     data->nCells = mesh->nCells;
     //data->vertices.resize(2 * 4 * mesh->nCells);
@@ -66,10 +93,10 @@ void Simulation2D::m_updateMeshData()
         data->vertices[id] = (position - halfLength) / (0.55f * maxLength);
     }
 
-    const fstim::Cell* begin = mesh->cells.get(); 
-    const fstim::Cell* end = begin + mesh->nCells;
+    const fstim::Cell2d* begin = mesh->cells.get(); 
+    const fstim::Cell2d* end = begin + mesh->nCells;
 
-    for (const fstim::Cell* cell = begin; cell != end; cell++)
+    for (const fstim::Cell2d* cell = begin; cell != end; cell++)
     {
         data->cellElements[cell->id] = cell->vertexId;
         //for (vecp::Vec2f vertex : cell->vertices)
@@ -86,7 +113,7 @@ void Simulation2D::m_updateMeshData()
 void Simulation2D::m_updateVelocityData()
 {
     const fstim::VectorField* field = this->m_solver->getVelocity();
-    const fstim::Mesh* mesh = this->m_solver->getMesh();
+    const fstim::Mesh2d* mesh = this->m_solver->getMesh();
     const vecp::Vec2d* velocity = field->readValues();
     
     auto data = std::make_shared<std::vector<vecp::Vec2f>>();
@@ -94,7 +121,7 @@ void Simulation2D::m_updateVelocityData()
     
     for (int id = 0; id < mesh->nVertices; id++)
     {
-        const fstim::Vertex& vertex = mesh->vertices[id];
+        const fstim::Vertex2d& vertex = mesh->vertices[id];
         vecp::Vec2d vertexValue = vecp::Vec2d();
         for (int index = 0; index < vertex.cellId.size(); index++)
         {
@@ -118,6 +145,6 @@ void Simulation2D::m_compute()
     {
         return;
     }
-    this->m_solver->compute(0.032f);
+    this->m_solver->compute(0.005f);
     this->m_updateVelocityData();
 }

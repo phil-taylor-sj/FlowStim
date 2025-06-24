@@ -1,9 +1,7 @@
-#pragma once 
+#pragma once
 
-#include <stdexcept>
-#include <format>
-
-#include <VecPlus/Vec2.h>
+#include <memory>
+#include <span>
 
 #include <Core/Domain/Cell.h>
 #include <Core/Domain/Face.h>
@@ -11,38 +9,38 @@
 #include <Core/Domain/Compass.h>
 #include <Core/Domain/GridProfileEquidistant.h>
 #include <Core/Domain/VertexMapping.h>
+#include <Core/Domain/MeshDomainData.h>
 
-using namespace vecp;
+#include <VecPlus/Vec2.h>
+#include <VecPlus/Vec3.h>
 
 namespace fstim
 {
+    template <typename D, typename F, typename I>
     class MeshFactory
     {
-    public:
-        std::unique_ptr<Mesh> operator()(Vec2i size, Vec2d length);
+    public:   
+
+        MeshFactory() {};
         
-        MeshFactory() : m_profile(std::make_unique<GridProfileEquidistant>()) {};
+        virtual ~MeshFactory() {};
 
-        MeshFactory(std::unique_ptr<GridProfile> profile) : m_profile(std::move(profile)) {};
-
-        ~MeshFactory() {};
-
-    private:
-
-        const std::unique_ptr<GridProfile> m_profile;
-
-        const Compass m_directions[4] = {Compass::NORTH, Compass::SOUTH, Compass::EAST, Compass::WEST};
-
-        int m_calcCellId(int i, int j, Vec2i size);
+    protected:
         
-        Vec2i m_getCellLocations(int id, Vec2i size);
+        int m_nCells = 4;
+        int m_nFaces = 4;
+        int m_nVertices = 4;
+        std::unique_ptr<Cell<D, F>[]> m_cells = nullptr;
+        std::unique_ptr<Face<D>[]> m_faces = nullptr;
+        std::unique_ptr<Vertex<D>[]> m_vertices = nullptr;
+        D length {};
 
-        void m_assignIds(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, Vec2i size);
+        void m_calcCellToCellSpacing(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
 
-        void m_assignProperties(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, Vec2i size, Vec2d length);
-        
-        void m_assignVertices(std::unique_ptr<Cell[]>& cells, std::unique_ptr<Face[]>& faces, vecp::Vec2i size);
+        void m_calcOwnerWeights(Face<D>* faces, int nFaces, const Cell<D, F>* cells, int nCells);
 
+        [[nodiscard]] std::unique_ptr<Mesh<D, F>> m_createMesh(D length);
     };
     
+    extern template class MeshFactory<vecp::Vec2d, vecp::Vec2f, vecp::Vec2i>;
 }

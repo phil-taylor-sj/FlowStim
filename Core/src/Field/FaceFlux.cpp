@@ -4,7 +4,7 @@ namespace fstim
 {
     void FaceFlux::Linear(
             double* flux,
-            const Mesh& mesh, 
+            const Mesh2d& mesh, 
             const VectorField& velocity,
             const double* rho)
     {
@@ -12,7 +12,7 @@ namespace fstim
 
         for (int faceId = 0; faceId < mesh.nFaces; faceId++)
         {
-            const Face& face = mesh.faces[faceId];
+            const Face2d& face = mesh.faces[faceId];
 
             if (face.neighId != -1)
             {
@@ -39,6 +39,8 @@ namespace fstim
             double cellRho = (rho == nullptr) ? 1. : rho[face.ownerId];
             std::tuple<BcType, vecp::Vec2d> fluxBc = velocity.getBc(mesh.getFaceSetId(faceId));
             switch (std::get<0>(fluxBc)) {
+                case BcType::NONE:
+                    [[fallthrough]];
                 case BcType::ZEROGRADIENT:
                     flux[faceId] = face.normal.dot(values[face.ownerId] * cellRho);
                     break;
@@ -54,7 +56,7 @@ namespace fstim
     }
 
     std::unique_ptr<double[]> FaceFlux::Linear(
-        const Mesh& mesh, 
+        const Mesh2d& mesh, 
         const VectorField& velocity,
         const double* rho
         )

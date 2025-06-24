@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Core/Solver/JacobiMethod.h>
+#include <Core/Solver/Tolerance.h>
+
+#include <stddef.h> 
 
 namespace fstim
 {
@@ -30,6 +33,10 @@ namespace fstim
          * \param newValues An array of values obtained produced by the most recent iteration loop.
          * \param oldValues An array of values from immediately prior to the most recent iteraiton loop.
          */
-        Tolerance<double> m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues) override;
+        Tolerance<T> m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues) override;
+
+        bool m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits) override;
     };
+
+    extern template class JacobiScalarMethod<double>;
 }

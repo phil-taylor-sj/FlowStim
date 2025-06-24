@@ -3,7 +3,7 @@
 Simulation::Simulation(QOpenGLWindow::UpdateBehavior updateBehavior, QWindow *parent) : QOpenGLWindow(updateBehavior, parent), m_timer(new QTimer(this))
 {
     qInfo() << this << "Constructed";
-    fstim::MeshFactory factory = fstim::MeshFactory();
+    fstim::Mesh2dStructuredFactory factory = fstim::Mesh2dStructuredFactory();
     this->m_length = vecp::Vec2d(10., 20.);
     this->m_mesh = factory(vecp::Vec2i(10, 20), this->m_length);
     connect(m_timer, &QTimer::timeout, this, &Simulation::m_updateCanvas);
@@ -38,7 +38,7 @@ void Simulation::m_updateCanvas()
     update(); // Triggers a repaint
 }
 
-void Simulation::m_drawRectangle(const fstim::Cell& cell)
+void Simulation::m_drawRectangle(const fstim::Cell2d& cell)
 {
     qInfo() << "Cell Id = " << cell.id << ":" 
     << cell.vertices[0].x << cell.vertices[0].y << ",  "

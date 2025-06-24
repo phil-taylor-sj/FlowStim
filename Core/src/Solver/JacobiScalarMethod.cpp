@@ -1,10 +1,15 @@
 #include <Core/Solver/JacobiScalarMethod.h>
+#include <Core/Solver/Tolerance.h>
+
+#include <_stdlib.h>
+#include <algorithm>
+#include <cstdlib>
 
 namespace fstim
 {
 
     template <typename T>
-    Tolerance<double> JacobiScalarMethod<T>::m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues)
+    Tolerance<T> JacobiScalarMethod<T>::m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues)
     {
         T maxAbs = 0.;
         T maxRel = 0.;
@@ -20,8 +25,16 @@ namespace fstim
             maxRel = std::max(maxRel, relErr);
         }
         
-        return Tolerance<double>(maxAbs, maxRel);  
+        return Tolerance<T>(maxAbs, maxRel);  
     }
 
+    template <typename T>
+    bool JacobiScalarMethod<T>::m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits)
+    {
+        return (errors.absolute <= convergenceLimits.absolute ||
+                errors.relative <= convergenceLimits.relative);
+ 
+    }
+        
     template class JacobiScalarMethod<double>;
 }

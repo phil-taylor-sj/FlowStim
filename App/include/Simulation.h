@@ -6,7 +6,7 @@
 #include <QTimer>
 
 #include <VecPlus/Vec2.h>
-#include <Core/Domain/MeshFactory.h>
+#include <Core/Domain/Mesh2dStructuredFactory.h>
 #include <Core/Domain/Mesh.h>
 
 class Simulation : public QOpenGLWindow, protected QOpenGLFunctions
@@ -24,12 +24,12 @@ protected:
     void paintGL() override;
 
 private:
-    std::unique_ptr<const fstim::Mesh> m_mesh;
+    std::unique_ptr<const fstim::Mesh2d> m_mesh;
     vecp::Vec2d m_length;
     
     QTimer* m_timer;
     
     void m_updateCanvas();
-    void m_drawRectangle(const fstim::Cell& cell);
+    void m_drawRectangle(const fstim::Cell2d& cell);
 
 };

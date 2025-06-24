@@ -10,6 +10,6 @@ namespace fstim
     template<typename T>
     class Initialise
     {
-        static void rectangle(const Mesh& mesh, Field<T>& field, vecp::Vec2i center, vecp::Vec2i widths);
+        static void rectangle(const Mesh2d& mesh, Field<T>& field, vecp::Vec2i center, vecp::Vec2i widths);
     };
 }

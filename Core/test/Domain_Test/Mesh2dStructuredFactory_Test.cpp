@@ -1,6 +1,8 @@
 #include "../pch.h"
 
-#include <Core/Domain/MeshFactory.h>
+#include <set>
+
+#include <Core/Domain/Mesh2dStructuredFactory.h>
 
 using namespace fstim;
 
@@ -11,10 +13,10 @@ namespace Domain_Tests
     protected:
         void SetUp() override 
         {
-            MeshFactory factory = MeshFactory();
+            Mesh2dStructuredFactory factory = Mesh2dStructuredFactory();
             mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
         }
-        std::unique_ptr<const Mesh> mesh;
+        std::unique_ptr<const Mesh2d> mesh;
     };
 
     class SmallMeshEqualParamF : public ::testing::TestWithParam<std::tuple<vecp::Vec2i, vecp::Vec2d>>
@@ -26,12 +28,12 @@ namespace Domain_Tests
             length = std::get<1>(GetParam());
             dx = length.x / size.x;
             dy = length.y / size.y;
-            MeshFactory factory = MeshFactory();
+            Mesh2dStructuredFactory factory = Mesh2dStructuredFactory();
             mesh = std::move(factory(size, length));
         }
         vecp::Vec2i size;
         vecp::Vec2d length;
-        std::unique_ptr<const Mesh> mesh;
+        std::unique_ptr<const Mesh2d> mesh;
         double dx, dy;
     };
 
@@ -40,7 +42,7 @@ namespace Domain_Tests
     protected:
         void SetUp() override 
         {
-            MeshFactory factory = MeshFactory();
+            Mesh2dStructuredFactory factory = Mesh2dStructuredFactory();
             mesh = std::move(factory(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)));
             mesh->addFaceSet(vecp::Vec2d(1.5, 8.), vecp::Vec2d(3., 0.001));
             
@@ -53,7 +55,7 @@ namespace Domain_Tests
             
             mesh->addFaceSet(walls); 
         }
-        std::unique_ptr<Mesh> mesh;
+        std::unique_ptr<Mesh2d> mesh;
     };
 
     class SmallMeshEqualCellCenter_F : public SmallMeshEqualParamF {};
@@ -176,9 +178,9 @@ namespace Domain_Tests
         };
         for (int id = 0; id < 31; id++)
         {
-            const Face& face = mesh->faces[id];
-            Vec2d centerOne = mesh->cells[face.ownerId].center;
-            Vec2d centerTwo = (face.neighId != -1)
+            const Face2d& face = mesh->faces[id];
+            vecp::Vec2d centerOne = mesh->cells[face.ownerId].center;
+            vecp::Vec2d centerTwo = (face.neighId != -1)
                 ? mesh->cells[face.neighId].center
                 : face.center;
             double spacing = centerOne.mag(centerTwo);
@@ -225,7 +227,7 @@ namespace Domain_Tests
             length = std::get<1>(GetParam());
             expected = (size.x + 1) * (size.y + 1);
         }
-        MeshFactory factory{};
+        Mesh2dStructuredFactory factory{};
         vecp::Vec2i size;
         vecp::Vec2d length;
         int expected;
@@ -243,7 +245,7 @@ namespace Domain_Tests
             //FAIL() << err.what();
         }
 
-        std::unique_ptr<const Mesh> mesh = factory(size, length);
+        std::unique_ptr<const Mesh2d> mesh = factory(size, length);
         ASSERT_EQ(mesh->nVertices, expected);
 
         for (int id = 0; id < mesh->nVertices; id++)
@@ -369,4 +371,41 @@ namespace Domain_Tests
             }
         }
     }
+
+    class SmallMeshEqualOwnerWeights_F : public SmallMeshEqualParamF {};
+    TEST_P(SmallMeshEqualOwnerWeights_F, CorrectOwnerWeights)
+    {
+        std::set<int> boundaryIds = {0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18, 28, 29, 30};
+        for (int faceId = 0; faceId < 31; faceId++)
+        {
+            double expected = (boundaryIds.count(faceId) == 1) ? 1. : 0.5;
+            ASSERT_NEAR(mesh->faces[faceId].ownerWeight, expected, 1e-06);
+        }
+    }
+
+    INSTANTIATE_TEST_SUITE_P(CorrectOwnerWeights, SmallMeshEqualOwnerWeights_F, testing::Values(
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(200., 100.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(1., 1.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(0.2, 0.4))
+    ));
+
+    class SmallMeshEqualCellToCellSpacing_F : public SmallMeshEqualParamF {};
+    TEST_P(SmallMeshEqualCellToCellSpacing_F, CorrectCellToCellSpacing)
+    {
+        std::set<int> boundaryIds = {0, 3, 4, 7, 8, 11, 12, 15, 16, 17, 18, 28, 29, 30};
+        for (int faceId = 0; faceId < 31; faceId++)
+        {
+            double expected = (faceId < 16) ? this->dx : this->dy;
+            expected = (boundaryIds.count(faceId) == 1) ? expected * 0.5 : expected;
+            ASSERT_NEAR(mesh->faces[faceId].cellToCellSpacing, expected, 1e-06);
+        }
+    }
+
+    INSTANTIATE_TEST_SUITE_P(CorrectCellToCellSpacing, SmallMeshEqualCellToCellSpacing_F, testing::Values(
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(3., 8.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(200., 100.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(1., 1.)),
+        std::make_tuple(vecp::Vec2i(3, 4), vecp::Vec2d(0.2, 0.4))
+    ));
 }

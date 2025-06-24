@@ -9,6 +9,11 @@ add_library(Solver OBJECT
     JacobiMethod.cpp
     JacobiScalarMethod.cpp
     JacobiVectorMethod.cpp
+    RhieChow.cpp
+    FaceValues.cpp
+    FaceGradients.cpp
+    PressureExplicit.cpp
+    PisoSolver.cpp
     )
 
 target_link_libraries(Solver VecPlus)

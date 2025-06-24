@@ -1,5 +1,7 @@
 #pragma once
+
 #include <VecPlus/Vec2.h>
+#include <VecPlus/Vec3.h>
 
 #include <map>
 
@@ -15,6 +17,7 @@ namespace fstim
      * width, center position, and the IDs of the faces that make up 
      * the cell's boundaries.
      */
+    template <typename T, typename U>
     class Cell
     {
     public:
@@ -41,7 +44,7 @@ namespace fstim
          * The center is represented as a 2D vector, which indicates the cell's
          * central position in both the x and y directions. Initialized to (0.0, 0.0).
          */
-        vecp::Vec2d center{0., 0.};
+        T center{0., 0.};
 
         /**
          * \brief Identifiers for the faces of the cell.
@@ -57,7 +60,7 @@ namespace fstim
          * A vector containing the IDs of the faces that form the boundaries of the cell.
          * By default, this vector is initialized with three elements, all set to -1.
          */
-        std::vector<vecp::Vec2f> vertices = {vecp::Vec2f(0.f, 0.f)};
+        std::vector<U> vertices = {U()};
 
         /**
          * \brief Identifiers for the vertices of the cell.
@@ -93,4 +96,11 @@ namespace fstim
          */
         ~Cell() {};
     };
+
+    extern template class Cell<vecp::Vec2d, vecp::Vec2f>;
+    extern template class Cell<vecp::Vec3d, vecp::Vec3f>;
+
+    using Cell2d = Cell<vecp::Vec2d, vecp::Vec2f>;
+    using Cell3d = Cell<vecp::Vec3d, vecp::Vec3f>;
+
 }

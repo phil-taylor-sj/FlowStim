@@ -45,6 +45,7 @@ target_link_libraries(${APP_NAME} PRIVATE
     Domain
     Field
     Solver 
+    Case
     )
 
 target_include_directories(${APP_NAME} PRIVATE

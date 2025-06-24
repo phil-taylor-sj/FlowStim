@@ -2,6 +2,8 @@
 
 #include <Core/Solver/PointMethod.h>
 #include <Core/Solver/Tolerance.h>
+#include <iostream>
+
 
 namespace fstim
 {
@@ -28,6 +30,12 @@ namespace fstim
     protected:
         void m_iteratorLoop(Field<T>& field, const T* source, T* newValues);
 
-        Tolerance<double> virtual m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues) = 0;
+        Tolerance<T> virtual m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues) = 0;
+
+        bool virtual m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits) = 0;
     };
+
+    extern template class JacobiMethod<double>;
+
+    extern template class JacobiMethod<vecp::Vec2d>;
 }

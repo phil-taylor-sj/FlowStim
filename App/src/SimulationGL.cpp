@@ -146,15 +146,15 @@ void SimulationGL::m_drawField()
     int loc_minValue = m_shader->uniformLocation("u_minValue");
     assert(loc_maxValue != -1);
     assert(loc_minValue != -1);
-    m_shader->setUniformValue(loc_maxValue, 1.f);
-    m_shader->setUniformValue(loc_minValue, 0.f);
+    m_shader->setUniformValue(loc_maxValue, 10.f);
+    m_shader->setUniformValue(loc_minValue, -10.f);
 
     glDrawElements(GL_TRIANGLES, this->m_nCells * 6, GL_UNSIGNED_INT, nullptr);
     this->m_gridVao.release();
 }
 
 void SimulationGL::m_drawMesh()
-{   
+{
     this->m_shader->bind();
     this->m_cellVao.bind();
     for (int index = 0; index < this->m_nCells; index++)

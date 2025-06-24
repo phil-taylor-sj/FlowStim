@@ -11,11 +11,11 @@ namespace fstim
     public:
         bool virtual compute(double deltaTime) = 0;
 
-        void setMesh(std::unique_ptr<Mesh> mesh);
+        void setMesh(std::unique_ptr<Mesh2d> mesh);
 
         void setVelocity(std::unique_ptr<VectorFieldEqu> velocity);
 
-        const Mesh* getMesh();
+        const Mesh2d* getMesh();
 
         const VectorField* getVelocity();
 
@@ -29,7 +29,7 @@ namespace fstim
 
         SolverBase() { }
 
-        ~SolverBase() = default;
+        virtual ~SolverBase() = default;
 
         SolverBase(const SolverBase& newSolver) = delete;
 
@@ -37,7 +37,7 @@ namespace fstim
 
         
     protected:
-        std::unique_ptr<Mesh> m_mesh = nullptr;
+        std::unique_ptr<Mesh2d> m_mesh = nullptr;
         std::unique_ptr<VectorFieldEqu> m_velocity = nullptr;
         std::unique_ptr<double[]> m_viscosity = nullptr;
         double m_deltaTime = 1.;

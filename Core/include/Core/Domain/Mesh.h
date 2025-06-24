@@ -1,11 +1,16 @@
 #pragma once
+
+#include <memory>
 #include <vector>
 #include <set>
 
 #include <VecPlus/Vec2.h>
+#include <VecPlus/Vec3.h>
 #include <Core/Domain/Cell.h>
 #include <Core/Domain/Face.h>
 #include <Core/Domain/Vertex.h>
+
+#include <Core/Domain/MeshDomainData.h>
 
 namespace fstim
 {
@@ -39,17 +44,18 @@ namespace fstim
      * An std::vector array contianing sets of faceIds which belong to the face set
      * with an id denoted by the index.
      */
+    template <typename T, typename U>
     class Mesh
     {
     public:
-        const std::unique_ptr<const Cell[]> cells;
-        const std::unique_ptr<const Face[]> faces;
-        const std::unique_ptr<const Vertex[]> vertices;
+        const std::unique_ptr<const Cell<T, U>[]> cells;
+        const std::unique_ptr<const Face<T>[]> faces;
+        const std::unique_ptr<const Vertex<T>[]> vertices;
 
         const int nCells;
         const int nFaces;
         const int nVertices;
-        const vecp::Vec2d length;
+        const T length;
 
         /**
          * \brief Add a new face set, by selecting faces based on a single 2d rectangle.
@@ -63,7 +69,7 @@ namespace fstim
          * 
          * \return The id of the new face set.
          */
-        int addFaceSet(vecp::Vec2d center,vecp::Vec2d lengths);
+        int addFaceSet(T center, T lengths);
         
          /**
          * \brief Add a new face set, by selecting faces based on multiple 2d rectangles.
@@ -76,7 +82,7 @@ namespace fstim
          * 
          * \return The id of the new face set.
          */
-        int addFaceSet(std::vector<std::tuple<vecp::Vec2d, vecp::Vec2d>> boundaries);
+        int addFaceSet(std::vector<std::tuple<T, T>> boundaries);
 
         /**
          * \brief Get the id of a face set which contains a face with the specified id.
@@ -87,16 +93,20 @@ namespace fstim
          */
         int getFaceSetId(int faceId) const;
 
-        Mesh(int nCellsIn, int nFacesIn, int nVerticesIn, 
-            std::unique_ptr<Cell[]> cellsIn, std::unique_ptr<Face[]> facesIn, std::unique_ptr<Vertex[]> verticesIn,
-            vecp::Vec2d lengthIn);
+        Mesh(MeshDomainData<T, U>& data);
  
         virtual ~Mesh() = default;
     
     private:
         std::vector<std::set<int>> m_faceSets{};
     
-        void m_addFacesToSet(std::set<int>& newSet, vecp::Vec2d center, vecp::Vec2d lengths);
+        void m_addFacesToSet(std::set<int>& newSet, T center, T lengths);
 
     };
+
+    extern template class Mesh<vecp::Vec2d, vecp::Vec2f>;
+    extern template class Mesh<vecp::Vec3d, vecp::Vec3f>;
+
+    using Mesh2d = Mesh<vecp::Vec2d, vecp::Vec2f>;
+    using Mesh3d = Mesh<vecp::Vec3d, vecp::Vec3f>;
 }
