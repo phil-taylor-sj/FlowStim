@@ -1,7 +1,8 @@
 #include <benchmark/benchmark.h>
 
-#include <iostream>
+//#include <iostream>
 
+/**
 void SomeFunction()
 {  
     for (int i = 0; i < 1000; i++)
@@ -20,4 +21,5 @@ static void BM_SomeFunction(benchmark::State& state) {
 // Register the function as a benchmark
 BENCHMARK(BM_SomeFunction);
 // Run the benchmark
+*/
 BENCHMARK_MAIN();
