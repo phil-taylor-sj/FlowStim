@@ -1,17 +1,17 @@
 #pragma once
 
-#include <QWidget>
-#include <QDebug>
-#include <QTimer>
-
-#include <VecPlus/Vec2.h>
 #include <Core/Domain/Mesh2dStructuredFactory.h>
 #include <Core/Domain/Mesh.h>
 #include <Core/Solver/BurgersSolver.h>
 #include <Core/Domain/FaceSetFactory.h>
-
 #include <MeshData.h>
 
+#include <VecPlus/Vec2.h>
+
+#include <QWidget>
+#include <QDebug>
+#include <QTimer>
+#include <mutex>
 
 class Simulation2D : public QObject
 {

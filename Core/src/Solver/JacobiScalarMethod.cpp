@@ -1,7 +1,6 @@
 #include <Core/Solver/JacobiScalarMethod.h>
 #include <Core/Solver/Tolerance.h>
 
-#include <_stdlib.h>
 #include <algorithm>
 #include <cstdlib>
 

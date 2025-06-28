@@ -14,22 +14,22 @@ find_package(Qt6 COMPONENTS Core Gui OpenGL OpenGLWidgets REQUIRED )
 qt_standard_project_setup()
 
 qt6_wrap_cpp(MOC_FILES 
-    ${PROJECT_SOURCE_DIR}/App/include/Simulation.h
+    #${PROJECT_SOURCE_DIR}/App/include/Simulation.h
     ${PROJECT_SOURCE_DIR}/App/include/SimulationGL.h
     ${PROJECT_SOURCE_DIR}/App/include/Simulation2D.h
-    ${PROJECT_SOURCE_DIR}/App/include/MeshGL.h
-    ${PROJECT_SOURCE_DIR}/App/include/ShaderGL.h
+    #${PROJECT_SOURCE_DIR}/App/include/MeshGL.h
+    #${PROJECT_SOURCE_DIR}/App/include/ShaderGL.h
     )
 
 qt_add_resources(RESOURCE_FILES resources/shaders.qrc)
 
 qt_add_executable(${APP_NAME} ${RESOURCE_FILES}
     src/main.cpp
-    src/Simulation.cpp
+    #src/Simulation.cpp
     src/SimulationGL.cpp
     src/Simulation2D.cpp
-    src/MeshGL.cpp
-    src/ShaderGL.cpp
+    #src/MeshGL.cpp
+    #src/ShaderGL.cpp
     ${MOC_FILES}
 )
 

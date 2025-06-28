@@ -1,25 +1,27 @@
 #pragma once
 
-#include <QOpenGLWidget>
-#include <QDebug>
-#include <QOpenGLFunctions>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-//#include <QOpenGLFunctions_4_1_Core>
-#include <QTimer>
-#include <mutex>
-#include <iostream>
-
-#include <QtGUI>
-#include <VecPlus/Vec2.h>
-
 #include <Core/Domain/Mesh2dStructuredFactory.h>
 #include <Core/Domain/Mesh.h>
 #include <MeshData.h>
 #include <MeshGL.h>
 
+#include <VecPlus/Vec2.h>
+
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLFunctions>
 #include <QSurfaceFormat>
 #include <QOpenGLShader>
+#include <QOpenGLWidget>
+#include <QOpenGLBuffer>
+#include <QDebug>
+#include <QTimer>
+#include <QtGUI>
+//#include <QOpenGLFunctions_4_1_Core>
+
+#include <iostream>
+#include <vector>
+#include <mutex>
+
 
 class SimulationGL : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -65,6 +67,8 @@ private:
     std::unique_ptr<QOpenGLShader> m_fragmentShader;
 
     int m_maxCell = 0;
+
+    //QOpenGLFunctions* m_glFunctions = nullptr;
 
     void m_updateCanvas();
     void m_drawMesh();

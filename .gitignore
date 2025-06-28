@@ -35,3 +35,69 @@
 *.vscode
 
 *.DS_Store
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.ipch/
+*.aps
+*.ncb
+*.opendb
+*.tlog
+*.cache
+*.ilk
+*.pdb
+
+# VS Code workspace
+.vscode/
+
+# Visual Studio working folders
+.vs/
+
+# NuGet packages
+*.nupkg
+packages/
+*.snupkg
+
+# Backup & temporary files
+*~
+*.bak
+*.tmp
+*.log
+*.old
+
+# DotCover
+.idea/
+*.dotCover
+
+# Rider
+.idea/
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Build outputs from CMake if used with Visual Studio
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeUserPresets.json
+
+# Test results
+TestResults/
+
+# Other
+*.dbmdl
+*.psess
+*.vsp
+*.vspx
+*.vspscc
+*.vssscc

@@ -1,5 +1,6 @@
 #include <SimulationGL.h>
 
+#include <QOpenGLDebugLogger>
 
 SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(parent), m_timer(new QTimer(this))
 {
@@ -10,7 +11,12 @@ SimulationGL::SimulationGL(QWidget* parent, Qt::WindowFlags f) : QOpenGLWidget(p
 void SimulationGL::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.1f, 0.1f, 0.1f, 0.f);
+    //this->m_glFunctions = QOpenGLContext::currentContext()->functions();
+
+
+    this->m_createShader();
+
+    glClearColor(1.0f, 1.0f, 1.0f, 0.f);
 
     this->m_cellVao.create();
     this->m_cellVao.bind();
@@ -18,6 +24,9 @@ void SimulationGL::initializeGL()
     this->m_cellVertexBuffer.create();
     this->m_cellVertexBuffer.bind();
     this->m_cellVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     this->m_cellColourBuffer.create();
     this->m_cellColourBuffer.bind();
@@ -33,12 +42,22 @@ void SimulationGL::initializeGL()
     this->m_gridVertexBuffer.bind();
     this->m_gridVertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
 
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
     this->m_gridColourBuffer.create();
     this->m_gridColourBuffer.bind();
     this->m_gridColourBuffer.setUsagePattern(QOpenGLBuffer::DynamicDraw);
     
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    
     this->m_gridIndexBuffer.create();
+    this->m_gridIndexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    this->m_gridIndexBuffer.bind();
     this->m_gridVao.release();
+
 }
 
 void SimulationGL::resizeGL(int w, int h)
@@ -76,7 +95,7 @@ void SimulationGL::recieveMesh(std::shared_ptr<MeshData> data)
 
     //MeshGL::createVertexArray(this->m_vaoMesh, this->m_vbaMesh, *data.get());
     //MeshGL::createElementArray(this->m_vaoMesh, this->m_iboMesh, *data.get());
-    this->m_createShader();
+    //this->m_createShader();
 }
 
 void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> data)
@@ -87,7 +106,7 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     //this->m_cellColourBuffer.bind();
 
     this->m_gridVao.bind();
-    this->m_cellColourBuffer.bind();
+    this->m_gridColourBuffer.bind();
 
     //unsigned int total = this->m_nCells * 4;
     unsigned int total = this->m_nVertices;
@@ -126,8 +145,8 @@ void SimulationGL::recieveVelocity(std::shared_ptr<std::vector<vecp::Vec2f>> dat
     }
 
     m_gridColourBuffer.allocate(values.data(), values.size() * sizeof(float));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     //m_cellColourBuffer.allocate(colours.data(), colours.size() * sizeof(float));
     this->m_gridVao.release();
@@ -190,8 +209,8 @@ void SimulationGL::m_createCellMesh(std::shared_ptr<MeshData>& data)
     this->m_cellVertexBuffer.bind();
 
     this->m_cellVertexBuffer.allocate(allVertices.data(), allVertices.size() * sizeof(float));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    //glEnableVertexAttribArray(0);
+    //glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     this->m_nCells = data->nCells;
     this->m_cellIndexBuffer.bind();
@@ -225,8 +244,8 @@ void SimulationGL::m_createGridMesh(std::shared_ptr<MeshData>& data)
     this->m_gridVertexBuffer.bind();
 
     this->m_gridVertexBuffer.allocate(vertices.data(), vertices.size() * sizeof(float));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    //glEnableVertexAttribArray(0);
+    //glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     this->m_nVertices = data->vertices.size();
     this->m_gridIndexBuffer.bind();
@@ -278,6 +297,8 @@ void SimulationGL::m_createShader()
     //this->m_shader->addShader(this->m_fragmentShader.get());
     m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vertexTest.shader");
     m_shader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fragment.shader");
+    m_shader->bindAttributeLocation("position", 0);
+    m_shader->bindAttributeLocation("value", 1);
     m_shader->link();
 
     //this->m_shader = ShaderGL::createShader(vertexShader, fragmentShader); 
