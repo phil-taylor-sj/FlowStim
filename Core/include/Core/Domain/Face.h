@@ -1,8 +1,10 @@
 #pragma once
-#include <map>
 
 #include <VecPlus/Vec2.h>
 #include <VecPlus/Vec3.h>
+
+#include <vector>
+#include <map>
 
 namespace fstim
 {

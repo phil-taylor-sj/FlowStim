@@ -1,11 +1,15 @@
 #pragma once
 
-#include <map>
-
-#include <VecPlus/Vec2.h>
 #include <Core/Field/BcType.h>
 #include <Core/Field/FieldTolerance.h>
 #include <Core/Field/FieldRelaxation.h>
+
+#include <VecPlus/Vec2.h>
+
+#include <memory>
+#include <tuple>
+#include <vector>
+#include <map>
 
 namespace fstim
 {

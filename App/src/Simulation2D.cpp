@@ -5,6 +5,7 @@
 #include <Core/Domain/Compass.h>
 
 #include <stdexcept>
+#include <mutex>
 
 void Simulation2D::start()
 {
