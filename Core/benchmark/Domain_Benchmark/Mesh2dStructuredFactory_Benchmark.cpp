@@ -19,6 +19,8 @@ static void BM_Mesh2dStructuredFactory_Domain(benchmark::State& state)
 			vecp::Vec2i(cellsPerSide, cellsPerSide), vecp::Vec2d(10., 10.)
 		);
 	}
+
+	state.counters["Total Cells"] = cellsPerSide * cellsPerSide;
 }
 
 BENCHMARK(BM_Mesh2dStructuredFactory_Domain)
