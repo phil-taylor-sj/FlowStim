@@ -18,7 +18,8 @@ set(BENCH_TARGET FlowStim_Benchmarks)
 set(BENCH_SRCS
     main_benchmark.cpp
     Domain_Benchmark/Mesh2dStructuredFactory_Benchmark.cpp
-  )
+    Solver_Benchmark/JacobiScalarMethod_Benchmark.cpp
+)
 
 add_executable(${BENCH_TARGET} ${BENCH_SRCS})
 

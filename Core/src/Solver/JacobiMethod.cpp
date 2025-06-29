@@ -3,12 +3,12 @@
 namespace fstim
 {
     template <typename T>
-    void JacobiMethod<T>::operator()(Field<T>& field, const T* source)
+    int JacobiMethod<T>::operator()(Field<T>& field, const T* source)
     {
     
         std::unique_ptr<T[]> newValues = std::make_unique<T[]>(field.nCells);
 
-        for (size_t count = 0; count < 100; count++)
+        for (int count = 0; count < 100; count++)
         {
             this->m_iteratorLoop(field, source, newValues.get());
 
@@ -18,15 +18,17 @@ namespace fstim
             T* values = field.writeValues();
             for (int id = 0; id < field.nCells; id++)
             {
-                values[id] = newValues[id];
+                double alpha = 0.001;
+                values[id] = (values[id] * alpha) + (newValues[id] * (1 - alpha));
             }
 
             //Check errors against convergence criteria, and break loop if met.
             if (count != 0 && m_isConverged(errors, field.getTolerance()))
             {
-                break;
+                return count;
             }
         }
+        return 100;
     }
 
     template <typename T>

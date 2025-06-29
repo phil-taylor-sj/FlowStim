@@ -5,7 +5,7 @@
 namespace fstim
 {
     template <typename T>
-    void ExplicitMethod<T>::operator()(Field<T>& field, const T* source)
+    int ExplicitMethod<T>::operator()(Field<T>& field, const T* source)
     {
         T* values = field.writeValues();
         const T* oldValues = field.readOldValues();
@@ -23,6 +23,7 @@ namespace fstim
             }
             values[id] /= lhs[id].at(id);
         }
+        return 1;
     }
 
     template <typename T>

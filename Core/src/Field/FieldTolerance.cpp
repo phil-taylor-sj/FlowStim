@@ -8,8 +8,8 @@ namespace fstim
         double newRel = newTolerance.relative;
         
         this->m_tolerance = Tolerance<double>(
-            (newAbs > 0. && newAbs <= 1.) ? newAbs : this->DEFAULT_ABS,
-            (newRel >= 0. && newRel <= 1.) ? newRel : this->DEFAULT_REL
+            (newAbs > 0.) ? newAbs : this->DEFAULT_ABS,
+            (newRel >= 0.) ? newRel : this->DEFAULT_REL
         );
     }
 

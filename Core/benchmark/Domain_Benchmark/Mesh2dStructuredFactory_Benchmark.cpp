@@ -9,21 +9,24 @@
 
 using namespace fstim;
 
-static void BM_Mesh2dStructuredFactory_Domain(benchmark::State& state)
-{	
-	vecp::Vec2i size = vecp::Vec2i(state.range(0), state.range(1));
-	Mesh2dStructuredFactory factory = Mesh2dStructuredFactory();
-	for (auto _ : state) 
-	{
-		std::unique_ptr<Mesh2d> mesh = factory(
-			size, vecp::Vec2d(10., 10.)
-		);
-	}
+namespace bm_domain
+{
+	static void BM_Mesh2dStructuredFactory(benchmark::State& state)
+	{	
+		vecp::Vec2i size = vecp::Vec2i(state.range(0), state.range(1));
+		Mesh2dStructuredFactory factory = Mesh2dStructuredFactory();
+		for (auto _ : state) 
+		{
+			std::unique_ptr<Mesh2d> mesh = factory(
+				size, vecp::Vec2d(10., 10.)
+			);
+		}
 
-	state.counters["Total Cells"] = size.x * size.y;
+		state.counters["Total Cells"] = size.x * size.y;
+	}
 }
 
-BENCHMARK(BM_Mesh2dStructuredFactory_Domain)
+BENCHMARK(bm_domain::BM_Mesh2dStructuredFactory)
 	->Args({ 8,  8})
 	->Args({ 16, 16})
 	->Args({ 32, 32})

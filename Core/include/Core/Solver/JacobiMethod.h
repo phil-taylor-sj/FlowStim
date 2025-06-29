@@ -21,7 +21,7 @@ namespace fstim
     class JacobiMethod : public PointMethod<T>
     {
     public:
-        void operator()(Field<T>& field, const T* source = nullptr) override;
+        int operator()(Field<T>& field, const T* source = nullptr) override;
 
         JacobiMethod() {};
 

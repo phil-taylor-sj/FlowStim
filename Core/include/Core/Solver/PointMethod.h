@@ -7,7 +7,7 @@ namespace fstim
     class PointMethod
     {
     public:
-        void virtual operator()(Field<T>& field, const T* source = nullptr) = 0;
+        int virtual operator()(Field<T>& field, const T* source = nullptr) = 0;
     
         PointMethod() {};
 
