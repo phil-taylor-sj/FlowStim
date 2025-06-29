@@ -34,6 +34,37 @@ namespace fstim
                 errors.relative <= convergenceLimits.relative);
  
     }
-        
+ 
+
+    template <typename T>
+    T JacobiScalarMethod<T>::m_calcGlobalResidual(Field<T>& field, const T* source)
+    {
+        T residualSum = T();
+
+        T* values = field.writeValues();
+        const std::map<int, T>* lhs = field.readLeft();
+        const T* rhs = field.readRight();
+
+        for (int cellId = 0; cellId < field.nCells; cellId++)
+        {
+            T localResidual = T();
+            // Set the initial values of the new value.
+            for (const std::pair<int, T> pair : lhs[cellId])
+            {
+                localResidual += pair.second * values[pair.first];
+            }
+            localResidual -= rhs[cellId];
+
+            if (source != nullptr)
+            {
+                localResidual -= source[cellId];
+            }
+
+            // Add all contributions from the left hand side terms.
+            residualSum += std::abs(localResidual);
+        }
+        return residualSum / field.nCells;
+    }
+
     template class JacobiScalarMethod<double>;
 }
