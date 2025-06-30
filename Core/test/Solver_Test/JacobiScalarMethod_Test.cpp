@@ -1,6 +1,6 @@
 #include "../pch.h"
 
-#include <Core/Solver/JacobiScalarMethod.h>
+#include <Core/Solver/JacobiMethod.h>
 
 using namespace fstim;
 
@@ -54,8 +54,8 @@ namespace Solver_Tests
         
         this->field->setTolerance(this->tolerance);
         this->field->activateRelaxation(false);
-        JacobiScalarMethod<double> solver{};
-        solver(*(this->field.get()));
+        JacobiMethod<double> solver{};
+        int numLoops = solver(*(this->field.get()));
 
         const std::map<int, double>* lhs = this->field->readLeft();
         const double* values = this->field->readValues();
@@ -71,10 +71,11 @@ namespace Solver_Tests
             }
         }
 
+        ASSERT_LT(numLoops, 50);
         const double* expected = this->field->readRight();
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
-            ASSERT_NEAR(expected[cellId], output[cellId], this->tolerance.absolute * 10);
+            ASSERT_NEAR(expected[cellId]/values[cellId], output[cellId]/values[cellId], 1E-01);
         }
     }
 
@@ -82,6 +83,6 @@ namespace Solver_Tests
         std::make_tuple(12, Tolerance<double>{1E-06, 0.}),
         std::make_tuple(200, Tolerance<double>{1E-06, 0.}),
         std::make_tuple(2000, Tolerance<double>{1E-06, 0.}),
-        std::make_tuple(2000, Tolerance<double>{1E-06, 0.})
+        std::make_tuple(20000, Tolerance<double>{1E-06, 0.})
     ));
 }

@@ -8,12 +8,13 @@ namespace fstim
     template <typename T>
     int JacobiMethod<T>::operator()(Field<T>& field, const T* source)
     {
-        double epsilon = std::numeric_limits<double>::epsilon();
+        constexpr double epsilon = std::numeric_limits<double>::epsilon();
         std::unique_ptr<T[]> newValues = std::make_unique<T[]>(field.nCells);
  
 
         T normFactor = this->m_calcNormFactor(field, source) + epsilon;
-        T initialResidual = this->m_calcGlobalResidual(field, source) / normFactor;
+        normFactor = 1.;
+        T initialResidual = this->m_calcGlobalResidual(field, source);// normFactor;
 
         for (int count = 0; count < 100; count++)
         {
@@ -28,9 +29,9 @@ namespace fstim
                 values[id] = newValues[id];
             }
 
-            T newResidual = this->m_calcGlobalResidual(field, source) / normFactor;
-            T relativeResidual = newResidual / initialResidual;
-
+            T newResidual = this->m_calcGlobalResidual(field, source); // normFactor;
+            T relativeResidual = newResidual / (initialResidual);
+            // static_cast<double>(field.nCells);
             //Check errors against convergence criteria, and break loop if met.
             if (count != 0 && m_isConverged(Tolerance<T>(newResidual, relativeResidual), field.getTolerance()))
             {
@@ -58,7 +59,7 @@ namespace fstim
             }
 
             // Add all contributions from the left hand side terms.
-            for (const std::pair<int, T> pair : lhs[id])
+            for (const std::pair<int, T>& pair : lhs[id])
             {
                 if (pair.first == id) { continue; }
                 newValues[id] -= pair.second * values[pair.first];
@@ -97,7 +98,7 @@ namespace fstim
         {
             T localResidual = T();
             // Set the initial values of the new value.
-            for (const std::pair<int, T> pair : lhs[cellId])
+            for (const std::pair<int, T>& pair : lhs[cellId])
             {
                 localResidual += pair.second * values[pair.first];
             }
@@ -111,14 +112,14 @@ namespace fstim
             // Add all contributions from the left hand side terms.
             residualSum += this->m_getAbsolute(localResidual);
         }
-        return residualSum / field.nCells;
+        return residualSum;
     }
 
 
     template <typename T>
     T JacobiMethod<T>::m_calcNormFactor(Field<T>& field, const T* source)
     {
-        T* values = field.writeValues();
+        const T* values = field.readValues();
         T meanValue = std::accumulate(values, values + field.nCells, T())
             / static_cast<double>(field.nCells);
 
@@ -132,7 +133,7 @@ namespace fstim
             T correction = T();
             T leftNorm = T();
 
-            for (const std::pair<int, T> pair : lhs[cellId])
+            for (const std::pair<int, T>& pair : lhs[cellId])
             {
                 leftNorm += pair.second * values[pair.first];
                 correction += pair.second * meanValue;
@@ -143,9 +144,10 @@ namespace fstim
             {
                 rightNorm += source[cellId];
             } 
+            correction = T();
 
-            normFactor += this->m_getAbsolute(leftNorm - correction)
-                + this->m_getAbsolute(rightNorm - correction);
+            normFactor += (this->m_getAbsolute(leftNorm - correction)
+                + this->m_getAbsolute(rightNorm - correction));
         }
         return normFactor;
     }

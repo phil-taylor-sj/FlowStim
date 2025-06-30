@@ -1,6 +1,6 @@
 #include "../pch.h"
 
-#include <Core/Solver/JacobiVectorMethod.h>
+#include <Core/Solver/JacobiMethod.h>
 
 using namespace fstim;
 
@@ -49,8 +49,10 @@ namespace VectorSolver_Tests
         
         this->field->setTolerance(this->tolerance);
         this->field->activateRelaxation(false);
-        JacobiVectorMethod<vecp::Vec2d> solver{};
-        solver(*(this->field.get()));
+        JacobiMethod<vecp::Vec2d> solver{};
+        int numLoops = solver(*(this->field.get()));
+
+        ASSERT_LT (numLoops, 50);
 
         const std::map<int, vecp::Vec2d>* lhs = this->field->readLeft();
         const vecp::Vec2d* values = this->field->readValues();
@@ -60,7 +62,7 @@ namespace VectorSolver_Tests
         std::vector<vecp::Vec2d> output(this->field->nCells);
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
-            for (const std::pair<int, vecp::Vec2d> pair : lhs[cellId])
+            for (const std::pair<int, vecp::Vec2d>& pair : lhs[cellId])
             {
                 output[cellId] += pair.second * values[pair.first];
             }
@@ -70,8 +72,8 @@ namespace VectorSolver_Tests
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
             //std::cout << expected[cellId].x << "   "  << output[cellId].x << " " << this->tolerance.absolute << std::endl;
-            ASSERT_NEAR(expected[cellId].x, output[cellId].x, this->tolerance.absolute * 10);
-            ASSERT_NEAR(expected[cellId].y, output[cellId].y, this->tolerance.absolute * 10);
+            ASSERT_NEAR(expected[cellId].x, output[cellId].x, this->tolerance.absolute);
+            ASSERT_NEAR(expected[cellId].y, output[cellId].y, this->tolerance.absolute);
         }
     }
 
