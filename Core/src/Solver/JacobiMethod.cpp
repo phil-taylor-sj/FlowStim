@@ -3,8 +3,13 @@
 #include <numeric>
 #include <limits>
 
+#include <omp.h>
+
+
+
 namespace fstim
 {
+
     template <typename T>
     int JacobiMethod<T>::operator()(Field<T>& field, const T* source)
     {
@@ -12,8 +17,8 @@ namespace fstim
         std::unique_ptr<T[]> newValues = std::make_unique<T[]>(field.nCells);
  
 
-        T normFactor = this->m_calcNormFactor(field, source) + epsilon;
-        normFactor = 1.;
+        //T normFactor = this->m_calcNormFactor(field, source) + epsilon;
+        //normFactor = 1.;
         T initialResidual = this->m_calcGlobalResidual(field, source) / std::sqrt(field.nCells);// normFactor;
 
         for (int count = 0; count < 100; count++)
@@ -24,11 +29,13 @@ namespace fstim
    
             // Overwrite the current values with the new values.                      
             T* values = field.writeValues();
+            #pragma omp parallel for
             for (int id = 0; id < field.nCells; id++)
             {
                 values[id] = newValues[id];
             }
 
+            /**
             T newResidual = this->m_calcGlobalResidual(field, source) / std::sqrt(field.nCells); // normFactor;
             T relativeResidual = newResidual / (initialResidual);
             // static_cast<double>(field.nCells);
@@ -37,6 +44,7 @@ namespace fstim
             {
                 return count;
             }
+            */
         }
         return 100;
     }
@@ -49,6 +57,7 @@ namespace fstim
         const std::map<int, T>* lhs = field.readLeft();
         const T* rhs = field.readRight();
 
+        #pragma omp parallel for
         for (int id = 0; id < field.nCells; id++)
         {
             // Set the initial values of the new value.
@@ -94,6 +103,7 @@ namespace fstim
         const std::map<int, T>* lhs = field.readLeft();
         const T* rhs = field.readRight();
 
+        //#pragma omp parallel for reduction(+:residualSum)
         for (int cellId = 0; cellId < field.nCells; cellId++)
         {
             T localResidual = T();
@@ -119,6 +129,9 @@ namespace fstim
     template <typename T>
     T JacobiMethod<T>::m_calcNormFactor(Field<T>& field, const T* source)
     {
+        
+        T normFactor = T();
+        /**
         const T* values = field.readValues();
         T meanValue = std::accumulate(values, values + field.nCells, T())
             / static_cast<double>(field.nCells);
@@ -126,7 +139,6 @@ namespace fstim
         const std::map<int, T>* lhs = field.readLeft();
         const T* rhs = field.readRight();
 
-        T normFactor = T();
         for (int cellId = 0; cellId < field.nCells; cellId++)
         {
 
@@ -149,6 +161,7 @@ namespace fstim
             normFactor += (this->m_getAbsolute(leftNorm - correction)
                 + this->m_getAbsolute(rightNorm - correction));
         }
+        */
         return normFactor;
     }
 

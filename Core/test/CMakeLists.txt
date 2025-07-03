@@ -34,9 +34,11 @@ set(TEST_SRCS
 
 
 add_executable(${TEST_TARGET} ${TEST_SRCS})
+
 target_link_libraries(${TEST_TARGET} 
   gtest gtest_main gmock_main Domain Solver Field
   )
+
 target_include_directories(${TEST_TARGET} PUBLIC 
   ${PUBLIC_INCLUDE_DIR}
   ) 

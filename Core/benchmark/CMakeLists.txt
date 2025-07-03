@@ -24,9 +24,17 @@ set(BENCH_SRCS
 
 add_executable(${BENCH_TARGET} ${BENCH_SRCS})
 
-target_link_libraries(${BENCH_TARGET} 
-    benchmark::benchmark Domain Solver Field
-  )
+
+
+find_package(OpenMP REQUIRED)
+if (OpenMP_CXX_FOUND)
+    target_link_libraries(${BENCH_TARGET} 
+        benchmark::benchmark Domain Solver Field OpenMP::OpenMP_CXX
+    )
+else()
+    message(FATAL_ERROR "OpenMP not found!")
+endif()
+
 target_include_directories(${BENCH_TARGET} PUBLIC 
   ${PUBLIC_INCLUDE_DIR}
   ) 

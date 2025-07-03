@@ -11,6 +11,7 @@
 #include <limits>
 #include <map>
 
+#include <omp.h>
 
 using namespace fstim;
 
@@ -76,7 +77,16 @@ namespace bm_solver
 
     static void BM_JacobiVectorMethod_MaxCycles(benchmark::State& state)
     {
+
         int nCells = state.range(0);
+        int numThreads = state.range(1);
+        omp_set_dynamic(0);
+        omp_set_num_threads(numThreads);
+        #pragma omp parallel
+        #pragma omp single
+        {
+            state.counters["Threads"] = omp_get_num_threads();
+        }
         double initialValue = -20.;
         for (auto _ : state)
         {
@@ -92,19 +102,19 @@ namespace bm_solver
             field.reset();
             state.ResumeTiming();
         }
-        state.counters["Total Cells"] = nCells;
+        state.counters["Cells"] = nCells;
     }
 
 }
 
 BENCHMARK(bm_solver::BM_JacobiVectorMethod_OneCycle)
 ->RangeMultiplier(10)
-->Range(100, 100000)
+->Range(10000, 100000)
 ->Unit(benchmark::kMillisecond);
 
 
 BENCHMARK(bm_solver::BM_JacobiVectorMethod_MaxCycles)
-->RangeMultiplier(10)
-->Range(100, 100000)
+->ArgsProduct({ {100000},
+                {1, 2, 3, 4} })
 ->Unit(benchmark::kMillisecond);
 
