@@ -59,24 +59,23 @@ namespace Solver_Tests
 
         const std::map<int, double>* lhs = this->field->readLeft();
         const double* values = this->field->readValues();
-        
+        const double* rhs = this->field->readRight();
         // Calculate the dot product of the left hand side coefficients
         // and the converged values.
-        std::vector<double> output(this->field->nCells);
+        double residual = 0.;  
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
+            double sum = rhs[cellId];
             for (const std::pair<int, double> pair : lhs[cellId])
             {
-                output[cellId] += pair.second * values[pair.first];
+                 sum -= pair.second * values[pair.first];
             }
+            residual += std::abs(sum);
         }
+        residual /= std::sqrt(field->nCells);
 
         ASSERT_LT(numLoops, 50);
-        const double* expected = this->field->readRight();
-        for (int cellId = 0; cellId < this->field->nCells; cellId++)
-        {
-            ASSERT_NEAR(expected[cellId]/values[cellId], output[cellId]/values[cellId], 1E-01);
-        }
+        ASSERT_LE(residual, tolerance.absolute);
     }
 
     INSTANTIATE_TEST_SUITE_P(JacobiScalar_Vanilla, JacobiScalar_Vanilla_F, testing::Values(

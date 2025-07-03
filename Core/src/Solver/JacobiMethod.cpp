@@ -14,7 +14,7 @@ namespace fstim
 
         T normFactor = this->m_calcNormFactor(field, source) + epsilon;
         normFactor = 1.;
-        T initialResidual = this->m_calcGlobalResidual(field, source);// normFactor;
+        T initialResidual = this->m_calcGlobalResidual(field, source) / std::sqrt(field.nCells);// normFactor;
 
         for (int count = 0; count < 100; count++)
         {
@@ -29,7 +29,7 @@ namespace fstim
                 values[id] = newValues[id];
             }
 
-            T newResidual = this->m_calcGlobalResidual(field, source); // normFactor;
+            T newResidual = this->m_calcGlobalResidual(field, source) / std::sqrt(field.nCells); // normFactor;
             T relativeResidual = newResidual / (initialResidual);
             // static_cast<double>(field.nCells);
             //Check errors against convergence criteria, and break loop if met.
