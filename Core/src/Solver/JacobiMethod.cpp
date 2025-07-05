@@ -35,7 +35,6 @@ namespace fstim
                 values[id] = newValues[id];
             }
 
-            /**
             T newResidual = this->m_calcGlobalResidual(field, source) / std::sqrt(field.nCells); // normFactor;
             T relativeResidual = newResidual / (initialResidual);
             // static_cast<double>(field.nCells);
@@ -44,7 +43,6 @@ namespace fstim
             {
                 return count;
             }
-            */
         }
         return 100;
     }
@@ -103,24 +101,31 @@ namespace fstim
         const std::map<int, T>* lhs = field.readLeft();
         const T* rhs = field.readRight();
 
-        //#pragma omp parallel for reduction(+:residualSum)
-        for (int cellId = 0; cellId < field.nCells; cellId++)
+        #pragma omp parallel
         {
-            T localResidual = T();
-            // Set the initial values of the new value.
-            for (const std::pair<int, T>& pair : lhs[cellId])
+            T localResidualSum = T();
+            #pragma omp for nowait
+            for (int cellId = 0; cellId < field.nCells; cellId++)
             {
-                localResidual += pair.second * values[pair.first];
-            }
-            localResidual -= rhs[cellId];
+                T localResidual = T();
+                // Set the initial values of the new value.
+                for (const std::pair<int, T>& pair : lhs[cellId])
+                {
+                    localResidual += pair.second * values[pair.first];
+                }
+                localResidual -= rhs[cellId];
 
-            if (source != nullptr)
-            {
-                localResidual -= source[cellId];
+                if (source != nullptr)
+                {
+                    localResidual -= source[cellId];
+                }
+
+                // Add all contributions from the left hand side terms.
+                localResidualSum += this->m_getAbsolute(localResidual);
             }
 
-            // Add all contributions from the left hand side terms.
-            residualSum += this->m_getAbsolute(localResidual);
+            #pragma omp critical
+            residualSum += localResidualSum;
         }
         return residualSum;
     }
@@ -131,7 +136,6 @@ namespace fstim
     {
         
         T normFactor = T();
-        /**
         const T* values = field.readValues();
         T meanValue = std::accumulate(values, values + field.nCells, T())
             / static_cast<double>(field.nCells);
@@ -161,7 +165,6 @@ namespace fstim
             normFactor += (this->m_getAbsolute(leftNorm - correction)
                 + this->m_getAbsolute(rightNorm - correction));
         }
-        */
         return normFactor;
     }
 
