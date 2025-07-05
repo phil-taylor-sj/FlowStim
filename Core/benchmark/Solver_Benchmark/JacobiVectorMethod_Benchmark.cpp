@@ -72,14 +72,14 @@ namespace bm_solver
             field.reset();
             state.ResumeTiming();
         }
-        state.counters["Total Cells"] = nCells;
+        state.counters["Cells"] = nCells;
     }
 
     static void BM_JacobiVectorMethod_MaxCycles(benchmark::State& state)
     {
 
-        int nCells = state.range(0);
-        int numThreads = state.range(1);
+        int nCells = state.range(1);
+        int numThreads = state.range(0);
         omp_set_dynamic(0);
         omp_set_num_threads(numThreads);
         #pragma omp parallel
@@ -109,12 +109,12 @@ namespace bm_solver
 
 BENCHMARK(bm_solver::BM_JacobiVectorMethod_OneCycle)
 ->RangeMultiplier(10)
-->Range(10000, 100000)
+->Range(100, 100000)
 ->Unit(benchmark::kMillisecond);
 
 
 BENCHMARK(bm_solver::BM_JacobiVectorMethod_MaxCycles)
-->ArgsProduct({ {100000},
-                {1, 2, 3, 4} })
+->ArgsProduct({ {1, 2, 3, 4}, 
+    {1000, 10000, 100000}})
 ->Unit(benchmark::kMillisecond);
 

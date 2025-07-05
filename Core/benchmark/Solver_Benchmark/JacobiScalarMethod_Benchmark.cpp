@@ -10,6 +10,7 @@
 #include <memory>
 #include <limits>
 #include <map>
+#include <omp.h>
 
 
 using namespace fstim;
@@ -64,12 +65,20 @@ namespace bm_solver
             JacobiMethod<double> fieldIterator {};
             state.counters["Loops"] =  fieldIterator(*(field.get()));
         }        
-        state.counters["Total Cells"] = nCells;
+        state.counters["Cells"] = nCells;
     }
 
     static void BM_JacobiScalarMethod_MaxCycles(benchmark::State& state)
     {
-        int nCells = state.range(0);
+        int nCells = state.range(1);
+        int numThreads = state.range(0);
+        omp_set_dynamic(0);
+        omp_set_num_threads(numThreads);
+        #pragma omp parallel
+        #pragma omp single
+        {
+            state.counters["Threads"] = omp_get_num_threads();
+        }
         double initialValue = -20.;
         for (auto _ : state)
         {
@@ -82,7 +91,7 @@ namespace bm_solver
             JacobiMethod<double> fieldIterator{};
             state.counters["Loops"] = fieldIterator(*(field.get()));
         }
-        state.counters["Total Cells"] = nCells;
+        state.counters["Cells"] = nCells;
     }
 
 }
@@ -94,7 +103,8 @@ BENCHMARK(bm_solver::BM_JacobiScalarMethod_OneCycle)
 
 
 BENCHMARK(bm_solver::BM_JacobiScalarMethod_MaxCycles)
-->RangeMultiplier(10)
-->Range(100, 100000)
+->ArgsProduct({ {1, 2, 3, 4},
+                {1000, 10000, 100000}
+                })
 ->Unit(benchmark::kMillisecond);
 

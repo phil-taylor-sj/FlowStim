@@ -22,7 +22,7 @@ namespace bm_domain
 			);
 		}
 
-		state.counters["Total Cells"] = size.x * size.y;
+		state.counters["Cells"] = size.x * size.y;
 	}
 }
 
