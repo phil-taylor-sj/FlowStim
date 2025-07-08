@@ -66,10 +66,10 @@ namespace fstim
             }
 
             // Add all contributions from the left hand side terms.
-            for (const std::pair<int, T>& pair : lhs[id])
+            for (const auto& [coeffId, coeff] : lhs[id])
             {
-                if (pair.first == id) { continue; }
-                newValues[id] -= pair.second * values[pair.first];
+                if (coeffId == id) { continue; }
+                newValues[id] -= coeff * values[coeffId];
             }
 
             newValues[id] /= lhs[id].at(id);
@@ -109,9 +109,9 @@ namespace fstim
             {
                 T localResidual = T();
                 // Set the initial values of the new value.
-                for (const std::pair<int, T>& pair : lhs[cellId])
+                for (const auto& [coeffId, coeff] : lhs[cellId])
                 {
-                    localResidual += pair.second * values[pair.first];
+                    localResidual += coeff * values[coeffId];
                 }
                 localResidual -= rhs[cellId];
 
@@ -149,10 +149,10 @@ namespace fstim
             T correction = T();
             T leftNorm = T();
 
-            for (const std::pair<int, T>& pair : lhs[cellId])
+            for (const auto& [coeffId, coeff] : lhs[cellId])
             {
-                leftNorm += pair.second * values[pair.first];
-                correction += pair.second * meanValue;
+                leftNorm += coeff * values[coeffId];
+                correction += coeff * meanValue;
             }
 
             T rightNorm = rhs[cellId];
