@@ -31,6 +31,8 @@ namespace fstim
          */
         Tolerance<T> m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues) override;
 
+        T m_calcGlobalResidual(Field<T>& field, const T* source = nullptr) override;
+
         bool m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits) override;
     };
 

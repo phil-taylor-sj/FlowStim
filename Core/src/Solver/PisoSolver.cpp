@@ -21,6 +21,7 @@ namespace fstim
         {
             return false;
         }
+
         this->m_velocity->clear();
         this->m_pressure->clear();
 

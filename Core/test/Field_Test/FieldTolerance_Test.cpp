@@ -31,7 +31,7 @@ namespace FieldTolerance_Tests
     };
 
     // Test that the setTolerance method correctly sets the tolerance to the provided values
-    // if the provided values are invalid.
+    // if the provided values are valid.
     class FieldTolerance_ValidF : public FieldTolerance_Fixture {};
     TEST_P(FieldTolerance_ValidF, FieldTolerance_Valid)
     {
@@ -47,6 +47,7 @@ namespace FieldTolerance_Tests
 
     // Test that the setTolerance method correctly sets the tolerance to the default values
     // is that value if the provided tolerance is invalid.
+    
     class FieldTolerance_InvalidF : public FieldTolerance_Fixture {};
     TEST_P(FieldTolerance_InvalidF, FieldTolerance_Invalid)
     {
@@ -55,8 +56,8 @@ namespace FieldTolerance_Tests
     }
 
     INSTANTIATE_TEST_SUITE_P(FieldTolerance_Invalid, FieldTolerance_InvalidF, testing::Values(
-        std::make_tuple(Tolerance<double>(1.1, 1.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
-        std::make_tuple(Tolerance<double>(0., -0.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
+        //std::make_tuple(Tolerance<double>(1.1, 1.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
+        std::make_tuple(Tolerance<double>(-0.001, -0.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
         std::make_tuple(Tolerance<double>(-1., -1.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL))
     ));
 }

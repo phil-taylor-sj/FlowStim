@@ -9,7 +9,7 @@ namespace fstim
     {
     public:
 
-        void operator()(Field<T>& field, const T* source = nullptr) override;
+        int operator()(Field<T>& field, const T* source = nullptr) override;
 
         ExplicitMethod();
 

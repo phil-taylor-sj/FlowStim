@@ -16,6 +16,17 @@ add_library(Solver OBJECT
     PisoSolver.cpp
     )
 
-target_link_libraries(Solver VecPlus)
+
+
+find_package(OpenMP REQUIRED)
+if (OpenMP_CXX_FOUND)
+    target_link_libraries(Solver VecPlus OpenMP::OpenMP_CXX)
+else()
+    message(FATAL_ERROR "OpenMP not found!")
+    #target_link_libraries(${BENCH_TARGET} 
+    #    benchmark::benchmark Domain Solver Field
+    #)
+endif()
+
 
 target_include_directories(Solver PUBLIC ${PUBLIC_INCLUDE_DIR})

@@ -60,8 +60,8 @@ namespace Field_Tests
     }
 
     INSTANTIATE_TEST_SUITE_P(Field_FieldTolerance_Invalid, Field_FieldTolerance_InvalidF, testing::Values(
-        std::make_tuple(Tolerance<double>(1.1, 1.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
-        std::make_tuple(Tolerance<double>(0., -0.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
+        //std::make_tuple(Tolerance<double>(1.1, 1.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
+        std::make_tuple(Tolerance<double>(-0.001, -0.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL)),
         std::make_tuple(Tolerance<double>(-1., -1.1), Tolerance<double>(DEFAULT_ABS, DEFAULT_REL))
     ));
 

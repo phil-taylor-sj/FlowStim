@@ -1,5 +1,7 @@
 #include <Core/Solver/JacobiVectorMethod.h>
 
+#include <numeric>
+
 namespace fstim
 {
     template <typename T>
@@ -28,6 +30,41 @@ namespace fstim
         return ((errors.absolute - convergenceLimits.absolute).max() <= 0. ||
                 (errors.relative - convergenceLimits.relative).max() <= 0.);
     }
+
+    template <typename T>
+    T JacobiVectorMethod<T>::m_calcGlobalResidual(Field<T>& field, const T* source)
+    {
+        T residualSum = T();
+
+        T* values = field.writeValues();
+
+
+        const std::map<int, T>* lhs = field.readLeft();
+        const T* rhs = field.readRight();
+
+        for (int cellId = 0; cellId < field.nCells; cellId++)
+        {
+            T localResidual = T();
+            // Set the initial values of the new value.
+            for (const std::pair<int, T> pair : lhs[cellId])
+            {
+                localResidual += pair.second * values[pair.first];
+            }
+
+            localResidual -= rhs[cellId];
+
+            if (source != nullptr)
+            {
+                localResidual -= source[cellId];
+            }
+
+            // Add all contributions from the left hand side terms.
+            residualSum += localResidual.abs();
+        }
+        return residualSum;
+
+    };
+
 
     template class JacobiVectorMethod<vecp::Vec2d>;
 

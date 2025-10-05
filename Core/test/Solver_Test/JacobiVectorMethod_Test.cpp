@@ -1,6 +1,6 @@
 #include "../pch.h"
 
-#include <Core/Solver/JacobiVectorMethod.h>
+#include <Core/Solver/JacobiMethod.h>
 
 using namespace fstim;
 
@@ -49,30 +49,33 @@ namespace VectorSolver_Tests
         
         this->field->setTolerance(this->tolerance);
         this->field->activateRelaxation(false);
-        JacobiVectorMethod<vecp::Vec2d> solver{};
-        solver(*(this->field.get()));
+        JacobiMethod<vecp::Vec2d> solver{};
+        int numLoops = solver(*(this->field.get()));
+
+        ASSERT_LT (numLoops, 50);
 
         const std::map<int, vecp::Vec2d>* lhs = this->field->readLeft();
         const vecp::Vec2d* values = this->field->readValues();
+        const vecp::Vec2d* rhs = this->field->readRight();
         
         // Calculate the dot product of the left hand side coefficients
         // and the converged values.
-        std::vector<vecp::Vec2d> output(this->field->nCells);
+        vecp::Vec2d residual = 0.;
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
-            for (const std::pair<int, vecp::Vec2d> pair : lhs[cellId])
+            vecp::Vec2d sum = rhs[cellId];
+            for (const std::pair<int, vecp::Vec2d>& pair : lhs[cellId])
             {
-                output[cellId] += pair.second * values[pair.first];
+                sum -= pair.second * values[pair.first];
             }
+            residual += sum.abs();
         }
+        residual /= std::sqrt(field->nCells);
 
-        const vecp::Vec2d* expected = this->field->readRight();
-        for (int cellId = 0; cellId < this->field->nCells; cellId++)
-        {
-            //std::cout << expected[cellId].x << "   "  << output[cellId].x << " " << this->tolerance.absolute << std::endl;
-            ASSERT_NEAR(expected[cellId].x, output[cellId].x, this->tolerance.absolute * 10);
-            ASSERT_NEAR(expected[cellId].y, output[cellId].y, this->tolerance.absolute * 10);
-        }
+        ASSERT_LT(numLoops, 50);
+        ASSERT_LE(residual.x, tolerance.absolute);
+        ASSERT_LE(residual.y, tolerance.absolute);
+
     }
 
     INSTANTIATE_TEST_SUITE_P(JacobiVector_Vanilla, JacobiVector_Vanilla_F, testing::Values(
