@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Solver/PointMethod.h>
+#include <Core/Field/SparseMatrix.hpp>
 
 namespace fstim
 {

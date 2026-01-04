@@ -42,16 +42,16 @@ namespace fstim
         T residualSum = T();
 
         T* values = field.writeValues();
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
         for (int cellId = 0; cellId < field.nCells; cellId++)
         {
             T localResidual = T();
             // Set the initial values of the new value.
-            for (const std::pair<int, T> pair : lhs[cellId])
+            for (const auto coeffId : lhs.getColumnIds(cellId))
             {
-                localResidual += pair.second * values[pair.first];
+                localResidual += lhs(cellId, coeffId) * values[coeffId];
             }
             localResidual -= rhs[cellId];
 

@@ -11,7 +11,7 @@ namespace fstim
     {
 
         const T* values = field.readValues();
-        std::map<int, T>* lhs = field.writeLeft();
+        SparseMatrix<T>& lhs = field.writeLeft();
         T* rhs = field.writeRight();
         //const vecp::Vec2d* fluxes[] = velocity.readValues();
 
@@ -38,8 +38,8 @@ namespace fstim
                     // Retrive length data
                     double distance = (mesh.cells[neighId].center - cell.center).mag();
                     double internalWeight = (cell.center - face.center).mag() / distance;
-                    lhs[cellId][cellId] += flux * internalWeight;
-                    lhs[cellId][neighId] +=  flux * (1. - internalWeight);
+                    lhs(cellId, cellId) += flux * internalWeight;
+                    lhs(cellId, neighId) +=  flux * (1. - internalWeight);
                     continue;
                 }
 
@@ -50,7 +50,7 @@ namespace fstim
                     case BcType::NONE:
                         [[fallthrough]];
                     case BcType::ZEROGRADIENT:
-                        lhs[cellId][cellId] += flux;
+                        lhs(cellId, cellId) += flux;
                         break;
                     case BcType::FIXEDVALUE:
                         rhs[cellId] -= std::get<1>(bc) * flux;

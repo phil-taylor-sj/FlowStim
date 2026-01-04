@@ -21,7 +21,7 @@ namespace bm_solver
     static std::unique_ptr<Field<vecp::Vec2d>> createVectorField(int nCells, double initialValue)
     {
         std::unique_ptr<Field<vecp::Vec2d>> field = std::make_unique<Field<vecp::Vec2d>>(nCells);
-        std::map<int, vecp::Vec2d>* lhs = field->writeLeft();
+        SparseMatrix2d& lhs = field->writeLeft();
         vecp::Vec2d* rhs = field->writeRight();
         for (int cellId = 0; cellId < field->nCells; cellId++)
         {
@@ -36,7 +36,7 @@ namespace bm_solver
             int maxIndex = std::min(cellId + 2, field->nCells - 1);
             for (int index = minIndex; index <= maxIndex; index++)
             {
-                lhs[cellId][index] = (cellId == index)
+                lhs(cellId, index) = (cellId == index)
                     ? vecp::Vec2d((double)cellId + 10., (double)cellId + 10.)
                     : vecp::Vec2d(-1.,-1.);
             }

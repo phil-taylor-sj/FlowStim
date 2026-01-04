@@ -6,7 +6,7 @@ namespace fstim
     void Laplacian<T>::operator()(const Mesh2d& mesh, Field<T>& field, const double* visc)
     {
         const T* values = field.readValues();
-        std::map<int, T>* lhs = field.writeLeft();
+        SparseMatrix<T>& lhs = field.writeLeft();
         T* rhs = field.writeRight();
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
@@ -28,8 +28,8 @@ namespace fstim
                 // Update and skip to next cycle if face is internal
                 if (neighId != -1) 
                 {
-                    lhs[cellId][cellId] -= -1.0 * (sfMag / distance) * visc[cellId];
-                    lhs[cellId][neighId] -=  1.0 * (sfMag / distance) * visc[neighId];
+                    lhs(cellId, cellId) -= -1.0 * (sfMag / distance) * visc[cellId];
+                    lhs(cellId, neighId) -=  1.0 * (sfMag / distance) * visc[neighId];
                     continue;
                 }
 

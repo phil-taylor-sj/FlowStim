@@ -16,7 +16,7 @@ namespace VectorSolver_Tests
 
             field = std::make_unique<Field<vecp::Vec2d>>(std::get<0>(GetParam()));
 
-            std::map<int, vecp::Vec2d>* lhs = field->writeLeft();
+            SparseMatrix2d& lhs = field->writeLeft();
             vecp::Vec2d* rhs = field->writeRight();
 
             for (int cellId = 0; cellId < field->nCells; cellId++)
@@ -26,7 +26,7 @@ namespace VectorSolver_Tests
                 for (int index = minIndex; index <= maxIndex; index++)
                 {
                     double value = (double)cellId;
-                    lhs[cellId][index] = (cellId == index) 
+                    lhs(cellId, index) = (cellId == index) 
                         ? vecp::Vec2d(value + 10., -(value + 10))
                         : vecp::Vec2d(-1., -1.);
                 }
@@ -54,7 +54,7 @@ namespace VectorSolver_Tests
 
         ASSERT_LT (numLoops, 50);
 
-        const std::map<int, vecp::Vec2d>* lhs = this->field->readLeft();
+        const SparseMatrix2d& lhs = this->field->readLeft();
         const vecp::Vec2d* values = this->field->readValues();
         const vecp::Vec2d* rhs = this->field->readRight();
         
@@ -64,9 +64,9 @@ namespace VectorSolver_Tests
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
             vecp::Vec2d sum = rhs[cellId];
-            for (const std::pair<int, vecp::Vec2d>& pair : lhs[cellId])
+            for (const auto coeffId : lhs.getColumnIds(cellId))
             {
-                sum -= pair.second * values[pair.first];
+                sum -= lhs(cellId, coeffId) * values[coeffId];
             }
             residual += sum.abs();
         }

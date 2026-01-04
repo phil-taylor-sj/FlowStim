@@ -9,19 +9,19 @@ namespace fstim
     {
         T* values = field.writeValues();
         const T* oldValues = field.readOldValues();
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
         for (int id = 0; id < field.nCells; id++)
         {
             values[id] = rhs[id];
             // Cycle through the coefficient map for the lhs contributions to the current cell.
-            for (const std::pair<int, T> pair : lhs[id])
+            for (const auto coeffId : lhs.getColumnIds(id))
             {
-                if (pair.first == id) { continue; } // Skip primary cell coefficient (Ap)
-                values[id] -= pair.second * oldValues[pair.first];
+                if (coeffId == id) { continue; } // Skip primary cell coefficient (Ap)
+                values[id] -= lhs(id, coeffId) * oldValues[coeffId];
             }
-            values[id] /= lhs[id].at(id);
+            values[id] /= lhs(id, id);
         }
         return 1;
     }

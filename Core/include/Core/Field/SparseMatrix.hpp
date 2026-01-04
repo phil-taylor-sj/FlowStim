@@ -6,6 +6,8 @@
 
 #include <memory>
 #include <map>
+#include <set>
+#include <ranges>
 
 namespace fstim
 {
@@ -25,11 +27,26 @@ namespace fstim
 			return this->m_coeffs[rowId][columnId];
 		}
 
+		inline std::set<int> getColumnIds(std::size_t rowId) const
+		{
+			return std::set<int>(
+				std::views::keys(m_coeffs[rowId]).begin(),
+				std::views::keys(m_coeffs[rowId]).end()
+			);
+		}
+
+		inline void clear()
+		{
+			std::for_each(this->m_coeffs.get(), this->m_coeffs.get() + nRows, [](auto& coeffs) {
+					coeffs.clear();
+				});
+		}
+
 		SparseMatrix(std::size_t nRowsIn) :
 			nRows(nRowsIn),
-			m_coeffs(std::make_unique<std::map<std::size_t, T>[]>(nRowsIn)) {}
+			m_coeffs(std::make_unique<std::map<int, T>[]>(nRowsIn)) {}
 
-		SparseMatrix() {}
+		~SparseMatrix() {}
 
 	private:
 		std::unique_ptr<std::map<int, T>[]> m_coeffs;
@@ -37,4 +54,5 @@ namespace fstim
 
 	using SparseMatrix2d = SparseMatrix<vecp::Vec2d>;
 	using SparseMatrix3d = SparseMatrix<vecp::Vec3d>;
+	using SparseMatrixScalar = SparseMatrix<double>;
 }

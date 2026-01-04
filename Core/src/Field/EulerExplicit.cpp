@@ -11,7 +11,7 @@ namespace fstim
             )
     {
         const T* values = field.readValues();
-        std::map<int, T>* lhs = field.writeLeft();
+        SparseMatrix<T>& lhs = field.writeLeft();
         T* rhs = field.writeRight();
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
@@ -21,8 +21,8 @@ namespace fstim
 
             //lhs[cellId][cellId] *= factor;
             rhs[cellId] += values[cellId] * factor;  
-            rhs[cellId] -= values[cellId] * lhs[cellId][cellId];
-            lhs[cellId][cellId] = T() + factor;
+            rhs[cellId] -= values[cellId] * lhs(cellId, cellId);
+            lhs(cellId, cellId) = T() + factor;
         }
     }
 

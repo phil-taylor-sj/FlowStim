@@ -16,7 +16,7 @@ namespace Solver_Tests
 
             field = std::make_unique<Field<double>>(nCells);
 
-            std::map<int, double>* lhs = field->writeLeft();
+            SparseMatrixScalar& lhs = field->writeLeft();
             double* rhs = field->writeRight();
 
             for (int cellId = 0; cellId < field->nCells; cellId++)
@@ -32,7 +32,7 @@ namespace Solver_Tests
                 int maxIndex = std::min(cellId + 2, field->nCells - 1);
                 for (int index = minIndex; index <= maxIndex; index++)
                 {
-                    lhs[cellId][index] = (cellId == index) 
+                    lhs(cellId, index) = (cellId == index) 
                         ? (double)cellId + 10.
                         : -1.;
                 }
@@ -57,7 +57,7 @@ namespace Solver_Tests
         JacobiMethod<double> solver{};
         int numLoops = solver(*(this->field.get()));
 
-        const std::map<int, double>* lhs = this->field->readLeft();
+        const SparseMatrixScalar& lhs = this->field->readLeft();
         const double* values = this->field->readValues();
         const double* rhs = this->field->readRight();
         // Calculate the dot product of the left hand side coefficients
@@ -66,9 +66,9 @@ namespace Solver_Tests
         for (int cellId = 0; cellId < this->field->nCells; cellId++)
         {
             double sum = rhs[cellId];
-            for (const std::pair<int, double> pair : lhs[cellId])
+            for (const auto coeffId : lhs.getColumnIds(cellId))
             {
-                 sum -= pair.second * values[pair.first];
+                 sum -= lhs(cellId, coeffId) * values[coeffId];
             }
             residual += std::abs(sum);
         }

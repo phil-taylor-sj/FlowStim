@@ -2,6 +2,8 @@
 
 #include <Core/Solver/PointMethod.h>
 #include <Core/Solver/Tolerance.h>
+#include <Core/Field/SparseMatrix.hpp>
+
 #include <iostream>
 
 

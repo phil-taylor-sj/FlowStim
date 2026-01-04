@@ -21,7 +21,7 @@ namespace bm_solver
     static std::unique_ptr<Field<double>> createScalarField(int nCells, double initialValue)
     {
         std::unique_ptr<Field<double>> field = std::make_unique<Field<double>>(nCells);
-        std::map<int, double>* lhs = field->writeLeft();
+        SparseMatrixScalar& lhs = field->writeLeft();
         double* rhs = field->writeRight();
         for (int cellId = 0; cellId < field->nCells; cellId++)
         {
@@ -36,7 +36,7 @@ namespace bm_solver
             int maxIndex = std::min(cellId + 2, field->nCells - 1);
             for (int index = minIndex; index <= maxIndex; index++)
             {
-                lhs[cellId][index] = (cellId == index)
+                lhs(cellId, index) = (cellId == index)
                     ? (double)cellId + 10.
                     : -1.;
             }

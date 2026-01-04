@@ -2,6 +2,7 @@
 
 #include <Core/Domain/Mesh.h>
 #include <Core/Field/Field.h>
+#include <Core/Field/SparseMatrix.hpp>
 
 #include <VecPlus/Vec2.h>
 #include <VecPlus/Vec3.h>

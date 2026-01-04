@@ -4,6 +4,7 @@
 #include <Core/Field/Field.h>
 #include <Core/Domain/Mesh.h>
 #include <Core/Solver/FaceValues.h>
+#include <Core/Field/SparseMatrix.hpp>
 
 namespace fstim
 {

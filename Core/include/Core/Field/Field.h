@@ -3,6 +3,7 @@
 #include <Core/Field/BcType.h>
 #include <Core/Field/FieldTolerance.h>
 #include <Core/Field/FieldRelaxation.h>
+#include <Core/Field/SparseMatrix.hpp>
 
 #include <VecPlus/Vec2.h>
 
@@ -34,7 +35,7 @@ namespace fstim
          *
          * \return A const pointer to the array of equation coefficients.
         */        
-        const std::map<int, T>* readLeft() const { return this->m_lhs.get(); }
+        const SparseMatrix<T>& readLeft() const { return this->m_lhs; }
         
         /*!
          * \brief Provides read only access to the equation constants.
@@ -59,7 +60,7 @@ namespace fstim
          * 
          * \return A non-const pointer to the array of equation coefficients.
         */   
-        std::map<int, T>* writeLeft() { return this->m_lhs.get(); };
+        SparseMatrix<T>& writeLeft() { return this->m_lhs; };
 
         /*!
          * \brief Provides read only access to the equation constants.
@@ -85,7 +86,7 @@ namespace fstim
         void initialise();
 
         Field(int nCells) : nCells(nCells),
-          m_lhs(std::make_unique<std::map<int, T>[]>(nCells)),
+          m_lhs(SparseMatrix<T>(nCells)),
           m_rhs(std::make_unique<T[]>(nCells)),
           m_values(std::make_unique<T[]>(nCells)),
           m_oldValues(std::make_unique<T[]>(nCells)) { }
@@ -98,7 +99,7 @@ namespace fstim
 
 
     protected:
-        std::unique_ptr<std::map<int, T>[]> m_lhs;
+        SparseMatrix<T> m_lhs;
         std::unique_ptr<T[]> m_rhs;
         std::unique_ptr<T[]> m_values;
         std::unique_ptr<T[]> m_oldValues = nullptr;

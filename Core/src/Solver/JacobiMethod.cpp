@@ -52,7 +52,7 @@ namespace fstim
     {
         const T* values = field.readValues();
         const T* oldValues = field.readOldValues();
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
         #pragma omp parallel for
@@ -66,13 +66,13 @@ namespace fstim
             }
 
             // Add all contributions from the left hand side terms.
-            for (const auto& [coeffId, coeff] : lhs[id])
+            for (const auto& coeffId : lhs.getColumnIds(id))
             {
                 if (coeffId == id) { continue; }
-                newValues[id] -= coeff * values[coeffId];
+                newValues[id] -= lhs(id, coeffId) * values[coeffId];
             }
 
-            newValues[id] /= lhs[id].at(id);
+            newValues[id] /= lhs(id, id);
         }
     }
 
@@ -98,7 +98,7 @@ namespace fstim
         T residualSum = T();
 
         T* values = field.writeValues();
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
         #pragma omp parallel
@@ -109,9 +109,9 @@ namespace fstim
             {
                 T localResidual = T();
                 // Set the initial values of the new value.
-                for (const auto& [coeffId, coeff] : lhs[cellId])
+                for (const auto coeffId : lhs.getColumnIds(cellId))
                 {
-                    localResidual += coeff * values[coeffId];
+                    localResidual += lhs(cellId, coeffId) * values[coeffId];
                 }
                 localResidual -= rhs[cellId];
 
@@ -140,7 +140,7 @@ namespace fstim
         T meanValue = std::accumulate(values, values + field.nCells, T())
             / static_cast<double>(field.nCells);
 
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
         for (int cellId = 0; cellId < field.nCells; cellId++)
@@ -149,10 +149,10 @@ namespace fstim
             T correction = T();
             T leftNorm = T();
 
-            for (const auto& [coeffId, coeff] : lhs[cellId])
+            for (const auto coeffId : lhs.getColumnIds(cellId))
             {
-                leftNorm += coeff * values[coeffId];
-                correction += coeff * meanValue;
+                leftNorm += lhs(cellId, coeffId) * values[coeffId];
+                correction += lhs(cellId, coeffId) * meanValue;
             }
 
             T rightNorm = rhs[cellId];

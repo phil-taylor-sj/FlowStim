@@ -36,9 +36,9 @@ namespace fstim
     {
         for (int id = 0; id < this->nCells; id++)
         {
-            this->m_lhs[id].clear();
             this->m_rhs[id] = T();
         }
+        this->m_lhs.clear();
     }
 
     template <typename T>

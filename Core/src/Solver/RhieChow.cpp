@@ -17,7 +17,7 @@ namespace fstim
     {
         int nCells = field.nCells;
         const T* values = field.readValues();
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
         std::unique_ptr<T[]> momentum = std::make_unique<T[]>(nCells);
@@ -25,13 +25,13 @@ namespace fstim
         for (int cellId = 0; cellId < nCells; cellId++)
         {
             T sum = T();
-            for (const std::pair<int, T> pair : lhs[cellId])
+            for (const auto coeffId : lhs.getColumnIds(cellId))
             {
-                if (pair.first == cellId) { continue; } // Skip primary cell coefficient (Ap)
-                sum -= pair.second * values[pair.first];
+                if (coeffId == cellId) { continue; } // Skip primary cell coefficient (Ap)
+                sum -= lhs(cellId, coeffId) * values[coeffId];
             }
             sum += rhs[cellId];
-            sum /= lhs[cellId].at(cellId);
+            sum /= lhs(cellId, cellId);
             momentum[cellId] = sum;
         }
 
@@ -41,12 +41,12 @@ namespace fstim
     template <typename T>
     std::unique_ptr<T[]> RhieChow<T>::interpolatePrimaryCoefficients(Field<T>& field, Mesh2d& mesh)
     {
-        const std::map<int, T>* lhs = field.readLeft();
+        const SparseMatrix<T>& lhs = field.readLeft();
         std::unique_ptr<T[]> primaryCellCoefficients = std::make_unique<T[]>(field.nCells);
 
         for (int cellId = 0; cellId < field.nCells; cellId++)
         {
-            primaryCellCoefficients[cellId] = lhs[cellId].at(cellId);
+            primaryCellCoefficients[cellId] = lhs(cellId, cellId);
         }
 
         std::unique_ptr<T[]> faceValues = FaceValues<T>::interpolate(

@@ -6,7 +6,7 @@ namespace fstim
     void PressureLinear<D, F>::operator()(const Mesh<D, F>& mesh, ScalarField& field, const D* primaryCoeffsAtFaces)
     {
         const double* values = field.readValues();
-        std::map<int, double>* lhs = field.writeLeft();
+        SparseMatrixScalar& lhs = field.writeLeft();
         double* rhs = field.writeRight();
 
         for (int cellId = 0; cellId < mesh.nCells; cellId++)
@@ -30,8 +30,8 @@ namespace fstim
                 // Update and skip to next cycle if face is internal
                 if (neighId != -1) 
                 {
-                    lhs[cellId][cellId] += -1.0 * factor;
-                    lhs[cellId][neighId] += factor;
+                    lhs(cellId, cellId) += -1.0 * factor;
+                    lhs(cellId, neighId) += factor;
                     continue;
                 }
 
@@ -45,7 +45,7 @@ namespace fstim
                         // no change to equation
                         break;
                     case BcType::FIXEDVALUE:
-                        lhs[cellId][cellId] += -1.0 * factor;
+                        lhs(cellId, cellId) += -1.0 * factor;
                         rhs[cellId] -= factor * std::get<1>(bc);
                         break;
                     default:
