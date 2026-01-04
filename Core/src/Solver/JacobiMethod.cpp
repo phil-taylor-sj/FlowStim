@@ -79,16 +79,52 @@ namespace fstim
     template <typename T>
     Tolerance<T> JacobiMethod<T>::m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues)
     {
-        return Tolerance<T>(0.1, 0.1);
+        T maxAbs = T();
+        T maxRel = T();
+        for (size_t id = 0; id < nCells; id++)
+        {
+            if constexpr (std::is_arithmetic_v<T>)
+            {
+                T absErr = std::abs(newValues[id] - oldValues[id]);
+
+                T relErr = (oldValues[id] != 0.)
+                    ? absErr / std::abs(oldValues[id])
+                    : 0.;
+
+                maxAbs = std::max(maxAbs, absErr);
+                maxRel = std::max(maxRel, relErr);
+            }
+            else
+            {
+                T absErr = (newValues[id] - oldValues[id]).abs();
+
+                T relErr = ((oldValues[id].abs()).min() != 0.)
+                    ? absErr / oldValues[id].abs()
+                    : T();
+
+                maxAbs = maxAbs.max(absErr);
+                maxRel = maxRel.max(relErr);
+            }
+        }
+
+        return Tolerance<T>(maxAbs, maxRel);
     }
 
     template <typename T>
     bool JacobiMethod<T>::m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits)
     {
-        return (
-            this->m_getMax(errors.absolute - convergenceLimits.absolute) <= 0. ||
-            this->m_getMax(errors.relative - convergenceLimits.relative) <= 0.
-            );
+        bool is_converged = true;
+        if constexpr (std::is_arithmetic_v<T>)
+        {
+            is_converged = errors.absolute <= convergenceLimits.absolute ||
+                errors.relative <= convergenceLimits.relative;
+        }
+        else
+        {
+            is_converged = (errors.absolute - convergenceLimits.absolute).max() <= 0. ||
+                (errors.relative - convergenceLimits.relative).max() <= 0.;
+        }
+        return is_converged;
     }
 
 
@@ -98,35 +134,37 @@ namespace fstim
         T residualSum = T();
 
         T* values = field.writeValues();
+
         const SparseMatrix<T>& lhs = field.readLeft();
         const T* rhs = field.readRight();
 
-        #pragma omp parallel
+        for (int cellId = 0; cellId < field.nCells; cellId++)
         {
-            T localResidualSum = T();
-            #pragma omp for nowait
-            for (int cellId = 0; cellId < field.nCells; cellId++)
+            T localResidual = T();
+            // Set the initial values of the new value.
+            for (const auto coeffId : lhs.getColumnIds(cellId))
             {
-                T localResidual = T();
-                // Set the initial values of the new value.
-                for (const auto coeffId : lhs.getColumnIds(cellId))
-                {
-                    localResidual += lhs(cellId, coeffId) * values[coeffId];
-                }
-                localResidual -= rhs[cellId];
-
-                if (source != nullptr)
-                {
-                    localResidual -= source[cellId];
-                }
-
-                // Add all contributions from the left hand side terms.
-                localResidualSum += this->m_getAbsolute(localResidual);
+                localResidual += lhs(cellId, coeffId) * values[coeffId];
             }
 
-            #pragma omp critical
-            residualSum += localResidualSum;
+            localResidual -= rhs[cellId];
+
+            if (source != nullptr)
+            {
+                localResidual -= source[cellId];
+            }
+
+            // Add all contributions from the left hand side terms.
+            if constexpr (std::is_arithmetic_v<T>)
+            {
+                residualSum += std::abs(localResidual);
+            }
+            else
+            {
+                residualSum += localResidual.abs();
+            }
         }
+        return residualSum;
         return residualSum;
     }
 
@@ -162,8 +200,17 @@ namespace fstim
             } 
             correction = T();
 
-            normFactor += (this->m_getAbsolute(leftNorm - correction)
-                + this->m_getAbsolute(rightNorm - correction));
+            if constexpr (std::is_arithmetic_v<T>)
+            {
+                normFactor += std::abs(leftNorm - correction)
+                    + std::abs(rightNorm - correction);
+            }
+            else
+            {
+                normFactor += (leftNorm - correction).abs()
+                    + (rightNorm - correction).abs();
+            }
+
         }
         return normFactor;
     }

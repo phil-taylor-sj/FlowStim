@@ -4,8 +4,7 @@
 
 #include <Core/Field/FieldEquation.h>
 
-#include <Core/Solver/JacobiScalarMethod.h>
-#include <Core/Solver/JacobiVectorMethod.h>
+#include <Core/Solver/JacobiMethod.h>
 
 namespace fstim
 {
@@ -30,8 +29,8 @@ namespace fstim
     private:
 
         std::unique_ptr<ScalarFieldEqu> m_pressure = nullptr;
-        JacobiVectorMethod<vecp::Vec2d> m_velocityIterator = JacobiVectorMethod<vecp::Vec2d>();
-        JacobiScalarMethod<double> m_pressureIterator = JacobiScalarMethod<double>();
+        JacobiMethod<vecp::Vec2d> m_velocityIterator = JacobiMethod<vecp::Vec2d>();
+        JacobiMethod<double> m_pressureIterator = JacobiMethod<double>();
 
         void m_solveMomentumPredictor();
         void m_discretisePressureEquation(const vecp::Vec2d* primaryCoeffsAtFaces);

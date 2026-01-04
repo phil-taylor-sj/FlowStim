@@ -32,20 +32,13 @@ namespace fstim
     protected:
         void m_iteratorLoop(Field<T>& field, const T* source, T* newValues);
 
-        Tolerance<T> virtual m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues);
+        Tolerance<T> m_calcMaxErrors(size_t nCells, const T* newValues, const T* oldValues);
 
-        T virtual m_calcGlobalResidual(Field<T>& field, const T* source = nullptr);
+        T m_calcGlobalResidual(Field<T>& field, const T* source = nullptr);
 
-        T virtual m_calcNormFactor(Field<T>& field, const T* source = nullptr);
+        T m_calcNormFactor(Field<T>& field, const T* source = nullptr);
 
-        bool virtual m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits);
-    
-        inline vecp::Vec2d m_getAbsolute(const vecp::Vec2d& vector) { return vector.abs(); }
-        inline double m_getMax(const vecp::Vec2d& vector) { return vector.max(); }
-
-        inline double m_getAbsolute(const double& value) { return std::abs(value); }
-        inline double m_getMax(const double& input) { return input;}
-
+        bool m_isConverged(Tolerance<T> errors, Tolerance<double> convergenceLimits);
     
     };
 

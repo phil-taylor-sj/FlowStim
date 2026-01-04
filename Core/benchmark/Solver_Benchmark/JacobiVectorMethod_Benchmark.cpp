@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
 
-#include <Core/Solver/JacobiVectorMethod.h>
+#include <Core/Solver/JacobiMethod.h>
 #include <Core/Solver/Tolerance.h>
 #include <Core/Field/Field.h>
 

@@ -7,8 +7,6 @@ add_library(Solver OBJECT
     PointMethod.cpp
     ExplicitMethod.cpp
     JacobiMethod.cpp
-    JacobiScalarMethod.cpp
-    JacobiVectorMethod.cpp
     RhieChow.cpp
     FaceValues.cpp
     FaceGradients.cpp
