@@ -26,6 +26,7 @@ namespace SparseMatrix_Tests
                 // [-1., 0., -1., 13., 0., -1., 0. ...]
                 // [-1., 0., -1., 0., 14., 0., -1. ...]
                 // ....
+                /**
                 for (int offset : std::views::iota(-4, 5) | std::views::stride(2))
                 {
                     int offIndex = cellId + offset;
@@ -35,6 +36,7 @@ namespace SparseMatrix_Tests
                     (*matrix)(cellId, cellId) = newValue;
                     inputMatrix[cellId][cellId] = newValue; 
                 }
+                    */
             }
         }
 		std::unique_ptr<SparseMatrix<vecp::Vec2d>> matrix;

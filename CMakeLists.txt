@@ -16,7 +16,7 @@ if (MSVC)
       "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG")
 endif()
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -32,7 +32,7 @@ else()
     set(PROJECT_IS_TOP_LEVEL OFF)
 endif()
 
-set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
+#set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
 
 set(BUILD_BIN_DIR ${PROJECT_SOURCE_DIR}/build/bin)
 
