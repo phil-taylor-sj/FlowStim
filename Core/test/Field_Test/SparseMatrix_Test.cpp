@@ -1,6 +1,10 @@
 #include "../pch.h"
 
 #include <Core/Field/SparseMatrix.hpp>
+#include <Core/Domain/Mesh.h>
+#include <Core/Domain/Mesh2dStructuredFactory.h>
+
+#include <VecPlus/Vec2.h>
 
 #include <memory>
 #include <tuple>
@@ -46,6 +50,27 @@ namespace SparseMatrix_Tests
 		std::unique_ptr<std::map<int, double>[]>  inputMatrix;
         int nRows; 
 	};
+
+    class SparseMatrix_Initialise2dMesh_Fixture : public ::testing::TestWithParam<std::pair<int, int>>
+    {
+    protected:
+        void SetUp() override
+        {
+            this->meshSize = vecp::Vec2i(
+                std::get<0>(GetParam()),
+                std::get<1>(GetParam())
+            );
+ 
+            Mesh2dStructuredFactory meshFactory {};
+            this->mesh = meshFactory(meshSize, vecp::Vec2d(1., 1.));
+            this->nCells = this->mesh->nCells;
+            this->matrix = std::make_unique<SparseMatrix2d>(this->nCells);
+        }
+        std::unique_ptr<SparseMatrix2d> matrix;
+        std::unique_ptr<Mesh2d> mesh;
+        vecp::Vec2i meshSize;
+        int nCells;
+    };
 
     class SparseMatrix_CorrectKeys_F : public SparseMatrix_Fixture {};
     TEST_P(SparseMatrix_CorrectKeys_F, SparseMatirx_AssignsCorrectKeys)
@@ -119,14 +144,68 @@ namespace SparseMatrix_Tests
         SparseMatrix_OverwriteValues_F, 
         testing::Values(10, 100, 1000, 10000));
 
-    class SparseMatrix_Initialise2dDomain_F : public SparseMatrix_Fixture {};
-    TEST_P(SparseMatrix_Initialise2dDomain_F, SparseMatirx_Initialise2dDomain)
+    class SparseMatrix_ClearValues_F : public SparseMatrix_Fixture {};
+    TEST_P(SparseMatrix_ClearValues_F, SparseMatirx_ClearValues)
     {
 
+     for (std::size_t rowId = 0; rowId < nRows; rowId++)
+        {
+            auto expectedIds = std::views::keys(inputMatrix[rowId]);
+            auto storedIds = matrix->getColumnIds(rowId);
+            ASSERT_EQ(storedIds.size(), std::ranges::size(storedIds));
+            for (auto id : expectedIds)
+            {
+                ASSERT_TRUE(storedIds.contains(id));
+            }
+        }
+        matrix->clear();
+        for (int rowId = 0; rowId < nRows; rowId++)
+        {
+            auto expectedIds = std::views::keys(inputMatrix[rowId]);
+            auto columnIds = matrix->getColumnIds(rowId);
+
+           ASSERT_EQ(columnIds.size(), std::ranges::size(columnIds));
+            for (auto id : expectedIds)
+            {
+                ASSERT_TRUE(columnIds.contains(id));
+                ASSERT_EQ(0., (*matrix)(rowId, id));
+            }
+        }
+    }
+
+    INSTANTIATE_TEST_SUITE_P(SparseMatrix_ClearValues, 
+        SparseMatrix_ClearValues_F, 
+        testing::Values(10, 100, 1000, 10000));
+
+    class SparseMatrix_Initialise2dDomain_F : public SparseMatrix_Initialise2dMesh_Fixture {};
+    TEST_P(SparseMatrix_Initialise2dDomain_F, SparseMatirx_Initialise2dDomain)
+    {
+        matrix->initialiseForMesh(*mesh);
+
+        for (int cellId = 0; cellId < nCells; cellId++)
+        {
+            auto columnIds = matrix->getColumnIds(cellId);          
+            
+            std::vector<int> expectedIds = mesh->cells[cellId].faceId
+                | std::views::filter([&](int faceId) { 
+                    return mesh->faces[faceId].neighId >= 0; })
+                | std::views::transform([&](int faceId) { 
+                    const Face2d& face = mesh->faces[faceId];
+                    return (face.ownerId == cellId) ? face.neighId : face.ownerId;})
+                | std::ranges::to<std::vector>();
+
+            expectedIds.emplace_back(cellId);
+            ASSERT_EQ(expectedIds.size(), columnIds.size());
+            for(auto id : expectedIds)
+            {
+                ASSERT_TRUE(std::ranges::contains(columnIds, id));
+            }
+        }
     }
 
     INSTANTIATE_TEST_SUITE_P(SparseMatrix_Initialise2dDomain, 
-        SparseMatrix_CorrectValues_F, 
-        testing::Values(10, 100, 1000, 10000));
+        SparseMatrix_Initialise2dDomain_F, testing::Values(
+            std::make_pair<int, int>(3, 4)
+        ));
 
 }

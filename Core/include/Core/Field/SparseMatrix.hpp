@@ -1,8 +1,9 @@
 #pragma once
 
+#include <Core/Domain/Mesh.h>
+
 #include <VecPlus/Vec2.h>
 #include <VecPlus/Vec3.h>
-
 
 #include <memory>
 #include <map>
@@ -35,11 +36,34 @@ namespace fstim
 			);
 		}
 
+		inline void initialiseForMesh(const Mesh2d& mesh)
+		{
+			if (mesh.nCells != this->nRows) return;
+
+			for (int cellId = 0; cellId < mesh.nCells; cellId++)
+			{
+				(*this)(cellId, cellId) = T();
+
+				const Cell2d& cell = mesh.cells[cellId];
+				for (const auto& faceId : cell.faceId)
+				{
+					const Face2d& face = mesh.faces[faceId];
+					if (face.neighId < 0) continue;
+					int neighId = (face.ownerId == cellId)
+						? face.neighId
+						: face.ownerId;
+					(*this)(cellId, neighId) = T();
+				}
+			}
+		}
+
 		inline void clear()
 		{
-			std::for_each(this->m_coeffs.get(), this->m_coeffs.get() + nRows, [](auto& coeffs) {
-					coeffs.clear();
-				});
+			std::for_each(this->m_coeffs.get(), this->m_coeffs.get() + nRows, 
+				[](auto& coeffs) {
+					std::ranges::for_each(coeffs, [](auto& pair) {pair.second = T();});
+				}
+			);
 		}
 
 		SparseMatrix(std::size_t nRowsIn) :
