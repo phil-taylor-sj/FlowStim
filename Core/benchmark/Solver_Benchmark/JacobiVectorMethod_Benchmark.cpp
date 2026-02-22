@@ -49,6 +49,7 @@ namespace bm_solver
         vecp::Vec2d* values = field->writeValues();
         std::fill(values, values + field->nCells, initialValue);
 
+        lhs.freeze();
         return field;
 
     }
@@ -110,6 +111,7 @@ namespace bm_solver
 BENCHMARK(bm_solver::BM_JacobiVectorMethod_OneCycle)
 ->RangeMultiplier(10)
 ->Range(100, 100000)
+->Iterations(100)
 ->Unit(benchmark::kMillisecond);
 
 

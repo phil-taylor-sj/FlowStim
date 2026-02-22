@@ -36,13 +36,13 @@ namespace SparseMatrix_Tests
                 for (int offset = -4; offset <= 4; offset++)
                 {
                     int offIndex = rowId + offset;
-                    if (offIndex < 0. || offIndex >= nRows) continue;
+                    if (offIndex < 0 || offIndex >= nRows) continue;
 
                     double newValue = (offset == 0) 
                         ? (double)rowId + 10. 
                         : (double)offset / 10.;
-                    (*matrix)(rowId, rowId) = newValue;
-                    inputMatrix[rowId][rowId] = newValue; 
+                    (*matrix)(rowId, offIndex) = newValue;
+                    inputMatrix[rowId][offIndex] = newValue; 
                 }
             }
         }
@@ -75,14 +75,15 @@ namespace SparseMatrix_Tests
     class SparseMatrix_CorrectKeys_F : public SparseMatrix_Fixture {};
     TEST_P(SparseMatrix_CorrectKeys_F, SparseMatirx_AssignsCorrectKeys)
     {
+        matrix->freeze();
         for (std::size_t rowId = 0; rowId < nRows; rowId++)
         {
             auto expectedIds = std::views::keys(inputMatrix[rowId]);
             auto storedIds = matrix->getColumnIds(rowId);
-            ASSERT_EQ(storedIds.size(), std::ranges::size(storedIds));
+            ASSERT_EQ(storedIds.size(), std::ranges::size(expectedIds));
             for (auto id : expectedIds)
             {
-                ASSERT_TRUE(storedIds.contains(id));
+                ASSERT_TRUE(std::ranges::contains(storedIds, id));
             }
         }
     }
@@ -147,15 +148,15 @@ namespace SparseMatrix_Tests
     class SparseMatrix_ClearValues_F : public SparseMatrix_Fixture {};
     TEST_P(SparseMatrix_ClearValues_F, SparseMatirx_ClearValues)
     {
-
-     for (std::size_t rowId = 0; rowId < nRows; rowId++)
+        matrix->freeze();
+        for (std::size_t rowId = 0; rowId < nRows; rowId++)
         {
             auto expectedIds = std::views::keys(inputMatrix[rowId]);
             auto storedIds = matrix->getColumnIds(rowId);
             ASSERT_EQ(storedIds.size(), std::ranges::size(storedIds));
             for (auto id : expectedIds)
             {
-                ASSERT_TRUE(storedIds.contains(id));
+                ASSERT_TRUE(std::ranges::contains(storedIds, id));
             }
         }
         matrix->clear();
@@ -167,7 +168,7 @@ namespace SparseMatrix_Tests
            ASSERT_EQ(columnIds.size(), std::ranges::size(columnIds));
             for (auto id : expectedIds)
             {
-                ASSERT_TRUE(columnIds.contains(id));
+                ASSERT_TRUE(std::ranges::contains(columnIds, id));
                 ASSERT_EQ(0., (*matrix)(rowId, id));
             }
         }

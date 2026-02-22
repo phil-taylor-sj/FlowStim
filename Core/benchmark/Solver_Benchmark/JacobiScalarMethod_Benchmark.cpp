@@ -46,6 +46,7 @@ namespace bm_solver
         double* values = field->writeValues();
         std::fill(values, values + field->nCells, initialValue);
 
+        lhs.freeze();
         return field;
 
     }
@@ -94,11 +95,46 @@ namespace bm_solver
         state.counters["Cells"] = nCells;
     }
 
+    static void BM_SparseMatrixScalar_Read(benchmark::State& state)
+    {
+        int nCells = state.range(1);
+        int numThreads = state.range(0);
+        omp_set_dynamic(0);
+        omp_set_num_threads(numThreads);
+        #pragma omp parallel
+        #pragma omp single
+        {
+            state.counters["Threads"] = omp_get_num_threads();
+        }
+
+        std::unique_ptr<Field<double>> field = createScalarField(nCells, 0.);
+        for (auto _ : state)
+        {
+            const SparseMatrixScalar& lhs = field->readLeft();
+            #pragma omp parallel for schedule(static)
+            for (int rowId = 0; rowId < field->nCells; rowId++)
+            {
+                double temp = lhs(rowId, rowId);
+                benchmark::DoNotOptimize(temp);
+                benchmark::ClobberMemory(); 
+            }
+        }
+        state.counters["Cells"] = nCells;
+    }
+
 }
+
+BENCHMARK(bm_solver::BM_SparseMatrixScalar_Read)
+->ArgsProduct({ {1, 2, 3, 4},
+                {10000, 100000, 200000}
+                })
+->Unit(benchmark::kMillisecond)
+->Iterations(100);
 
 BENCHMARK(bm_solver::BM_JacobiScalarMethod_OneCycle)
     ->RangeMultiplier(10)
     ->Range(100, 100000)
+    ->Iterations(100)
     ->Unit(benchmark::kMillisecond);
 
 
@@ -107,4 +143,5 @@ BENCHMARK(bm_solver::BM_JacobiScalarMethod_MaxCycles)
                 {1000, 10000, 100000}
                 })
 ->Unit(benchmark::kMillisecond);
+
 
